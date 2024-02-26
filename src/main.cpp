@@ -5,20 +5,23 @@
 int main(){
     std::clog << "Logi: " << std::endl;
 
-    // Stworzenie obiektu klasy Game
-    Game game;
+    sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
+    sf::CircleShape shape(100.f);
+    shape.setFillColor(sf::Color::Green);
 
-    game.init();
+    while (window.isOpen())
+    {
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+                window.close();
+        }
 
-    while (game.isRunning()){
-        game.processEvents();
-
-        game.update();
-
-        game.render();
+        window.clear();
+        window.draw(shape);
+        window.display();
     }
-
-    game.cleanup();
 
     return 0;
 }
