@@ -1,20 +1,17 @@
-PROGRAMNAME = FPS
+PROGRAMNAME = Doom style 2.5D game
 COMPILER = g++
 CXXFLAGS = -std=c++11 -Wall
 SRCDIR = src
 BINDIR = bin
 INCLUDEDIR = include
-SFMLINCLUDEDIR = -I.\include
-SFMLLIBDIR = -L.\lib
+SFMLINCLUDEDIR = -IC:\SFML-2.5.1\include
+SFMLLIBDIR = -LC:\SFML-2.5.1\lib
 SFMLLIBS = -lsfml-graphics -lsfml-window -lsfml-system
 
 all: $(BINDIR)/main.exe
 
-$(BINDIR)/main.exe: $(BINDIR)/main.o $(BINDIR)/Game.o
+$(BINDIR)/main.exe: $(BINDIR)/main.o
 	$(COMPILER) -o $@ $^ $(SFMLLIBDIR) $(SFMLLIBS)
 	
-$(BINDIR)/main.o: $(SRCDIR)/main.cpp $(INCLUDEDIR)/Game.h
-	$(COMPILER) $(CXXFLAGS) -c $< -o $@ $(SFMLINCLUDEDIR)
-	
-$(BINDIR)/Game.o: $(SRCDIR)/Game.cpp $(INCLUDEDIR)/Game.h
+$(BINDIR)/main.o: $(SRCDIR)/main.cpp
 	$(COMPILER) $(CXXFLAGS) -c $< -o $@ $(SFMLINCLUDEDIR)
