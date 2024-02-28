@@ -7,7 +7,7 @@
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
-                "${file}",
+                "${file}","${workspaceFolder}\\src\\Game.cpp",
                 "-o",
                 "${workspaceFolder}\\bin\\${fileBasenameNoExtension}.exe",
                 "-IC:\\SFML-2.5.1\\include",

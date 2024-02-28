@@ -1,20 +1,48 @@
 #include "..\include\Game.h"
 
-// Konstruktor
+        //Konstruktor
 Game::Game(){
+
+    std::clog << "Utworzenie obiektu game" << std::endl;
+
     m_is_running = true;
     window_width = 1000;
     window_height = 900;
     frames_per_second = 60;
-
 }
 
 // Destruktor
 Game::~Game() {
+
+    std::clog  << "Destrukcja obiektu game" << std::endl;
+}
+
+//
+void Game::run(){
+    std::clog << "Gra chodzi a nawet biegnie" << std::endl;
+
+    this->init();
+
+
+    while (m_window.isOpen())
+    {
+        sf::Event event;
+        while (m_window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+                m_window.close();
+        }
+
+        m_window.clear();
+        m_window.display();
+    }
+
+    std::clog << "Gra już nie biega" << std::endl;
 }
 
 // Inicjalizacja
 void Game::init() {
+    
     
     // Stworzenie okna gry
     m_window.create(sf::VideoMode(window_width, window_height), "2.5D FPS Game");
@@ -32,6 +60,7 @@ void Game::processEvents() {
         // Wyjście z gry
         if (event.type == sf::Event::Closed) {
             m_is_running = false;
+            m_window.close();
         }
     }
 

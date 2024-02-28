@@ -1,30 +1,15 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include "..\include\Game.h"
 
-class Game{
-    public:
-        Game(){
-
-        }
-        void run(){
-
-        }
-    
-    private:
-        void processEvents();
-        void update();
-        void render();
-
-    private:
-        sf::RenderWindow mWindow;
-        sf::CircleShape mPlayer;
-};
-
-int main(){
+int main(int argc, char* argv[]){
     std::clog << "Logi: " << std::endl;
+    std::clog << "Gra została pomyślnie włączona" << std::endl;
 
     Game game;
+
     game.run();
 
+    std::clog << "Gra dobiegła końca" << std::endl;
     return 0;
 }
