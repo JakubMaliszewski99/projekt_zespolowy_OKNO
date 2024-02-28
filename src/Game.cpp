@@ -17,7 +17,7 @@ Game::~Game() {
     std::clog  << "Destrukcja obiektu game" << std::endl;
 }
 
-//
+// Główna metoda z pętlą gry
 void Game::run(){
     std::clog << "Gra chodzi a nawet biegnie" << std::endl;
 
@@ -38,11 +38,13 @@ void Game::run(){
     }
 
     std::clog << "Gra już nie biega" << std::endl;
+    this->cleanup();
 }
 
 // Inicjalizacja
 void Game::init() {
     
+    std::clog << "Inicjalizacja gry" << std::endl;
     
     // Stworzenie okna gry
     m_window.create(sf::VideoMode(window_width, window_height), "2.5D FPS Game");
@@ -80,6 +82,7 @@ void Game::render() {
 
 // Cleanup
 void Game::cleanup() {
+
 }
 
 // Sprawdź czy gra jest on czy off

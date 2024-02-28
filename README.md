@@ -18,10 +18,10 @@
 
 ## Instalacja
 
-1. Klonowanie repozytorium przez url: 
-2. Instalacja kompilatora,
-3. Instalacja biblioteki SFML
-4. Zbudowanie projektu możliwe poprzez komendę make, lub przez otwarcie folderu w VS code i zbudowanie aplikacji.
+1. Klonowanie repozytorium przez url: `https://github.com/JakubMaliszewski99/projekt_zespolowy_OKNO.git`
+2. Instalacja kompilatora gcc 7.6.0,
+3. Instalacja biblioteki SFML 2.5.1,
+4. Zbudowanie projektu możliwe poprzez komendę make, lub przez otwarcie folderu w VS code i zbudowanie aplikacji,
 5. Odpalenie gry plikiem wykonywalnym .exe w folderze bin.
 
 Autorzy:
