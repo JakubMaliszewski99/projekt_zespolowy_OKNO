@@ -5,7 +5,7 @@
 ## Założenia i funkcjonalność
 
 1. Generowanie mapy z tabeli (minimapa poziomu w rogu ekranu),
-2. Renderowanie sceny za pomocą reycastingu,
+2. Renderowanie sceny za pomocą raycastingu,
 3. Użycie tekstur na ścianach,
 4. Shading zależny od odległości od gracza,
 5. Podstawowe ruchy gracza (ruch prawo, lewo, przód, tył, oraz obrót prawo-lewo wokół osi z), gracz posiada również broń, którą może strzelać
@@ -13,8 +13,8 @@
 
 ## Wymagania
 
-1. Biblioteka SFML w wersji 2.5.1.
-2. Zalecany kompilator g++ wersja 7.6.0
+1. Biblioteka SFML w wersji 2.5.1. (ścieżka C:\SFML-2.5.1) download: https://www.sfml-dev.org/files/SFML-2.5.1-windows-gcc-7.3.0-mingw-32-bit.zip
+2. Zalecany kompilator g++ wersja 7.6.0 (ścieżka C:\mingw32\bin) download: https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/7.3.0/threads-posix/dwarf/i686-7.3.0-release-posix-dwarf-rt_v5-rev0.7z/download
 
 ## Instalacja
 
