@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include "..\include\Player.h"
 
 class Game {
 public:
@@ -23,7 +24,7 @@ private:
         int window_height;
         int frames_per_second;
         bool m_is_running;
-        sf::CircleShape mPlayer;
+        Player player;
 };
 
 #endif // GAME_H

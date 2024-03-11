@@ -1,5 +1,6 @@
 #include "..\include\Game.h"
 
+
         //Konstruktor
 Game::Game(){
 
@@ -9,6 +10,7 @@ Game::Game(){
     window_width = 1000;
     window_height = 900;
     frames_per_second = 60;
+
 }
 
 // Destruktor
@@ -21,24 +23,17 @@ Game::~Game() {
 void Game::run(){
     std::clog << "Gra chodzi a nawet biegnie" << std::endl;
 
-    this->init();
-
+    init();
 
     while (m_window.isOpen())
     {
-        sf::Event event;
-        while (m_window.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
-                m_window.close();
-        }
-
-        m_window.clear();
-        m_window.display();
+        processEvents();
+        update();
+        render();
     }
 
     std::clog << "Gra już nie biega" << std::endl;
-    this->cleanup();
+    cleanup();
 }
 
 // Inicjalizacja
@@ -76,7 +71,7 @@ void Game::update() {
 // Renderer
 void Game::render() {
     m_window.clear();
-
+    m_window.draw(player.getPlayerDot());
     m_window.display();
 }
 
