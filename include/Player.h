@@ -17,7 +17,7 @@ class Player{
         void moveRight();
         void moveLeft();
         sf::CircleShape getPlayerDot();
-        sf::Vertex* getPlayerDirectionLine();
+        //sf::Vertex* getPlayerDirectionLine();
         
 
     private:
@@ -35,7 +35,7 @@ class Player{
         sf::Color playerColor;
         sf::CircleShape playerDot;
         
-        static sf::Vertex playerDirectionLine[2];
+        //static sf::Vertex playerDirectionLine[2];
 
 };
 

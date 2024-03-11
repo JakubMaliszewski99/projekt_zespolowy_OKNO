@@ -5,14 +5,19 @@
             "includePath": [
                 "${default}",
                 "C:\\SFML-2.5.1\\include",
-                "C:\\mingw32\\lib\\gcc\\i686-w64-mingw32\\7.3.0\\include\\c++"
+                "C:/mingw32/bin/../lib/gcc/i686-w64-mingw32/7.3.0/include",
+                "C:/mingw32/bin/../lib/gcc/i686-w64-mingw32/7.3.0/include-fixed",
+                "C:/mingw32/bin/../lib/gcc/i686-w64-mingw32/7.3.0/../../../../i686-w64-mingw32/include",
+                "C:/mingw32/lib/gcc/i686-w64-mingw32/7.3.0/include/c++",
+                "C:/mingw32/lib/gcc/i686-w64-mingw32/7.3.0/include/c++/i686-w64-mingw32",
+                "C:\\mingw32\\lib\\gcc\\i686-w64-mingw32\\7.3.0\\include\\c++\\tr1",
+                "C:\\mingw32\\lib\\gcc\\i686-w64-mingw32\\7.3.0\\include"
             ],
             "defines": [
                 "_DEBUG",
                 "UNICODE",
                 "_UNICODE"
             ],
-            "compilerPath": "C:\\mingw32\\bin\\g++.exe",
             "cStandard": "c11",
             "cppStandard": "gnu++14",
             "intelliSenseMode": "windows-gcc-x86"
