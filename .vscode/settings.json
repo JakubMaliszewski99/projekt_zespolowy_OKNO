@@ -53,5 +53,6 @@
     },
     "cmake.configureOnOpen": false,
     "C_Cpp.default.compilerPath": "C:\\mingw32\\bin\\g++.exe",
-    "files.encoding": "cp852"
+    "files.encoding": "cp852",
+    "files.autoGuessEncoding": true
 }
