@@ -23,6 +23,12 @@ class Player{
         float radius;
         double positionX;
         double positionY;
+        /* może ruch jako boole
+        bool isMovingUp;
+        bool isMovingDown;
+        bool isMovingLeft;
+        bool isMovingRight;
+        */
         sf::Color playerColor;
         sf::CircleShape playerDot;
 

@@ -9,6 +9,13 @@ Player::Player(){
     positionY = 0.0;
     playerColor = sf::Color::White;
 
+    /* Może ruch jako boole?
+    isMovingUp = false;
+    isMovingDown = false;
+    isMovingLeft = false;
+    isMovingRight = false;
+    */
+
     playerDot.setRadius(radius);
     playerDot.setPosition(positionX, positionY);
     playerDot.setFillColor(playerColor);
