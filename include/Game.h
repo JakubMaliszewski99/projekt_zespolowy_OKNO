@@ -13,6 +13,7 @@ public:
     void init();
     void run();
     void processEvents();
+    void handlePlayerInput(sf::Keyboard::Key key, bool isPressed);
     void update();
     void render();
     void cleanup();

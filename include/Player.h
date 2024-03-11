@@ -4,6 +4,9 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 
+//stałe
+const double PLAYER_MOV = 10.0;
+
 class Player{
 
     public:
@@ -16,6 +19,7 @@ class Player{
         sf::CircleShape getPlayerDot();
 
     private:
+
         float radius;
         double positionX;
         double positionY;

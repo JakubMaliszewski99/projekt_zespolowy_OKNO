@@ -55,14 +55,43 @@ void Game::processEvents() {
     while (m_window.pollEvent(event)) {
 
         // Wyjście z gry
-        if (event.type == sf::Event::Closed) {
-            m_is_running = false;
-            m_window.close();
+        switch (event.type)
+        {
+            case sf::Event::KeyPressed:
+                std::clog << "Nacisnąłeś klawisz" << std::endl;
+                handlePlayerInput(event.key.code, true);
+                break;
+            case sf::Event::Closed:
+                m_is_running = false;
+                m_window.close();
+                break;
         }
     }
 
 }
 
+void Game::handlePlayerInput(sf::Keyboard::Key key, bool isPressed) {
+
+    switch (key)
+    {
+        case sf::Keyboard::W:
+            std::clog << "Naciśnięto W" << std::endl;
+            player.moveUp();
+            break;
+        case sf::Keyboard::S:
+            std::clog << "Naciśnięto S" << std::endl;
+            player.moveDown();
+            break;
+        case sf::Keyboard::A:
+            std::clog << "Naciśnięto A" << std::endl;
+            player.moveLeft();
+            break;
+        case sf::Keyboard::D:
+            std::clog << "Naciśnięto D" << std::endl;
+            player.moveRight();
+            break;
+    }
+}
 // Logika gry
 void Game::update() {
 
