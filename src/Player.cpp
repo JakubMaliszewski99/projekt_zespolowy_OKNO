@@ -8,6 +8,8 @@ Player::Player(){
     positionX = 0.0;
     positionY = 0.0;
     playerColor = sf::Color::White;
+    
+    sf::Vertex playerDirection[] = {sf::Vertex(sf::Vector2f(positionX, positionY)), sf::Vertex(sf::Vector2f(positionX + 10, positionY))};
 
     /* Może ruch jako boole?
     isMovingUp = false;
@@ -48,4 +50,8 @@ void Player::moveLeft(){
 //Gettery
 sf::CircleShape Player::getPlayerDot(){
     return playerDot;
+}
+
+sf::Vertex* Player::getPlayerDirectionLine(){
+    return playerDirectionLine;
 }

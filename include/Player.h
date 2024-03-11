@@ -17,12 +17,15 @@ class Player{
         void moveRight();
         void moveLeft();
         sf::CircleShape getPlayerDot();
+        sf::Vertex* getPlayerDirectionLine();
+        
 
     private:
 
         float radius;
         double positionX;
         double positionY;
+
         /* może ruch jako boole
         bool isMovingUp;
         bool isMovingDown;
@@ -31,6 +34,8 @@ class Player{
         */
         sf::Color playerColor;
         sf::CircleShape playerDot;
+        
+        static sf::Vertex playerDirectionLine[2];
 
 };
 

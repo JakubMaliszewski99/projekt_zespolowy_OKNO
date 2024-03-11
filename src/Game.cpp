@@ -100,7 +100,12 @@ void Game::update() {
 // Renderer
 void Game::render() {
     m_window.clear();
+
+    //draw player
     m_window.draw(player.getPlayerDot());
+    sf::Vertex line[] = {sf::Vertex(sf::Vector2f(10, 10), sf::Color::Blue), sf::Vertex(sf::Vector2f(20, 10), sf::Color::Blue)};
+    m_window.draw(line, 2, sf::Lines);
+
     m_window.display();
 }
 
