@@ -1,7 +1,7 @@
 #include "..\include\Game.h"
 
 
-        //Konstruktor
+// Konstruktor
 Game::Game(){
 
     std::clog << "Utworzenie obiektu game" << std::endl;
@@ -53,14 +53,20 @@ void Game::init() {
 void Game::processEvents() {
     sf::Event event;
     while (m_window.pollEvent(event)) {
-
-        // Wyjście z gry
         switch (event.type)
         {
+            // Naciśnięto klawisz
             case sf::Event::KeyPressed:
-                std::clog << "Nacisnąłeś klawisz" << std::endl;
+                std::clog << "Nacisnąłeś klawisz: ";
                 handlePlayerInput(event.key.code, true);
                 break;
+            
+            // Puszczono klawisz
+            case sf::Event::KeyReleased:
+                std::clog << "Puściłeś klawisz: ";
+                handlePlayerInput(event.key.code, false);
+            
+            // Wyjście z gry
             case sf::Event::Closed:
                 m_is_running = false;
                 m_window.close();
@@ -74,30 +80,35 @@ void Game::handlePlayerInput(sf::Keyboard::Key key, bool isPressed) {
 
     switch (key)
     {
+        // Ruch
         case sf::Keyboard::W:
-            std::clog << "Naciśnięto W" << std::endl;
+            std::clog << "W" << std::endl;
             player.moveUp();
             break;
         case sf::Keyboard::S:
-            std::clog << "Naciśnięto S" << std::endl;
+            std::clog << "S" << std::endl;
             player.moveDown();
             break;
         case sf::Keyboard::A:
-            std::clog << "Naciśnięto A" << std::endl;
+            std::clog << "A" << std::endl;
             player.moveLeft();
             break;
         case sf::Keyboard::D:
-            std::clog << "Naciśnięto D" << std::endl;
+            std::clog << "D" << std::endl;
             player.moveRight();
             break;
+        // Rotacja
         case sf::Keyboard::E:
-            std::clog << "Naciśnięto E" << std::endl;
+            std::clog << "E" << std::endl;
             player.rotateRight();
             break;
         case sf::Keyboard::Q:
-            std::clog << "Naciśnięto Q" << std::endl;
+            std::clog << "Q" << std::endl;
             player.rotateLeft();
             break;
+        // Bieg
+        // Strzelanie
+        // Interakcja
     }
 }
 // Logika gry
@@ -109,10 +120,21 @@ void Game::update() {
 void Game::render() {
     m_window.clear();
 
-    //draw player
-    m_window.draw(player.getPlayerDot());
-    m_window.draw(player.getDirectionLine());
+    // Rysuj Hud
+        // Pasek Życia
+        // Ilość amunicji
+        // Jaka broń
 
+    // Rysuj Minimapę
+        // Rysuj Teren
+        // Rysuj Gracza
+        m_window.draw(player.getPlayerDot());
+        m_window.draw(player.getDirectionLine());
+
+
+    //Rysuj Przeciwników
+
+    //Wyświetl
     m_window.display();
 }
 

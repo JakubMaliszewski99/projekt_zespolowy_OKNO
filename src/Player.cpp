@@ -1,5 +1,5 @@
 #include "..\include\Player.h"
-//Konstruktor
+// Konstruktor
 Player::Player(){
     std::clog << "Utworzenie obiektu player" << std::endl;
 
@@ -10,12 +10,12 @@ Player::Player(){
     
     playerColor = sf::Color::White;
 
-    //Kropka oznaczająca playera
+    // Kropka oznaczająca playera
     playerDot.setRadius(radius);
     playerDot.setPosition(positionX, positionY);
     playerDot.setFillColor(playerColor);
 
-    //Linia wskazująca kierunek patrzenia
+    // Linia wskazująca kierunek patrzenia
     directionLine.setPrimitiveType(sf::Lines);
     directionLine.resize(2);
     directionLine[0].color = sf::Color::Red;
@@ -27,10 +27,10 @@ Player::Player(){
     directionLine[1].position = directionLine[0].position + direction * 18.f;
 }
 
-//Destruktor
+// Destruktor
 Player::~Player(){}
 
-//Ruch na minimapce
+// Ruch na minimapce
 void Player::moveUp(){
     positionY -= PLAYER_MOV;
     playerDot.setPosition(positionX, positionY);
@@ -59,6 +59,7 @@ void Player::moveLeft(){
     directionLine[1].position = directionLine[0].position + direction * 18.f;
 }
 
+// Rotacja
 void Player::rotateLeft(){
     angle -= PLAYER_ROT;
     direction = sf::Vector2f(std::cos(angle), std::sin(angle));
