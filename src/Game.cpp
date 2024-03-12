@@ -23,6 +23,7 @@ Game::~Game() {
 void Game::run(){
     std::clog << "Gra chodzi a nawet biegnie" << std::endl;
     init();
+    sf::Clock clock;
     
 /*
     Menu menu;
@@ -45,8 +46,9 @@ void Game::run(){
 
     while (m_window.isOpen())
     {
+        sf::Time deltaTime = clock.restart();
         processEvents();
-        update();
+        update(deltaTime);
         render();
     }
 
@@ -62,9 +64,11 @@ void Game::init() {
     // Stworzenie okna gry
     m_window.create(sf::VideoMode(window_width, window_height), "2.5D FPS Game");
 
+    /*
     // Limit klatek na sekundę
     m_window.setVerticalSyncEnabled(true);
     m_window.setFramerateLimit(frames_per_second);
+    */
 }
 
 // Eventy
@@ -131,26 +135,31 @@ void Game::handlePlayerInput(sf::Keyboard::Key key, bool isPressed) {
     }
 }
 // Logika gry
-void Game::update() {
+void Game::update(sf::Time deltaTime) {
 
+    sf::Vector2f movement(0.f, 0.f);
+    float rotation = 0.f;
     if(player.isMovingUp && player.getPositionY() > 0){
-        player.moveUp();
+        movement.y -= player.getSpeed();
     }
     if(player.isMovingDown && player.getPositionY() < window_height - (player.getPlayerDot().getRadius()) * 2){
-        player.moveDown();
+        movement.y += player.getSpeed();
     }
     if(player.isMovingLeft && player.getPositionX() > 0){
-        player.moveLeft();
+        movement.x -= player.getSpeed();
     }
     if(player.isMovingRight && player.getPositionX() < window_width - (player.getPlayerDot().getRadius()) * 2){
-        player.moveRight();
+        movement.x += player.getSpeed();
     }
     if(player.isRotatingRight){
-        player.rotateRight();
+        rotation += player.getRotationSpeed();
     }
     if(player.isRotatingLeft){
-        player.rotateLeft();
+        rotation -= player.getRotationSpeed();
     }
+
+    player.move(movement * deltaTime.asSeconds());
+    player.rotate(rotation * deltaTime.asSeconds());
 
 
 }

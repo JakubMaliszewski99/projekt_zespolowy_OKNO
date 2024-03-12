@@ -28,50 +28,26 @@ Player::Player(){
     direction = sf::Vector2f(std::cos(angle), std::sin(angle));
     directionLine[0].position = playerDot.getPosition() + sf::Vector2f(playerDot.getRadius(), playerDot.getRadius());
     directionLine[1].position = directionLine[0].position + direction * 18.f;
+
+    speed = 150.f;
+    rotationSpeed = 3.141592653589/180.f * 500;
 }
 
 // Destruktor
 Player::~Player(){}
 
 // Ruch na minimapce
-void Player::moveUp(){
-    positionY -= PLAYER_MOV;
-    playerDot.setPosition(positionX, positionY);
-    directionLine[0].position = playerDot.getPosition() + sf::Vector2f(playerDot.getRadius(), playerDot.getRadius());
-    directionLine[1].position = directionLine[0].position + direction * 18.f;
-}
-
-void Player::moveDown(){
-    positionY += PLAYER_MOV;
-    playerDot.setPosition(positionX, positionY);
-    directionLine[0].position = playerDot.getPosition() + sf::Vector2f(playerDot.getRadius(), playerDot.getRadius());
-    directionLine[1].position = directionLine[0].position + direction * 18.f;
-}
-
-void Player::moveRight(){
-    positionX += PLAYER_MOV;
-    playerDot.setPosition(positionX, positionY);
-    directionLine[0].position = playerDot.getPosition() + sf::Vector2f(playerDot.getRadius(), playerDot.getRadius());
-    directionLine[1].position = directionLine[0].position + direction * 18.f;
-}
-
-void Player::moveLeft(){
-    positionX -= PLAYER_MOV;
+void Player::move(sf::Vector2f movement){
+    positionX += movement.x;
+    positionY += movement.y;
     playerDot.setPosition(positionX, positionY);
     directionLine[0].position = playerDot.getPosition() + sf::Vector2f(playerDot.getRadius(), playerDot.getRadius());
     directionLine[1].position = directionLine[0].position + direction * 18.f;
 }
 
 // Rotacja
-void Player::rotateLeft(){
-    angle -= PLAYER_ROT;
-    direction = sf::Vector2f(std::cos(angle), std::sin(angle));
-    directionLine[0].position = playerDot.getPosition() + sf::Vector2f(playerDot.getRadius(), playerDot.getRadius());
-    directionLine[1].position = directionLine[0].position + direction * 18.f;
-}
-
-void Player::rotateRight(){
-    angle += PLAYER_ROT;
+void Player::rotate(float rotation){
+    angle += rotation;
     direction = sf::Vector2f(std::cos(angle), std::sin(angle));
     directionLine[0].position = playerDot.getPosition() + sf::Vector2f(playerDot.getRadius(), playerDot.getRadius());
     directionLine[1].position = directionLine[0].position + direction * 18.f;
@@ -101,5 +77,14 @@ float Player::getAngle(){
 float Player::getRadius(){
     return radius;
 }
+
+float Player::getSpeed(){
+    return speed;
+}
+
+float Player::getRotationSpeed(){
+    return rotationSpeed;
+}
+
 
 //Settery
