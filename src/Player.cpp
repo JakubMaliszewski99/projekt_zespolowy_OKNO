@@ -7,9 +7,10 @@ Player::Player(){
     radius = 10.0f;
     positionX = 0.0;
     positionY = 0.0;
+    velocity = 0.0;
+    
     playerColor = sf::Color::White;
     
-    //sf::Vertex playerDirection[] = {sf::Vertex(sf::Vector2f(positionX, positionY)), sf::Vertex(sf::Vector2f(positionX + 10, positionY))};
 
     /* Może ruch jako boole?
     isMovingUp = false;
@@ -21,6 +22,7 @@ Player::Player(){
     playerDot.setRadius(radius);
     playerDot.setPosition(positionX, positionY);
     playerDot.setFillColor(playerColor);
+    //angle = playerDot.getRotation() * M_PI/180.f;
 }
 
 //Destruktor
@@ -52,6 +54,8 @@ sf::CircleShape Player::getPlayerDot(){
     return playerDot;
 }
 
-//sf::Vertex* Player::getPlayerDirectionLine(){
-    //return playerDirectionLine;
-//}
+float Player::getAngle(){
+    return angle;
+}
+
+//Settery

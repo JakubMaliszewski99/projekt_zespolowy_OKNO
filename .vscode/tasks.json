@@ -14,7 +14,8 @@
                 "-LC:\\SFML-2.5.1\\lib",
                 "-lsfml-graphics",
                 "-lsfml-window",
-                "-lsfml-system"
+                "-lsfml-system",
+                "-std=c++11"
             ],
             "options": {
                 "cwd": "${fileDirname}"

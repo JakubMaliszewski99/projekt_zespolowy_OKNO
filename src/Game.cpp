@@ -90,6 +90,12 @@ void Game::handlePlayerInput(sf::Keyboard::Key key, bool isPressed) {
             std::clog << "Naciśnięto D" << std::endl;
             player.moveRight();
             break;
+        case sf::Keyboard::E:
+            std::clog << "Naciśnięto E" << std::endl;
+            break;
+        case sf::Keyboard::Q:
+            std::clog << "Naciśnięto Q" << std::endl;
+            break;
     }
 }
 // Logika gry

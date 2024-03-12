@@ -4,8 +4,11 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 
+#include <math.h>
+
 //stałe
 const double PLAYER_MOV = 10.0;
+//const double M_PI = cos(1)*4;
 
 class Player{
 
@@ -16,15 +19,18 @@ class Player{
         void moveDown();
         void moveRight();
         void moveLeft();
+        //gettery
         sf::CircleShape getPlayerDot();
-        //sf::Vertex* getPlayerDirectionLine();
-        
+        float getAngle();
 
     private:
 
         float radius;
         double positionX;
         double positionY;
+        
+        double velocity;
+        float angle;
 
         /* może ruch jako boole
         bool isMovingUp;
