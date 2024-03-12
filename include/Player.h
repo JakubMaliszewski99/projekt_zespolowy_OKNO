@@ -28,11 +28,16 @@ class Player{
         sf::VertexArray getDirectionLine();
         float getAngle();
 
+        bool isMovingUp, isMovingDown, isMovingLeft, isMovingRight;
+        bool isRotatingLeft, isRotatingRight;
+
     private:
 
         float radius;
         double positionX;
         double positionY;
+
+        
         
         double velocity;
         float angle;

@@ -7,6 +7,9 @@ Player::Player(){
     positionX = 0.0;
     positionY = 0.0;
     velocity = 0.0;
+
+    isMovingUp = isMovingDown = isMovingLeft = isMovingRight = false;
+    isRotatingLeft = isRotatingRight = false;
     
     playerColor = sf::Color::White;
 

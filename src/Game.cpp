@@ -79,11 +79,11 @@ void Game::processEvents() {
                 handlePlayerInput(event.key.code, true);
                 break;
             
-            /*// Puszczono klawisz
+            // Puszczono klawisz
             case sf::Event::KeyReleased:
                 std::clog << "Puściłeś klawisz: ";
                 handlePlayerInput(event.key.code, false);
-                */
+                break;
             
             // Wyjście z gry
             case sf::Event::Closed:
@@ -102,28 +102,28 @@ void Game::handlePlayerInput(sf::Keyboard::Key key, bool isPressed) {
         // Ruch
         case sf::Keyboard::W:
             std::clog << "W" << std::endl;
-            player.moveUp();
+            player.isMovingUp = isPressed;
             break;
         case sf::Keyboard::S:
             std::clog << "S" << std::endl;
-            player.moveDown();
+            player.isMovingDown = isPressed;
             break;
         case sf::Keyboard::A:
             std::clog << "A" << std::endl;
-            player.moveLeft();
+            player.isMovingLeft = isPressed;
             break;
         case sf::Keyboard::D:
             std::clog << "D" << std::endl;
-            player.moveRight();
+            player.isMovingRight = isPressed;
             break;
         // Rotacja
         case sf::Keyboard::E:
             std::clog << "E" << std::endl;
-            player.rotateRight();
+            player.isRotatingRight = isPressed;
             break;
         case sf::Keyboard::Q:
             std::clog << "Q" << std::endl;
-            player.rotateLeft();
+            player.isRotatingLeft = isPressed;
             break;
         // Bieg
         // Strzelanie
@@ -132,6 +132,26 @@ void Game::handlePlayerInput(sf::Keyboard::Key key, bool isPressed) {
 }
 // Logika gry
 void Game::update() {
+
+    if(player.isMovingUp){
+        player.moveUp();
+    }
+    if(player.isMovingDown){
+        player.moveDown();
+    }
+    if(player.isMovingLeft){
+        player.moveLeft();
+    }
+    if(player.isMovingRight){
+        player.moveRight();
+    }
+    if(player.isRotatingRight){
+        player.rotateRight();
+    }
+    if(player.isRotatingLeft){
+        player.rotateLeft();
+    }
+
 
 }
 
