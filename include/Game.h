@@ -4,6 +4,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "..\include\Player.h"
+#include "..\include\Menu.h"
 
 class Game {
 public:

@@ -22,8 +22,26 @@ Game::~Game() {
 // Główna metoda z pętlą gry
 void Game::run(){
     std::clog << "Gra chodzi a nawet biegnie" << std::endl;
-
     init();
+    
+/*
+    Menu menu;
+
+        while (m_window.isOpen()) {
+        sf::Event event;
+        while (m_window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed)
+                m_window.close();
+            // Pass the event to the menu for handling
+            menu.handleEvent(event, m_window);
+        }
+
+        m_window.clear();
+        // Draw the menu
+        menu.draw(m_window);
+        m_window.display();
+    }
+    */
 
     while (m_window.isOpen())
     {
