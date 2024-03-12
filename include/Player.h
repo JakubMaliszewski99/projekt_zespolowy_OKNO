@@ -24,9 +24,13 @@ class Player{
         void rotateRight();
 
         //gettery
+        double getPositionX();
+        double getPositionY();
+        float getAngle();
+        float getRadius();
         sf::CircleShape getPlayerDot();
         sf::VertexArray getDirectionLine();
-        float getAngle();
+
 
         bool isMovingUp, isMovingDown, isMovingLeft, isMovingRight;
         bool isRotatingLeft, isRotatingRight;

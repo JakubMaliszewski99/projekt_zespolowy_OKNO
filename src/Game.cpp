@@ -133,16 +133,16 @@ void Game::handlePlayerInput(sf::Keyboard::Key key, bool isPressed) {
 // Logika gry
 void Game::update() {
 
-    if(player.isMovingUp){
+    if(player.isMovingUp && player.getPositionY() > 0){
         player.moveUp();
     }
-    if(player.isMovingDown){
+    if(player.isMovingDown && player.getPositionY() < window_height - (player.getPlayerDot().getRadius()) * 2){
         player.moveDown();
     }
-    if(player.isMovingLeft){
+    if(player.isMovingLeft && player.getPositionX() > 0){
         player.moveLeft();
     }
-    if(player.isMovingRight){
+    if(player.isMovingRight && player.getPositionX() < window_width - (player.getPlayerDot().getRadius()) * 2){
         player.moveRight();
     }
     if(player.isRotatingRight){

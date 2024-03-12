@@ -78,6 +78,14 @@ void Player::rotateRight(){
 }
 
 //Gettery
+
+double Player::getPositionX(){
+    return positionX;
+}
+double Player::getPositionY(){
+    return positionY;
+}
+
 sf::CircleShape Player::getPlayerDot(){
     return playerDot;
 }
@@ -88,6 +96,10 @@ sf::VertexArray Player::getDirectionLine(){
 
 float Player::getAngle(){
     return angle;
+}
+
+float Player::getRadius(){
+    return radius;
 }
 
 //Settery
