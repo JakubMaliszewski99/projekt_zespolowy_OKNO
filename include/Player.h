@@ -7,20 +7,26 @@
 #include <math.h>
 
 //stałe
-const double PLAYER_MOV = 10.0;
-//const double M_PI = cos(1)*4;
+const double PLAYER_MOV = 2.5;
+const double PLAYER_ROT = 3.141592653589/180.f * 5;
 
 class Player{
 
     public:
         Player();
         ~Player();
+        //moving
         void moveUp();
         void moveDown();
         void moveRight();
         void moveLeft();
+        //rotating
+        void rotateLeft();
+        void rotateRight();
+
         //gettery
         sf::CircleShape getPlayerDot();
+        sf::VertexArray getDirectionLine();
         float getAngle();
 
     private:
@@ -32,16 +38,11 @@ class Player{
         double velocity;
         float angle;
 
-        /* może ruch jako boole
-        bool isMovingUp;
-        bool isMovingDown;
-        bool isMovingLeft;
-        bool isMovingRight;
-        */
         sf::Color playerColor;
         sf::CircleShape playerDot;
-        
-        //static sf::Vertex playerDirectionLine[2];
+
+        sf::Vector2f direction;
+        sf::VertexArray directionLine;
 
 };
 

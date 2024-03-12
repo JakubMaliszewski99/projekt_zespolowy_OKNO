@@ -7,7 +7,7 @@ Game::Game(){
     std::clog << "Utworzenie obiektu game" << std::endl;
 
     m_is_running = true;
-    window_width = 1000;
+    window_width = 1500;
     window_height = 900;
     frames_per_second = 60;
 
@@ -92,9 +92,11 @@ void Game::handlePlayerInput(sf::Keyboard::Key key, bool isPressed) {
             break;
         case sf::Keyboard::E:
             std::clog << "Naciśnięto E" << std::endl;
+            player.rotateRight();
             break;
         case sf::Keyboard::Q:
             std::clog << "Naciśnięto Q" << std::endl;
+            player.rotateLeft();
             break;
     }
 }
@@ -109,8 +111,7 @@ void Game::render() {
 
     //draw player
     m_window.draw(player.getPlayerDot());
-    sf::Vertex line[] = {sf::Vertex(sf::Vector2f(10, 10), sf::Color::Blue), sf::Vertex(sf::Vector2f(20, 10), sf::Color::Blue)};
-    m_window.draw(line, 2, sf::Lines);
+    m_window.draw(player.getDirectionLine());
 
     m_window.display();
 }
