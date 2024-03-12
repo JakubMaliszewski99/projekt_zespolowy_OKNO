@@ -61,10 +61,11 @@ void Game::processEvents() {
                 handlePlayerInput(event.key.code, true);
                 break;
             
-            // Puszczono klawisz
+            /*// Puszczono klawisz
             case sf::Event::KeyReleased:
                 std::clog << "Puściłeś klawisz: ";
                 handlePlayerInput(event.key.code, false);
+                */
             
             // Wyjście z gry
             case sf::Event::Closed:
