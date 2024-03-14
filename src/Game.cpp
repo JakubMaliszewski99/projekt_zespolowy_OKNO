@@ -1,6 +1,5 @@
 #include "..\include\Game.h"
 
-
 // Konstruktor
 Game::Game(){
 
@@ -64,11 +63,6 @@ void Game::init() {
     // Stworzenie okna gry
     m_window.create(sf::VideoMode(window_width, window_height), "2.5D FPS Game");
 
-    /*
-    // Limit klatek na sekundę
-    m_window.setVerticalSyncEnabled(true);
-    m_window.setFramerateLimit(frames_per_second);
-    */
 }
 
 // Eventy
@@ -130,6 +124,10 @@ void Game::handlePlayerInput(sf::Keyboard::Key key, bool isPressed) {
             player.isRotatingLeft = isPressed;
             break;
         // Bieg
+        case sf::Keyboard::LShift:
+            std::clog << "Shift - Bieg" << std::endl;
+            player.isSprinting = isPressed;
+            break;
         // Strzelanie
         // Interakcja
     }
@@ -140,6 +138,7 @@ void Game::update(sf::Time deltaTime) {
     sf::Vector2f movement(0.f, 0.f);
     float velocity = player.getSpeed() * deltaTime.asSeconds();
     float rotation = 0.f;
+    player.isSprinting? player.setSpeed(PLAYER_DEFAULT_SPEED * 2) : player.setSpeed(PLAYER_DEFAULT_SPEED);
     if(player.isMovingForwards){
         movement.x += cos(player.getAngle()) * velocity;
         movement.y += sin(player.getAngle()) * velocity;
@@ -149,13 +148,13 @@ void Game::update(sf::Time deltaTime) {
         movement.y -= sin(player.getAngle()) * velocity;
     }
     if(player.isMovingLeft){
-        movement.x -= cos(player.getAngle() + 90 * (3.14159265358979323846 /180)) * velocity;
-        movement.y -= sin(player.getAngle() + 90 * (3.14159265358979323846 /180)) * velocity;
+        movement.x -= cos(player.getAngle() + 90 * (M_PI /180)) * velocity;
+        movement.y -= sin(player.getAngle() + 90 * (M_PI /180)) * velocity;
 
     }
     if(player.isMovingRight){
-        movement.x += cos(player.getAngle() + 90 * (3.14159265358979323846 /180)) * velocity;
-        movement.y += sin(player.getAngle() + 90 * (3.14159265358979323846 /180)) * velocity;
+        movement.x += cos(player.getAngle() + 90 * (M_PI /180)) * velocity;
+        movement.y += sin(player.getAngle() + 90 * (M_PI /180)) * velocity;
     }
     if(player.isRotatingRight){
         rotation += player.getRotationSpeed() * deltaTime.asSeconds();
@@ -186,6 +185,8 @@ void Game::render() {
 
 
     //Rysuj Przeciwników
+
+    //R
 
     //Wyświetl
     m_window.display();

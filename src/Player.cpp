@@ -11,6 +11,7 @@ Player::Player(){
 
     isMovingForwards = isMovingBackwards = isMovingLeft = isMovingRight = false;
     isRotatingLeft = isRotatingRight = false;
+    isSprinting = false;
     
     playerColor = sf::Color::White;
 
@@ -30,7 +31,7 @@ Player::Player(){
     directionLine[0].position = playerDot.getPosition() + sf::Vector2f(playerDot.getRadius(), playerDot.getRadius());
     directionLine[1].position = directionLine[0].position + direction * 18.f;
 
-    speed = 150.f;
+    speed = PLAYER_DEFAULT_SPEED;
     rotationSpeed = M_PI/180.f * 500;
 }
 
@@ -89,3 +90,7 @@ float Player::getRotationSpeed(){
 
 
 //Settery
+
+void Player::setSpeed(float speed){
+    this->speed = speed;
+}

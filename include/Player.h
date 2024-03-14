@@ -8,7 +8,7 @@
 
 
 //stałe
-const double PLAYER_ROT = 3.141592653589/180.f * 5;
+const float PLAYER_DEFAULT_SPEED = 150.f; //początkowa prędkość gracza
 
 class Player{
 
@@ -32,9 +32,13 @@ class Player{
         float getSpeed();
         float getRotationSpeed();
 
+        // Settery
+        void setSpeed(float speed);
+
         // Zmienne stanu gracza
         bool isMovingForwards, isMovingBackwards, isMovingLeft, isMovingRight;
         bool isRotatingLeft, isRotatingRight;
+        bool isSprinting;
 
     private:
         // Zmienne do ruchu gracza
