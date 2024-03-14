@@ -5,6 +5,9 @@
 #include <SFML/Graphics.hpp>
 #include "..\include\Player.h"
 #include "..\include\Menu.h"
+#define _USE_MATH_DEFINES
+#include <cmath>
+
 
 class Game {
 public:

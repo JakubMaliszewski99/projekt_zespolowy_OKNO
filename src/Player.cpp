@@ -3,12 +3,13 @@
 Player::Player(){
     std::clog << "Utworzenie obiektu player" << std::endl;
 
+    // Inicjalizacja zmiennych
     radius = 5.0f;
     positionX = 0.0;
     positionY = 0.0;
     velocity = 0.0;
 
-    isMovingUp = isMovingDown = isMovingLeft = isMovingRight = false;
+    isMovingForwards = isMovingBackwards = isMovingLeft = isMovingRight = false;
     isRotatingLeft = isRotatingRight = false;
     
     playerColor = sf::Color::White;
@@ -22,15 +23,15 @@ Player::Player(){
     directionLine.setPrimitiveType(sf::Lines);
     directionLine.resize(2);
     directionLine[0].color = sf::Color::Red;
-    directionLine[1].color = sf::Color::Blue;
+    directionLine[1].color = sf::Color::Red;
 
-    angle = playerDot.getRotation() * 3.141592653589/180.f;
+    angle = playerDot.getRotation() * M_PI/180.f;
     direction = sf::Vector2f(std::cos(angle), std::sin(angle));
     directionLine[0].position = playerDot.getPosition() + sf::Vector2f(playerDot.getRadius(), playerDot.getRadius());
     directionLine[1].position = directionLine[0].position + direction * 18.f;
 
     speed = 150.f;
-    rotationSpeed = 3.141592653589/180.f * 500;
+    rotationSpeed = M_PI/180.f * 500;
 }
 
 // Destruktor
@@ -42,7 +43,7 @@ void Player::move(sf::Vector2f movement){
     positionY += movement.y;
     playerDot.setPosition(positionX, positionY);
     directionLine[0].position = playerDot.getPosition() + sf::Vector2f(playerDot.getRadius(), playerDot.getRadius());
-    directionLine[1].position = directionLine[0].position + direction * 18.f;
+    directionLine[1].position = directionLine[0].position + direction * 15.f;
 }
 
 // Rotacja
@@ -50,7 +51,7 @@ void Player::rotate(float rotation){
     angle += rotation;
     direction = sf::Vector2f(std::cos(angle), std::sin(angle));
     directionLine[0].position = playerDot.getPosition() + sf::Vector2f(playerDot.getRadius(), playerDot.getRadius());
-    directionLine[1].position = directionLine[0].position + direction * 18.f;
+    directionLine[1].position = directionLine[0].position + direction * 15.f;
 }
 
 //Gettery

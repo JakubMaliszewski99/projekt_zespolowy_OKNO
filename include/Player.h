@@ -3,7 +3,9 @@
 
 #include <iostream>
 #include <SFML/Graphics.hpp>
-#include <math.h>
+#define _USE_MATH_DEFINES
+#include <cmath>
+
 
 //stałe
 const double PLAYER_ROT = 3.141592653589/180.f * 5;
@@ -31,7 +33,7 @@ class Player{
         float getRotationSpeed();
 
         // Zmienne stanu gracza
-        bool isMovingUp, isMovingDown, isMovingLeft, isMovingRight;
+        bool isMovingForwards, isMovingBackwards, isMovingLeft, isMovingRight;
         bool isRotatingLeft, isRotatingRight;
 
     private:
@@ -39,7 +41,7 @@ class Player{
         double positionX;
         double positionY;
         double velocity;
-        float angle;
+        float angle; // w radianach
 
         // Rysowanie kropki gracza na minimapce
         float radius;

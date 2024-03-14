@@ -105,28 +105,28 @@ void Game::handlePlayerInput(sf::Keyboard::Key key, bool isPressed) {
     {
         // Ruch
         case sf::Keyboard::W:
-            std::clog << "W" << std::endl;
-            player.isMovingUp = isPressed;
+            std::clog << "W - Przód" << std::endl;
+            player.isMovingForwards = isPressed;
             break;
         case sf::Keyboard::S:
-            std::clog << "S" << std::endl;
-            player.isMovingDown = isPressed;
+            std::clog << "S - Tył" << std::endl;
+            player.isMovingBackwards = isPressed;
             break;
         case sf::Keyboard::A:
-            std::clog << "A" << std::endl;
+            std::clog << "A - Lewo" << std::endl;
             player.isMovingLeft = isPressed;
             break;
         case sf::Keyboard::D:
-            std::clog << "D" << std::endl;
+            std::clog << "D - Prawo" << std::endl;
             player.isMovingRight = isPressed;
             break;
         // Rotacja
         case sf::Keyboard::E:
-            std::clog << "E" << std::endl;
+            std::clog << "E - Obrót prawo" << std::endl;
             player.isRotatingRight = isPressed;
             break;
         case sf::Keyboard::Q:
-            std::clog << "Q" << std::endl;
+            std::clog << "Q - Obrót lewo" << std::endl;
             player.isRotatingLeft = isPressed;
             break;
         // Bieg
@@ -138,29 +138,34 @@ void Game::handlePlayerInput(sf::Keyboard::Key key, bool isPressed) {
 void Game::update(sf::Time deltaTime) {
 
     sf::Vector2f movement(0.f, 0.f);
+    float velocity = player.getSpeed() * deltaTime.asSeconds();
     float rotation = 0.f;
-    if(player.isMovingUp && player.getPositionY() > 0){
-        movement.y -= player.getSpeed();
+    if(player.isMovingForwards){
+        movement.x += cos(player.getAngle()) * velocity;
+        movement.y += sin(player.getAngle()) * velocity;
     }
-    if(player.isMovingDown && player.getPositionY() < window_height - (player.getPlayerDot().getRadius()) * 2){
-        movement.y += player.getSpeed();
+    if(player.isMovingBackwards){
+        movement.x -= cos(player.getAngle()) * velocity;
+        movement.y -= sin(player.getAngle()) * velocity;
     }
-    if(player.isMovingLeft && player.getPositionX() > 0){
-        movement.x -= player.getSpeed();
+    if(player.isMovingLeft){
+        movement.x -= cos(player.getAngle() + 90 * (3.14159265358979323846 /180)) * velocity;
+        movement.y -= sin(player.getAngle() + 90 * (3.14159265358979323846 /180)) * velocity;
+
     }
-    if(player.isMovingRight && player.getPositionX() < window_width - (player.getPlayerDot().getRadius()) * 2){
-        movement.x += player.getSpeed();
+    if(player.isMovingRight){
+        movement.x += cos(player.getAngle() + 90 * (3.14159265358979323846 /180)) * velocity;
+        movement.y += sin(player.getAngle() + 90 * (3.14159265358979323846 /180)) * velocity;
     }
     if(player.isRotatingRight){
-        rotation += player.getRotationSpeed();
+        rotation += player.getRotationSpeed() * deltaTime.asSeconds();
     }
     if(player.isRotatingLeft){
-        rotation -= player.getRotationSpeed();
+        rotation -= player.getRotationSpeed() * deltaTime.asSeconds();
     }
 
-    player.move(movement * deltaTime.asSeconds());
-    player.rotate(rotation * deltaTime.asSeconds());
-
+    player.move(movement);
+    player.rotate(rotation);
 
 }
 
