@@ -1,4 +1,4 @@
-#include "..\include\Menu.h"
+#include "../include/Menu.h"
 #include <iostream>
 
 Button::Button(sf::Vector2f position, sf::Vector2f size, std::string text) {

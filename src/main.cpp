@@ -1,6 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
-#include "..\include\Game.h"
+#include "../include/Game.h"
 
 int main(int argc, char* argv[]){
     std::clog << "Logi: " << std::endl;

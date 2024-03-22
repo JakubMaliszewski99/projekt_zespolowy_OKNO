@@ -1,4 +1,4 @@
-#include "..\include\Player.h"
+#include "../include/Player.h"
 // Konstruktor
 Player::Player(){
     std::clog << "Utworzenie obiektu player" << std::endl;
