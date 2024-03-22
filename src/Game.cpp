@@ -2,14 +2,12 @@
 
 // Konstruktor
 Game::Game(){
-
     std::clog << "Utworzenie obiektu game" << std::endl;
 
     m_is_running = true;
     window_width = 1500;
     window_height = 900;
     frames_per_second = 60;
-
 }
 
 // Destruktor
@@ -180,9 +178,9 @@ void Game::render() {
     // Rysuj Minimapę
         // Rysuj Teren
         // Rysuj Gracza
-        m_window.draw(player.getPlayerDot());
-        m_window.draw(player.getDirectionLine());
-
+        //m_window.draw(player.getPlayerDot());
+        //m_window.draw(player.getDirectionLine());
+        renderer.draw(&player, &m_window);
 
     //Rysuj Przeciwników
 

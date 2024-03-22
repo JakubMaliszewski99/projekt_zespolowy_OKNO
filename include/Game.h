@@ -4,7 +4,10 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "../include/Player.h"
+#include "../include/Enemy.h"
 #include "../include/Menu.h"
+#include "../include/Painter2D.h"
+
 #define _USE_MATH_DEFINES
 #include <cmath>
 
@@ -30,6 +33,9 @@ private:
         int frames_per_second;
         bool m_is_running;
         Player player;
+        Enemy enemy;
+
+        Painter2D renderer;
 };
 
 #endif // GAME_H

@@ -26,9 +26,6 @@ class Player{
         double getPositionX();
         double getPositionY();
         float getAngle();
-        float getRadius();
-        sf::CircleShape getPlayerDot();
-        sf::VertexArray getDirectionLine();
         float getSpeed();
         float getRotationSpeed();
 
@@ -46,15 +43,6 @@ class Player{
         double positionY;
         double velocity;
         float angle; // w radianach
-
-        // Rysowanie kropki gracza na minimapce
-        float radius;
-        sf::Color playerColor;
-        sf::CircleShape playerDot;
-
-        // Rysowanie linii gracza wyznaczającej zwrot gracza
-        sf::Vector2f direction;
-        sf::VertexArray directionLine;
 
         // Zmienne do logiki gry
         float life;
