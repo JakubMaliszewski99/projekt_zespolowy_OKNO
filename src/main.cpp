@@ -7,7 +7,6 @@ int main(int argc, char* argv[]){
     std::clog << "Gra została pomyślnie włączona" << std::endl;
 
     Game game;
-
     game.run();
 
     std::clog << "Gra dobiegła końca" << std::endl;
