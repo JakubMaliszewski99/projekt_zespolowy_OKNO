@@ -32,6 +32,7 @@ private:
         int window_height;
         int frames_per_second;
         bool m_is_running;
+        
         Player player;
         Enemy enemy;
 

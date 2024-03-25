@@ -8,6 +8,8 @@ Game::Game(){
     window_width = 1500;
     window_height = 900;
     frames_per_second = 60;
+
+    enemy = Enemy(window_width, window_height);
 }
 
 // Destruktor
@@ -181,7 +183,7 @@ void Game::render() {
         //m_window.draw(player.getPlayerDot());
         //m_window.draw(player.getDirectionLine());
         renderer.draw(&player, &m_window);
-
+        renderer.draw(&enemy, &m_window);
     //Rysuj Przeciwników
 
     //R

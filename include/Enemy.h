@@ -2,11 +2,13 @@
 #define ENEMY_H
 
 #pragma once
+#include "../include/Actor.h"
 
-class Enemy
-{
+class Enemy: public Actor{
+     
 public:
     Enemy();
+    Enemy(int windowSizeX, int windowSizeY);
     ~Enemy();
 
 private:

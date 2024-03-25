@@ -2,12 +2,18 @@
 
 Painter2D::Painter2D()
 {
-    radius = 5.0f;
+    playerRadius = 5.0f;
+    enemyRadius = 10.0f;
     playerColor = sf::Color::White;
+    enemyColor = sf::Color::Red;
 
     // Kropka oznaczaj¥ca playera
-    playerDot.setRadius(radius);
+    playerDot.setRadius(playerRadius);
     playerDot.setFillColor(playerColor);
+
+    //Kropka przeciwnika
+    enemyDot.setRadius(enemyRadius);
+    enemyDot.setFillColor(enemyColor);
 
     // Linia wskazuj¥ca kierunek patrzenia
     directionLine.setPrimitiveType(sf::Lines);
@@ -35,7 +41,8 @@ void Painter2D::draw(Player* player, sf::RenderWindow* window)
     window->draw(directionLine);
 }
 
-void Painter2D::draw(Enemy* enemy)
+void Painter2D::draw(Enemy* enemy, sf::RenderWindow* window)
 {
-
+    enemyDot.setPosition(enemy->getPositionX(), enemy->getPositionY());
+    window->draw(enemyDot);
 }
