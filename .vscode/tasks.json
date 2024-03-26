@@ -7,7 +7,8 @@
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
-                "${file}", "${workspaceFolder}\\src\\Game.cpp", "${workspaceFolder}\\src\\Player.cpp", "${workspaceFolder}\\src\\Menu.cpp",
+                "${file}", "${workspaceFolder}\\src\\Game.cpp", "${workspaceFolder}\\src\\Player.cpp", "${workspaceFolder}\\src\\Menu.cpp", "${workspaceFolder}\\src\\Actor.cpp",
+                "${workspaceFolder}\\src\\Enemy.cpp", "${workspaceFolder}\\src\\Painter2D.cpp",
                 "-o",
                 "${workspaceFolder}\\bin\\${fileBasenameNoExtension}.exe",
                 "-IC:\\SFML-2.5.1\\include",
