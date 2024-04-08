@@ -11,6 +11,8 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 
+const int WINDOW_X_SIZE = 1000;
+const int WINDOW_Y_SIZE = 600;
 
 class Game {
 public:

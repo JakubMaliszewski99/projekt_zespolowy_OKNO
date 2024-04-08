@@ -5,8 +5,8 @@ Game::Game(){
     std::clog << "Utworzenie obiektu game" << std::endl;
 
     m_is_running = true;
-    window_width = 1500;
-    window_height = 900;
+    window_width = WINDOW_X_SIZE;
+    window_height = WINDOW_Y_SIZE;
     frames_per_second = 60;
 
     enemy = Enemy(window_width, window_height);
