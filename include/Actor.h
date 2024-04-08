@@ -17,6 +17,7 @@ class Actor: public Object{
 
     public:
         Actor();
+        Actor(CollisionSolver* newSolver);
         ~Actor();
 
         // Ruch
@@ -26,8 +27,6 @@ class Actor: public Object{
         void rotate(float rotation);
 
         // Gettery
-        double getPositionX();
-        double getPositionY();
         float getAngle();
         float getSpeed();
         float getRotationSpeed();
@@ -42,8 +41,6 @@ class Actor: public Object{
 
     protected:
         // Zmienne do ruchu gracza
-        double positionX;
-        double positionY;
         double velocity;
         float angle; // w radianach
 

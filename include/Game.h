@@ -7,6 +7,7 @@
 #include "../include/Enemy.h"
 #include "../include/Menu.h"
 #include "../include/Painter2D.h"
+#include "../include/CollisionSolver.h"
 
 #define _USE_MATH_DEFINES
 #include <cmath>
@@ -29,6 +30,8 @@ public:
     bool isRunning() const;
 
 private:
+        void resolveCollisions();
+
         sf::RenderWindow m_window;
         int window_width;
         int window_height;
@@ -39,6 +42,7 @@ private:
         Enemy enemy;
 
         Painter2D renderer;
+        CollisionSolver collisionSolver;
 };
 
 #endif // GAME_H

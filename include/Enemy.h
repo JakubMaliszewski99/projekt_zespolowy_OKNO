@@ -8,7 +8,7 @@ class Enemy: public Actor{
      
 public:
     Enemy();
-    Enemy(int windowSizeX, int windowSizeY);
+    Enemy(int windowSizeX, int windowSizeY, CollisionSolver* newSolver);
     ~Enemy();
 
 private:

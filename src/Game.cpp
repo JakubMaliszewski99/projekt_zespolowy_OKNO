@@ -63,6 +63,10 @@ void Game::init() {
     // Stworzenie okna gry
     m_window.create(sf::VideoMode(window_width, window_height), "2.5D FPS Game");
 
+    // CollisionSolver setup
+    collisionSolver.addObject(&player);
+    collisionSolver.addObject(&enemy);
+
 }
 
 // Eventy
@@ -87,6 +91,8 @@ void Game::processEvents() {
             case sf::Event::Closed:
                 m_is_running = false;
                 m_window.close();
+                break;
+            default:
                 break;
         }
     }
@@ -130,6 +136,8 @@ void Game::handlePlayerInput(sf::Keyboard::Key key, bool isPressed) {
             break;
         // Strzelanie
         // Interakcja
+        default:
+            break;
     }
 }
 // Logika gry
@@ -165,7 +173,8 @@ void Game::update(sf::Time deltaTime) {
 
     player.move(movement);
     player.rotate(rotation);
-
+    
+    resolveCollisions();
 }
 
 // Renderer
@@ -200,4 +209,10 @@ void Game::cleanup() {
 // Sprawdź czy gra jest on czy off
 bool Game::isRunning() const {
     return m_is_running;
+}
+
+void Game::resolveCollisions()
+{
+    if(collisionSolver.collisionCheck(&player) != nullptr)
+        std::clog << "kolizja!" << std::endl;
 }

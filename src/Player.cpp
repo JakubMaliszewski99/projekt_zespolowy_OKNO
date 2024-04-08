@@ -1,6 +1,7 @@
 #include "../include/Player.h"
 // Konstruktor
-Player::Player(){
+Player::Player(CollisionSolver* newSolver): Actor(newSolver)
+{
     std::clog << "Utworzenie obiektu player" << std::endl;
 
     // Inicjalizacja zmiennych

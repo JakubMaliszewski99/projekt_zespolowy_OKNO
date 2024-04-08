@@ -14,7 +14,7 @@ Enemy::Enemy()
     angle = 0.0;
 }
 
-Enemy::Enemy(int windowSizeX, int windowSizeY)
+Enemy::Enemy(int windowSizeX, int windowSizeY, CollisionSolver* newSolver): Actor(newSolver)
 {
     std::clog << "Utworzenie obiektu enemy" << std::endl;
 

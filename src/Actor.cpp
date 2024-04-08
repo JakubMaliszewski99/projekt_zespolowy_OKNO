@@ -5,13 +5,18 @@ Actor::Actor(){
     std::clog << "Utworzenie obiektu Actor" << std::endl;
 }
 
+Actor::Actor(CollisionSolver *newSolver): Object(newSolver)
+{
+} 
+
 // Destruktor
 Actor::~Actor(){}
 
 // Ruch na minimapce
 void Actor::move(sf::Vector2f movement){
     positionX += movement.x;
-    positionY += movement.y;}
+    positionY += movement.y;
+}
 
 // Rotacja
 void Actor::rotate(float rotation){
@@ -19,13 +24,6 @@ void Actor::rotate(float rotation){
 }
 
 //Gettery
-
-double Actor::getPositionX(){
-    return positionX;
-}
-double Actor::getPositionY(){
-    return positionY;
-}
 
 float Actor::getAngle(){
     return angle;

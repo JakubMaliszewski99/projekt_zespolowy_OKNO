@@ -10,7 +10,7 @@
 class Player: public Actor{
 
     public:
-        Player();
+        Player(CollisionSolver* newSolver);
         ~Player();
 
     private:

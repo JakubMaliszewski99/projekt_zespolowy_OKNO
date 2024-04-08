@@ -3,14 +3,22 @@
 
 #pragma once
 
-class Object
-{
+#include "../include/CollisionSolver.h"
+
+class Object {
 public:
     Object();
+    Object(CollisionSolver* newSolver);
     ~Object();
 
-private:
+    double getPositionX();
+    double getPositionY();
+    
+protected:
+    double positionX;
+    double positionY;
 
+    CollisionSolver* collisionSolver;
 };
 
 #endif
