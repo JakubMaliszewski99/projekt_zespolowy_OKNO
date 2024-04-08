@@ -5,7 +5,7 @@
 #include <SFML/Graphics.hpp>
 #define _USE_MATH_DEFINES
 #include <cmath>
-
+#include "../include/Object.h"
 
 //staˆe
 const float DEFAULT_SPEED = 100.f;
@@ -13,7 +13,7 @@ const float PLAYER_DEFAULT_SPEED = 150.f; //pocz¥tkowa pr©dko˜† gracza
 const float ENEMY_DEFAULT_SPEED = 70.f;
 const float DEFAULT_ROTATION_SPEED = 500;
 
-class Actor{
+class Actor: public Object{
 
     public:
         Actor();
