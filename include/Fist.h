@@ -3,15 +3,14 @@
 
 #include "../include/Weapon.h"
 
-class Fist: public Weapon {
+class Fist : public Weapon {
 public:
-    Fist();
-    ~Fist();
+  Fist();
+  ~Fist();
 
-    virtual void fire();
+  virtual void fire();
 
 private:
-    
 };
 
 #endif // FIST_H

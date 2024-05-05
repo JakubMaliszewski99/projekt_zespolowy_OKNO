@@ -1,14 +1,30 @@
+#include "../include/core/engine/BSP.h"
+#include "../include/core/engine/GameEngine.h"
 #include <SFML/Graphics.hpp>
 #include <iostream>
-#include "../include/Game.h"
 
-int main(int argc, char* argv[]){
-    std::clog << "Logi: " << std::endl;
-    std::clog << "Gra została pomyślnie włączona" << std::endl;
+int main(int argc, char *argv[]) {
+  DebugSettings debugSettings;
+  debugSettings.displayFov = false;
+  debugSettings.displayVisibleNodes = false;
+  debugSettings.displayVisibleSegments = false;
 
-    Game game;
-    game.run();
+  GameEngine::InitSettings initSetting;
+  initSetting.windowWidth = WIDTH;
+  initSetting.windowHeight = HEIGHT;
+  initSetting.windowTitle = "DOOM 2.5D";
+  initSetting.isFullscreen = false;
+  #ifdef _DEBUG
+  initSetting.isDebug = true;
+  #else
+  initSetting.isDebug = false;
+  #endif
+  initSetting.difficultyLevel = 1;
+  initSetting.initialState = GameEngineState::eGame;
+  initSetting.debugSettings = debugSettings;
 
-    std::clog << "Gra dobiegła końca" << std::endl;
-    return 0;
+  GameEngine engine(initSetting);
+  engine.run();
+
+  return 0;
 }

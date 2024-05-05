@@ -5,13 +5,13 @@
 
 class Weapon {
 public:
-    Weapon();
-    ~Weapon();
+  Weapon();
+  ~Weapon();
 
-    virtual void fire() = 0;
+  virtual void fire() = 0;
 
 private:
-    Player* owner;
+  Player *owner;
 };
 
 #endif // WEAPON_H

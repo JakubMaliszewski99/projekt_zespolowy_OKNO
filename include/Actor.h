@@ -6,10 +6,8 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 
-
-//staˆe
 const float DEFAULT_SPEED = 100.f;
-const float PLAYER_DEFAULT_SPEED = 150.f; //pocz¥tkowa pr©dko˜† gracza
+const float PLAYER_DEFAULT_SPEED = 150.f;
 const float ENEMY_DEFAULT_SPEED = 70.f;
 const float DEFAULT_ROTATION_SPEED = 500;
 
@@ -34,6 +32,7 @@ class Actor{
 
         // Settery
         void setSpeed(float speed);
+        void setPosition(sf::Vector2f postion);
 
         // Zmienne stanu gracza
         bool isMovingForwards, isMovingBackwards, isMovingLeft, isMovingRight;
@@ -51,7 +50,6 @@ class Actor{
         float life;
         float speed;
         float rotationSpeed;
-        
 };
 
 #endif // ACTOR_H

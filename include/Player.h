@@ -8,13 +8,11 @@
 
 
 class Player: public Actor{
+public:
+  Player();
+  ~Player();
 
-    public:
-        Player();
-        ~Player();
-
-    private:
-        
+private:
 };
 
 #endif // PLAYER_H

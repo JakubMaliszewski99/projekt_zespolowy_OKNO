@@ -1,41 +1,44 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include <iostream>
-#include <SFML/Graphics.hpp>
-#include "../include/Player.h"
 #include "../include/Enemy.h"
 #include "../include/Menu.h"
 #include "../include/Painter2D.h"
+#include "../include/Player.h"
+#include "../include/core/loaders/WADLoader.h"
+#include <SFML/Graphics.hpp>
+#include <iostream>
 
 #define _USE_MATH_DEFINES
 #include <cmath>
 
-
 class Game {
 public:
-    Game();
-    ~Game();
+  Game();
+  ~Game();
 
-    void init();
-    void run();
-    void processEvents();
-    void handlePlayerInput(sf::Keyboard::Key key, bool isPressed);
-    void update(sf::Time deltaTime);
-    void render();
-    void cleanup();
-    bool isRunning() const;
+  void init();
+  void run();
+  void processEvents();
+  void handlePlayerInput();
+  void update(sf::Time deltaTime);
+  void render();
+  void cleanup();
+  bool isRunning() const;
 
 private:
-        sf::RenderWindow m_window;
-        int window_width;
-        int window_height;
-        int frames_per_second;
-        bool m_is_running;
-        Player player;
-        Enemy enemy;
+  sf::RenderWindow m_window;
+  int m_windowWidth;
+  int m_windowHeight;
+  int m_framesPerSecond;
+  bool m_isRunning;
+  Player player;
+  Enemy enemy;
+  GameLevel *m_level;
+  sf::VertexArray m_map;
+  sf::View m_camera;
 
-        Painter2D renderer;
+  Painter2D renderer;
 };
 
 #endif // GAME_H

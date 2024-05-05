@@ -1,46 +1,36 @@
 #include "../include/Actor.h"
 
 // Konstruktor
-Actor::Actor(){
-    std::clog << "Utworzenie obiektu Actor" << std::endl;
-}
+Actor::Actor() { std::clog << "Utworzenie obiektu Actor" << std::endl; }
 
 // Destruktor
-Actor::~Actor(){}
+Actor::~Actor() {}
 
 // Ruch na minimapce
-void Actor::move(sf::Vector2f movement){
-    positionX += movement.x;
-    positionY += movement.y;}
+void Actor::move(sf::Vector2f movement) {
+  positionX += movement.x;
+  positionY += movement.y;
+}
 
 // Rotacja
-void Actor::rotate(float rotation){
-    angle += rotation;
-}
+void Actor::rotate(float rotation) { angle += rotation; }
 
-//Gettery
+// Gettery
 
-double Actor::getPositionX(){
-    return positionX;
-}
-double Actor::getPositionY(){
-    return positionY;
-}
+double Actor::getPositionX() { return positionX; }
+double Actor::getPositionY() { return positionY; }
 
-float Actor::getAngle(){
-    return angle;
-}
+float Actor::getAngle() { return angle; }
 
-float Actor::getSpeed(){
-    return speed;
-}
+float Actor::getSpeed() { return speed; }
 
-float Actor::getRotationSpeed(){
-    return rotationSpeed;
-}
+float Actor::getRotationSpeed() { return rotationSpeed; }
 
-//Settery
+// Settery
 
-void Actor::setSpeed(float speed){
-    this->speed = speed;
+void Actor::setSpeed(float speed) { this->speed = speed; }
+
+void Actor::setPosition(sf::Vector2f position) {
+  this->positionX = position.x;
+  this->positionY = position.y;
 }

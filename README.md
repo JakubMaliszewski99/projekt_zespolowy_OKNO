@@ -24,6 +24,11 @@
 4. Zbudowanie projektu możliwe poprzez komendę make, lub przez otwarcie folderu w VS code i zbudowanie aplikacji,
 5. Odpalenie gry plikiem wykonywalnym .exe w folderze bin.
 
+## TODO:
+1. Dodac do loggera zapis do pliku.
+2. Przerobic InputManager na emit-subscribe?
+3. Ogarnac wszystkie komentarze z TODO.
+
 Autorzy:
 Jakub Maliszewski
 Mateusz Lewczak

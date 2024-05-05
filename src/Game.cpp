@@ -1,202 +1,131 @@
 #include "../include/Game.h"
-#define M_PI       3.14159265358979323846
+#include "core/engine/InputManager.h"
+#include "core/logger/Logger.h"
+#define M_PI 3.14159265358979323846
 
-// Konstruktor
-Game::Game(){
-    std::clog << "Utworzenie obiektu game" << std::endl;
+Game::Game() {
+  m_isRunning = true;
+  m_windowWidth = 1500;
+  m_windowHeight = 900;
+  m_framesPerSecond = 60;
 
-    m_is_running = true;
-    window_width = 1500;
-    window_height = 900;
-    frames_per_second = 60;
+  WADLoader loader;
+  m_level = loader.loadFromFile("../data/assets/DOOM.WAD", "E1M1");
 }
 
-// Destruktor
-Game::~Game() {
+Game::~Game() {}
 
-    std::clog  << "Destrukcja obiektu game" << std::endl;
+void Game::run() {
+  init();
+  sf::Clock clock;
+
+  while (m_window.isOpen()) {
+    sf::Time deltaTime = clock.restart();
+    processEvents();
+    update(deltaTime);
+    render();
+  }
+
+  cleanup();
 }
 
-// Główna metoda z pętlą gry
-void Game::run(){
-    std::clog << "Gra chodzi a nawet biegnie" << std::endl;
-    init();
-    sf::Clock clock;
-    
-/*
-    Menu menu;
-
-        while (m_window.isOpen()) {
-        sf::Event event;
-        while (m_window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed)
-                m_window.close();
-            // Pass the event to the menu for handling
-            menu.handleEvent(event, m_window);
-        }
-
-        m_window.clear();
-        // Draw the menu
-        menu.draw(m_window);
-        m_window.display();
-    }
-    */
-
-    while (m_window.isOpen())
-    {
-        sf::Time deltaTime = clock.restart();
-        processEvents();
-        update(deltaTime);
-        render();
-    }
-
-    std::clog << "Gra już nie biega" << std::endl;
-    cleanup();
-}
-
-// Inicjalizacja
 void Game::init() {
-    
-    std::clog << "Inicjalizacja gry" << std::endl;
-    
-    // Stworzenie okna gry
-    m_window.create(sf::VideoMode(window_width, window_height), "2.5D FPS Game");
+  m_window.create(sf::VideoMode(m_windowWidth, m_windowHeight),
+                  "2.5D FPS Game");
+  m_map = sf::VertexArray(sf::Lines);
+  for (auto linedef : m_level->linedefs) {
+    mapvertexes_t start = m_level->vertexes[linedef.startVertex];
+    mapvertexes_t end = m_level->vertexes[linedef.endVertex];
 
+    m_map.append(sf::Vertex(sf::Vector2f((float)start.x, (float)start.y),
+                          sf::Color::Red));
+    m_map.append(
+        sf::Vertex(sf::Vector2f((float)end.x, (float)end.y), sf::Color::Red));
+  }
+
+  for (auto thing : m_level->things) {
+    if (thing.type == 1) {
+      player.setPosition(sf::Vector2f((float)thing.x, (float)thing.y));
+      m_camera.setCenter(sf::Vector2f((float)thing.x, (float)thing.y));
+    }
+  }
 }
 
-// Eventy
 void Game::processEvents() {
-    sf::Event event;
-    while (m_window.pollEvent(event)) {
-        switch (event.type)
-        {
-            // Naciśnięto klawisz
-            case sf::Event::KeyPressed:
-                std::clog << "Nacisnąłeś klawisz: ";
-                handlePlayerInput(event.key.code, true);
-                break;
-            
-            // Puszczono klawisz
-            case sf::Event::KeyReleased:
-                std::clog << "Puściłeś klawisz: ";
-                handlePlayerInput(event.key.code, false);
-                break;
-            
-            // Wyjście z gry
-            case sf::Event::Closed:
-                m_is_running = false;
-                m_window.close();
-                break;
-        }
+  sf::Event event;
+  handlePlayerInput();
+  while (m_window.pollEvent(event)) {
+    switch (event.type) {
+    case sf::Event::Closed:
+      m_isRunning = false;
+      m_window.close();
+      break;
     }
-
+  }
 }
 
-void Game::handlePlayerInput(sf::Keyboard::Key key, bool isPressed) {
-
-    switch (key)
-    {
-        // Ruch
-        case sf::Keyboard::W:
-            std::clog << "W - Przód" << std::endl;
-            player.isMovingForwards = isPressed;
-            break;
-        case sf::Keyboard::S:
-            std::clog << "S - Tył" << std::endl;
-            player.isMovingBackwards = isPressed;
-            break;
-        case sf::Keyboard::A:
-            std::clog << "A - Lewo" << std::endl;
-            player.isMovingLeft = isPressed;
-            break;
-        case sf::Keyboard::D:
-            std::clog << "D - Prawo" << std::endl;
-            player.isMovingRight = isPressed;
-            break;
-        // Rotacja
-        case sf::Keyboard::E:
-            std::clog << "E - Obrót prawo" << std::endl;
-            player.isRotatingRight = isPressed;
-            break;
-        case sf::Keyboard::Q:
-            std::clog << "Q - Obrót lewo" << std::endl;
-            player.isRotatingLeft = isPressed;
-            break;
-        // Bieg
-        case sf::Keyboard::LShift:
-            std::clog << "Shift - Bieg" << std::endl;
-            player.isSprinting = isPressed;
-            break;
-        // Strzelanie
-        // Interakcja
-    }
+void Game::handlePlayerInput() {
+  player.isMovingForwards =
+      InputManager::getInstance()->isKeyPressed(sf::Keyboard::W);
+  player.isMovingBackwards =
+      InputManager::getInstance()->isKeyPressed(sf::Keyboard::S);
+  player.isMovingLeft =
+      InputManager::getInstance()->isKeyPressed(sf::Keyboard::A);
+  player.isMovingRight =
+      InputManager::getInstance()->isKeyPressed(sf::Keyboard::D);
+  player.isRotatingRight =
+      InputManager::getInstance()->isKeyPressed(sf::Keyboard::E);
+  player.isRotatingLeft =
+      InputManager::getInstance()->isKeyPressed(sf::Keyboard::Q);
+  player.isSprinting =
+      InputManager::getInstance()->isKeyPressed(sf::Keyboard::LShift);
 }
-// Logika gry
+
 void Game::update(sf::Time deltaTime) {
 
-    sf::Vector2f movement(0.f, 0.f);
-    float velocity = player.getSpeed() * deltaTime.asSeconds();
-    float rotation = 0.f;
-    player.isSprinting? player.setSpeed(PLAYER_DEFAULT_SPEED * 2) : player.setSpeed(PLAYER_DEFAULT_SPEED);
-    if(player.isMovingForwards){
-        movement.x += cos(player.getAngle()) * velocity;
-        movement.y += sin(player.getAngle()) * velocity;
-    }
-    if(player.isMovingBackwards){
-        movement.x -= cos(player.getAngle()) * velocity;
-        movement.y -= sin(player.getAngle()) * velocity;
-    }
-    if(player.isMovingLeft){
-        movement.x -= cos(player.getAngle() + 90 * (M_PI /180)) * velocity;
-        movement.y -= sin(player.getAngle() + 90 * (M_PI /180)) * velocity;
+  sf::Vector2f movement(0.f, 0.f);
+  float velocity = player.getSpeed() * deltaTime.asSeconds();
+  float rotation = 0.f;
+  player.isSprinting ? player.setSpeed(PLAYER_DEFAULT_SPEED * 2)
+                     : player.setSpeed(PLAYER_DEFAULT_SPEED);
+  if (player.isMovingForwards) {
+    movement.x += cos(player.getAngle()) * velocity;
+    movement.y += sin(player.getAngle()) * velocity;
+  }
+  if (player.isMovingBackwards) {
+    movement.x -= cos(player.getAngle()) * velocity;
+    movement.y -= sin(player.getAngle()) * velocity;
+  }
+  if (player.isMovingLeft) {
+    movement.x -= cos(player.getAngle() + 90 * (M_PI / 180)) * velocity;
+    movement.y -= sin(player.getAngle() + 90 * (M_PI / 180)) * velocity;
+  }
+  if (player.isMovingRight) {
+    movement.x += cos(player.getAngle() + 90 * (M_PI / 180)) * velocity;
+    movement.y += sin(player.getAngle() + 90 * (M_PI / 180)) * velocity;
+  }
+  if (player.isRotatingRight) {
+    rotation += player.getRotationSpeed() * deltaTime.asSeconds();
+  }
+  if (player.isRotatingLeft) {
+    rotation -= player.getRotationSpeed() * deltaTime.asSeconds();
+  }
 
-    }
-    if(player.isMovingRight){
-        movement.x += cos(player.getAngle() + 90 * (M_PI /180)) * velocity;
-        movement.y += sin(player.getAngle() + 90 * (M_PI /180)) * velocity;
-    }
-    if(player.isRotatingRight){
-        rotation += player.getRotationSpeed() * deltaTime.asSeconds();
-    }
-    if(player.isRotatingLeft){
-        rotation -= player.getRotationSpeed() * deltaTime.asSeconds();
-    }
-
-    player.move(movement);
-    player.rotate(rotation);
-
+  m_camera.move(movement);
+  player.move(movement);
+  player.rotate(rotation);
 }
 
-// Renderer
 void Game::render() {
-    m_window.clear();
+  m_window.clear();
 
-    // Rysuj Hud
-        // Pasek Życia
-        // Ilość amunicji
-        // Jaka broń
+  m_window.setView(m_camera);
+  renderer.draw(&player, &m_window);
+  m_window.draw(m_map);
 
-    // Rysuj Minimapę
-        // Rysuj Teren
-        // Rysuj Gracza
-        //m_window.draw(player.getPlayerDot());
-        //m_window.draw(player.getDirectionLine());
-        renderer.draw(&player, &m_window);
-
-    //Rysuj Przeciwników
-
-    //R
-
-    //Wyświetl
-    m_window.display();
+  m_window.display();
 }
 
-// Cleanup
-void Game::cleanup() {
+void Game::cleanup() {}
 
-}
-
-// Sprawdź czy gra jest on czy off
-bool Game::isRunning() const {
-    return m_is_running;
-}
+bool Game::isRunning() const { return m_isRunning; }

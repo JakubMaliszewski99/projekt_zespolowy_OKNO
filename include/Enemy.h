@@ -3,14 +3,12 @@
 
 #pragma once
 
-class Enemy
-{
+class Enemy {
 public:
-    Enemy();
-    ~Enemy();
+  Enemy();
+  ~Enemy();
 
 private:
-
 };
 
 #endif
