@@ -173,7 +173,6 @@ private:
     m_renderWindow->draw(line);
   }
 
-  // TODO: DELETE!!!
   void drawBoundingBox(int16_t top, int16_t bottom, int16_t left, int16_t right,
                        sf::Color color) {
     sf::RectangleShape rect;

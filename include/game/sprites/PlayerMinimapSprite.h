@@ -15,7 +15,9 @@ private:
   sf::Color playerColor;
   sf::CircleShape playerDot;
   sf::Vector2f direction;
+  sf::Vector2f velocity;
   sf::VertexArray directionLine;
+  sf::VertexArray velocityLine;
   sf::VertexArray fovRays[2];
   bool isFovVisible;
 };

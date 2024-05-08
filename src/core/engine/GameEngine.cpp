@@ -96,17 +96,31 @@ GameEngine::GameEngine(InitSettings settings) {
   m_ecsManager->registerComponent<CollectableComponent>();
   m_ecsManager->registerComponent<GameDrawableComponent>();
 
-  // PlayerSystem Signature
+  // PlayerControllSystem Signature
   Signature playerSystemSignature;
   playerSystemSignature.set(m_ecsManager->getComponentType<HealthComponent>());
   playerSystemSignature.set(
       m_ecsManager->getComponentType<TransformComponent>());
   playerSystemSignature.set(
       m_ecsManager->getComponentType<ControllableComponent>());
-  // PlayerSystem Register
-  m_playerSystem = m_ecsManager->registerSystem<PlayerSystem>();
-  m_playerSystem->init(m_ecsManager);
-  m_ecsManager->setSystemSignature<PlayerSystem>(playerSystemSignature);
+  // PlayerControllSystem Register
+  m_playerControllSystem = m_ecsManager->registerSystem<PlayerControllSystem>();
+  m_playerControllSystem->init(m_ecsManager);
+  m_ecsManager->setSystemSignature<PlayerControllSystem>(playerSystemSignature);
+
+  // PlayerMovementSystem Signature
+  Signature playerMovementSystemSignature;
+  playerMovementSystemSignature.set(
+      m_ecsManager->getComponentType<HealthComponent>());
+  playerMovementSystemSignature.set(
+      m_ecsManager->getComponentType<TransformComponent>());
+  playerMovementSystemSignature.set(
+      m_ecsManager->getComponentType<ControllableComponent>());
+  // PlayerMovementSystem Register
+  m_playerMovementSystem = m_ecsManager->registerSystem<PlayerMovementSystem>();
+  m_playerMovementSystem->init(m_ecsManager, std::make_shared<BSP>(m_level));
+  m_ecsManager->setSystemSignature<PlayerMovementSystem>(
+      playerMovementSystemSignature);
 
   // Create player entity
   m_playerEntity = m_ecsManager->createEntity();
@@ -152,10 +166,11 @@ GameEngine::GameEngine(InitSettings settings) {
       collectableSystemSignature);
 
   m_ecsManager->addComponent(m_playerEntity, HealthComponent{100, 100});
-  m_ecsManager->addComponent(m_playerEntity,
-                             TransformComponent{initialPlayerPosition.x,
-                                                initialPlayerPosition.y, 0,
-                                                initialPlayerAngle});
+  m_ecsManager->addComponent(
+      m_playerEntity,
+      TransformComponent{initialPlayerPosition.x, initialPlayerPosition.y,
+                         PLAYER_HEIGHT, PLAYER_HEIGHT,
+                         sf::Vector2f(), initialPlayerAngle});
   m_ecsManager->addComponent(
       m_playerEntity,
       MinimapSpriteComponent{
@@ -166,9 +181,10 @@ GameEngine::GameEngine(InitSettings settings) {
   // Create map entity
   m_mapEntity = m_ecsManager->createEntity();
   m_ecsManager->addComponent(m_mapEntity, TransformComponent{
-                                              0,
-                                              0,
-                                              0,
+                                              0.0f,
+                                              0.0f,
+                                              0.0f,0.0f,
+                                              sf::Vector2f(),
                                           });
   m_ecsManager->addComponent(
       m_mapEntity, MinimapSpriteComponent{
@@ -225,7 +241,8 @@ GameEngine::GameEngine(InitSettings settings) {
 
     auto thingEntity = m_ecsManager->createEntity();
     m_ecsManager->addComponent(
-        thingEntity, TransformComponent{(float)thing.x, (float)thing.y, 0, 0});
+        thingEntity,
+        TransformComponent{(float)thing.x, (float)thing.y, 0.0f, 0.0f, sf::Vector2f(), 0});
     m_ecsManager->addComponent(
         thingEntity,
         MinimapSpriteComponent{sf::View(), new CollectableMinimapSprite(color),
@@ -273,12 +290,13 @@ void GameEngine::update(sf::Time deltaTime) {
     m_state = GameEngineState::eGame;
   }
 
-  m_playerSystem->update(dt);
-  m_minimapRenderingSystem->update(dt);
-  //if (m_state == GameEngineState::eGameMinimap) {
-  //  m_minimapRenderingSystem->update(dt);
-  //} else if (m_state == GameEngineState::eGame) {
-  //  m_gameRenderingSystem->update(dt);
-  //}
+  m_playerControllSystem->update(dt);
+  m_playerMovementSystem->update(dt);
+  //m_minimapRenderingSystem->update(dt);
+  if (m_state == GameEngineState::eGameMinimap) {
+    m_minimapRenderingSystem->update(dt);
+  } else if (m_state == GameEngineState::eGame) {
+    m_gameRenderingSystem->update(dt);
+  }
   m_collectableSystem->update(dt);
 }

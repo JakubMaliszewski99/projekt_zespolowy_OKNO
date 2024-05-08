@@ -38,11 +38,6 @@ public:
     return defs;
   }
 
-  std::vector<std::vector<maplinedefs_t *>>
-  loadBlockmapFromLump(unsigned char *defsData, size_t defsSize,
-                       maplinedefs_t *definedLines);
-  std::unordered_map<int, int> loadRejects(unsigned char *defsData,
-                                           size_t defsSize);
   int getLumpTypeFromName(unsigned char lumpname[8]);
   GameLevel *loadFromFile(std::string filename, std::string mapName);
 };

@@ -20,6 +20,30 @@ public:
     return cross <= 0;
   }
 
+  int16_t getCurrentSubsectorID(float playerX, float playerY) {
+    int nodeID = m_rootNodeID;
+    while (!(nodeID & SSECTOR_ID)) {
+      // right == front
+      // left == back
+      auto node = m_gameLevel->nodes[nodeID];
+      if (isPlayerOnBackSide(playerX, playerY, nodeID)) {
+        nodeID = node.leftChild;
+      } else {
+        nodeID = node.rightChild;
+      }
+    }
+
+    return nodeID - SSECTOR_ID;
+  }
+
+  int16_t getSubSectorHeight(float playerX, float playerY) {
+    int16_t subsectorID = getCurrentSubsectorID(playerX, playerY);
+
+    auto subsector = m_gameLevel->subsuctors[subsectorID];
+    auto segment = m_gameLevel->segments[subsector.firstSectorNumber];
+    auto frontSector = m_gameLevel->sectors[segment.frontSector];
+    return frontSector.floorHeight;
+  }
 
 //private:
   GameLevel *m_gameLevel;

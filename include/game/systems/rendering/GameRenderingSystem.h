@@ -26,6 +26,7 @@ public:
     }
     m_defaultView = sf::View(sf::FloatRect(0, 0, WIDTH, HEIGHT));
     m_frameBuffer.create(WIDTH, HEIGHT);
+    m_texture.create(WIDTH, HEIGHT);
   }
 
   void update(float dt) {
@@ -45,11 +46,8 @@ public:
     renderBSP(m_playerTransform.positionX, m_playerTransform.positionY,
               RAD2DEG(m_playerTransform.angle), m_bsp->m_rootNodeID);
 
-    // TODO: Change it!
-    sf::Texture texture;
-    texture.create(WIDTH, HEIGHT);
-    texture.update(m_frameBuffer);
-    m_screenSprite.setTexture(texture);
+    m_texture.update(m_frameBuffer);
+    m_screenSprite.setTexture(m_texture);
 
     m_renderWindow->setView(m_defaultView);
     m_renderWindow->clear();
@@ -69,6 +67,7 @@ private:
   sf::View m_defaultView;
   sf::Image m_frameBuffer;
   sf::Sprite m_screenSprite;
+  sf::Texture m_texture;
 
   std::unordered_map<std::string, sf::Color> colorMapping;
 
@@ -107,6 +106,7 @@ private:
     m_renderWindow->draw(vline1);*/
   }
 
+  // TODO: Move it to BSP
   void drawSolidWallRange(GameLevelSegment segment, float x1, float x2,
                           float angle) {
     auto frontSector = m_bsp->m_gameLevel->sectors[segment.frontSector];
@@ -120,7 +120,7 @@ private:
     auto lightLevel = frontSector.lightLevel;
 
     // TODO: Determine player height based on current sector
-    int playerHeight = PLAYER_HEIGHT;
+    int playerHeight = m_playerTransform.positionZ;
     auto worldFrontZ1 = frontSector.ceilingHeight - playerHeight;
     auto worldFrontZ2 = frontSector.floorHeight - playerHeight;
 
@@ -194,7 +194,7 @@ private:
     auto lightLevel = frontSector.lightLevel;
 
     // TODO: Determine player height based on current sector
-    int playerHeight = PLAYER_HEIGHT;
+    int playerHeight = m_playerTransform.positionZ;
     float worldFrontZ1 = frontSector.ceilingHeight - playerHeight;
     float worldBackZ1 = backSector.ceilingHeight - playerHeight;
     float worldFrontZ2 = frontSector.floorHeight - playerHeight;

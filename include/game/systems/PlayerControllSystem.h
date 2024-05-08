@@ -1,4 +1,5 @@
 #pragma once
+#include "../../core/math/utilities.h"
 #include "../../core/ecs/ECSManager.h"
 #include "../../core/ecs/System.h"
 #include "../../core/engine/InputManager.h"
@@ -9,11 +10,11 @@
 #define M_PI 3.14159265358979323846
 
 const float DEFAULT_SPEED = 100.f;
-const float PLAYER_DEFAULT_SPEED = 150.f;
+const float PLAYER_DEFAULT_SPEED = 150.0f;
 const float ENEMY_DEFAULT_SPEED = 70.f;
 const float DEFAULT_ROTATION_SPEED = 10;
 
-class PlayerSystem : public System {
+class PlayerControllSystem : public System {
 public:
   void init(std::shared_ptr<ECSManager> manager) { m_manager = manager; }
 
@@ -29,7 +30,7 @@ public:
       }
 
       sf::Vector2f movement(0.f, 0.f);
-      float velocity = PLAYER_DEFAULT_SPEED * dt * 2;
+      float velocity = PLAYER_DEFAULT_SPEED * dt;
       float rotation = 0.f;
 
       // TODO: Fix diagonal velocity problem
@@ -63,17 +64,15 @@ public:
         drawable.camera.zoom(0.999f);
       }
 
-      transform.positionX += movement.x;
-      transform.positionY += movement.y;
-      transform.angle = normalizeAngle(transform.angle + rotation);
+      transform.velocity = movement;
+      transform.angle = normalizeRadianAngle(transform.angle + rotation);
     }
   }
 
 private:
   std::shared_ptr<ECSManager> m_manager;
 
-  float normalizeAngle(float angle) { 
-    float twoPi = 2 * M_PI;
-    return angle - twoPi * floor(angle / twoPi);
+  uint32_t currentPlayerSector() {
+
   }
 };

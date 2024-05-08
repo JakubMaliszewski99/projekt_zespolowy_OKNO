@@ -2,40 +2,6 @@
 
 WADLoader::WADLoader() {}
 
-// TODO: Probably to delete? Will create collision based on BSP
-//std::vector<std::vector<maplinedefs_t *>>
-//WADLoader::loadBlockmapFromLump(unsigned char *defsData, size_t defsSize,
-//                                maplinedefs_t *definedLines) {
-//  mapblockmapheader_t *blockmapheader = (mapblockmapheader_t *)defsData;
-//  std::vector<std::vector<maplinedefs_t *>> linedefs;
-//
-//  linedefs.reserve(blockmapheader->rows);
-//  for (int i = 0; i < blockmapheader->rows; i++) {
-//    std::vector<maplinedefs_t *> vectorOfLinedefs;
-//    vectorOfLinedefs.reserve(blockmapheader->columns);
-//    linedefs.push_back(vectorOfLinedefs);
-//  }
-//
-//  int16_t *listOfOffset = (int16_t *)(defsData + 8);
-//  for (int i = 0; i < blockmapheader->rows * blockmapheader->columns; i++) {
-//    int16_t currentOffset = listOfOffset[i];
-//    int16_t *blocklist = (int16_t *)(defsData + currentOffset);
-//    while (*blocklist != -1) {
-//      // linedefs[i][j] = definedLines + *blocklist;
-//      blocklist++;
-//    }
-//  }
-//
-//  return linedefs;
-//}
-//
-//// TODO: Probably to delete? No replacement, f it.
-//std::unordered_map<int, int> WADLoader::loadRejects(unsigned char *defsData,
-//                                                    size_t defsSize) {
-//  std::unordered_map<int, int> rejects;
-//  return rejects;
-//}
-
 int WADLoader::getLumpTypeFromName(unsigned char lumpname[8]) {
   if (strncmp((const char *)lumpname, "THINGS", 8) == 0) {
     return MapLumpTypes::eThings;

@@ -88,22 +88,6 @@ struct mapsectors_t {
   int16_t specialType;
   int16_t tagNumber;
 };
-
-/// Note: Probably should be created as a hashmap
-struct mapreject_t {
-  int8_t *data;
-};
-
-struct mapblockmapheader_t {
-  int16_t x;
-  int16_t y;
-  int16_t columns;
-  int16_t rows;
-};
-
-struct mapblockmap_t {
-  std::vector<std::vector<maplinedefs_t *>> linedefs;
-};
 #pragma pack(pop)
 
 // TODO: Convert all the structures to friendly equivalent
@@ -127,6 +111,4 @@ struct GameLevel {
   std::vector<mapssectors_t> subsuctors;
   std::vector<mapnodes_t> nodes;
   std::vector<mapsectors_t> sectors;
-  std::unordered_map<int, int> rejects;
-  std::vector<std::vector<maplinedefs_t *>> blockmap;
 };

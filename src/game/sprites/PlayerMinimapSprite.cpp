@@ -13,6 +13,11 @@ PlayerMinimapSprite::PlayerMinimapSprite(bool isFovVisible) {
   directionLine[0].color = sf::Color::Red;
   directionLine[1].color = sf::Color::Red;
 
+  velocityLine.setPrimitiveType(sf::Lines);
+  velocityLine.resize(2);
+  velocityLine[0].color = sf::Color::Green;
+  velocityLine[1].color = sf::Color::Green;
+
   fovRays[0].setPrimitiveType(sf::Lines);
   fovRays[0].resize(2);
   fovRays[0][0].color = sf::Color::Yellow;
@@ -49,6 +54,12 @@ void PlayerMinimapSprite::update(TransformComponent transform) {
       playerDot.getPosition() +
       sf::Vector2f(playerDot.getRadius(), playerDot.getRadius());
   fovRays[1][1].position = fovRays[1][0].position + directionRay2 * 2000.0f;
+
+  velocity = transform.velocity;
+  velocityLine[0].position =
+      playerDot.getPosition() +
+      sf::Vector2f(playerDot.getRadius(), playerDot.getRadius());
+  velocityLine[1].position = velocityLine[0].position + velocity * 20.0f;
 }
 
 void PlayerMinimapSprite::draw(sf::RenderTarget &target,
@@ -59,4 +70,5 @@ void PlayerMinimapSprite::draw(sf::RenderTarget &target,
     target.draw(fovRays[0]);
     target.draw(fovRays[1]);
   }
+  target.draw(velocityLine);
 }

@@ -25,6 +25,11 @@ float normalizeAngle(float angle) {
   return angle;
 }
 
+float normalizeRadianAngle(float angle) {
+  float twoPi = 2 * M_PI;
+  return angle - twoPi * floor(angle / twoPi);
+}
+
 sf::Vector2f convertMapVertexToVector(mapvertexes_t vertex) {
   return sf::Vector2f(vertex.x, vertex.y);
 }
@@ -146,4 +151,41 @@ float scaleFromGlobalAngle(float x, float rwNormalAngle, float rwDistance, float
   scale = std::min<float>(64.0f, std::max<float>(0.00390625, scale));
 
   return scale;
+}
+
+float distance(float x1, float y1, float x2, float y2) {
+  float dx = x1 - x2;
+  float dy = y1 - y2;
+
+  float dist = sqrtf(dx * dx + dy * dy);
+
+  return dist; 
+}
+
+float vectorLength(float x, float y) { return sqrtf(x * x + y * y); }
+
+float vectorLength(sf::Vector2f vec) { 
+  return sqrtf(vec.x * vec.x + vec.y * vec.y);
+}
+
+sf::Vector2f normalize(sf::Vector2f vec) { 
+  float length = vectorLength(vec);
+  sf::Vector2f normalized = vec / length;
+  return normalized;
+}
+
+sf::Vector2f lineNormal(float x1, float y1, float x2, float y2) {
+  float dx = x2 - x1;
+  float dy = y2 - y1;
+
+  //TODO: Take angle in account
+  return sf::Vector2f(-dy, dx);
+}
+
+sf::Vector2f projectVectorOntoLine(sf::Vector2f vector, sf::Vector2f line) {
+  float dotProduct = vector.x * line.x + vector.y * line.y;
+  float lineLength = vectorLength(line);
+  float newLength = dotProduct / (lineLength * lineLength);
+
+  return newLength * line;
 }

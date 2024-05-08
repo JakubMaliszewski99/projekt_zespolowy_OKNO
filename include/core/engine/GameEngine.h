@@ -4,7 +4,8 @@
 #include <string>
 #include "core/ecs/ECSManager.h"
 #include "core/logger/Logger.h"
-#include "game/systems/PlayerSystem.h"
+#include "game/systems/PlayerControllSystem.h"
+#include "game/systems/PlayerMovementSystem.h"
 #include "game/systems/CollectableSystem.h"
 #include "game/systems/rendering/MinimapRenderingSystem.h"
 #include "game/systems/rendering/GameRenderingSystem.h"
@@ -41,7 +42,8 @@ private:
   Entity m_playerEntity, m_mapEntity;
   GameLevel *m_level;
 
-  std::shared_ptr<PlayerSystem> m_playerSystem;
+  std::shared_ptr<PlayerControllSystem> m_playerControllSystem;
+  std::shared_ptr<PlayerMovementSystem> m_playerMovementSystem;
   std::shared_ptr<MinimapRenderingSystem> m_minimapRenderingSystem;
   std::shared_ptr<CollectableSystem> m_collectableSystem;
   std::shared_ptr<GameRenderingSystem> m_gameRenderingSystem;
