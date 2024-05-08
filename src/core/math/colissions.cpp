@@ -1,4 +1,5 @@
 #include "../include/core/math/collisions.h"
+#include <cmath>
 
 // Kudos to Jeff Thompson: https://www.jeffreythompson.org/collision-detection/
 bool pointCircleCollision(float px, float py, float cx, float cy, float r) {

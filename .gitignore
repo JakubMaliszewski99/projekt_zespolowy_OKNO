@@ -6,3 +6,5 @@ bin/
 build/
 out/
 .vs/
+CMakeCache.txt
+CMakeFiles/

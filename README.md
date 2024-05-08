@@ -15,6 +15,16 @@
 
 1. Biblioteka SFML w wersji 2.5.1. (ścieżka C:\SFML-2.5.1) download: https://www.sfml-dev.org/files/SFML-2.5.1-windows-gcc-7.3.0-mingw-32-bit.zip
 2. Zalecany kompilator g++ wersja 7.6.0 (ścieżka C:\mingw32\bin) download: https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/7.3.0/threads-posix/dwarf/i686-7.3.0-release-posix-dwarf-rt_v5-rev0.7z/download
+3. Dependencies:
+```
+sudo apt-get install cmake libx11-dev libxrandr-dev libfreetype-dev libalut-dev libvorbis-dev libflac-dev
+```
+4. Compilation:
+```
+cmake -S . -B out
+cmake --build out --config Release
+cmake --build out --config Debug
+```
 
 ## Instalacja
 

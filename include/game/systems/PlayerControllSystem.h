@@ -6,6 +6,7 @@
 #include "../components/ControllableComponent.h"
 #include "../components/MinimapSpriteComponent.h"
 #include "../components/TransformComponent.h"
+#include <cmath>
 
 #define M_PI 3.14159265358979323846
 

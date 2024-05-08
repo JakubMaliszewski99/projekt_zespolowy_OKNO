@@ -10,6 +10,7 @@
 #include <random>
 #include <set>
 #include <utility>
+#include <cstring>
 
 class GameRenderingSystem : public System {
 public:
