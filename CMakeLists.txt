@@ -24,9 +24,9 @@ include_directories (
     "libs/ext/SFML/include"
 )
 
-add_subdirectory(
-    "libs/ext/SFML"
-)
+#add_subdirectory(
+#    "libs/ext/SFML"
+#)
 
 target_link_libraries(doom
     sfml-graphics

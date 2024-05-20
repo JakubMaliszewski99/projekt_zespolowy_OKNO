@@ -95,6 +95,7 @@ GameEngine::GameEngine(InitSettings settings) {
   m_ecsManager->registerComponent<ControllableComponent>();
   m_ecsManager->registerComponent<CollectableComponent>();
   m_ecsManager->registerComponent<GameDrawableComponent>();
+  m_ecsManager->registerComponent<WeaponComponent>();
 
   // PlayerControllSystem Signature
   Signature playerSystemSignature;
@@ -165,6 +166,17 @@ GameEngine::GameEngine(InitSettings settings) {
   m_ecsManager->setSystemSignature<CollectableSystem>(
       collectableSystemSignature);
 
+  // WeaponSystem Signature
+  Signature weaponSystemSignature;
+  weaponSystemSignature.set(
+      m_ecsManager->getComponentType<WeaponComponent>());
+  //WeaponSystem Register
+  m_weaponSystem = m_ecsManager->registerSystem<WeaponSystem>();
+  m_weaponSystem->init(m_ecsManager);
+  m_ecsManager->setSystemSignature<WeaponSystem>(
+      weaponSystemSignature);
+
+
   m_ecsManager->addComponent(m_playerEntity, HealthComponent{100, 100});
   m_ecsManager->addComponent(
       m_playerEntity,
@@ -177,6 +189,7 @@ GameEngine::GameEngine(InitSettings settings) {
           sf::View(),
           new PlayerMinimapSprite(m_settings.debugSettings.displayFov), true});
   m_ecsManager->addComponent(m_playerEntity, ControllableComponent{true});
+  m_ecsManager->addComponent(m_playerEntity, WeaponComponent{WeaponType::handWeapon});
 
   // Create map entity
   m_mapEntity = m_ecsManager->createEntity();
@@ -299,4 +312,5 @@ void GameEngine::update(sf::Time deltaTime) {
     m_gameRenderingSystem->update(dt);
   }
   m_collectableSystem->update(dt);
+  m_weaponSystem->update(dt);
 }
