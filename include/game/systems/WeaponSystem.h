@@ -25,16 +25,14 @@ public:
             auto &weapon = m_manager->getComponent<WeaponComponent>(entity);
 
             if (InputManager::getInstance()->isKeyPressed(sf::Keyboard::Num1)) {
-                weapon.equipedWeaponType = WeaponType::handWeapon;
+                weapon.equipedWeaponType = WeaponType::eHandWeapon;
             }
             if (InputManager::getInstance()->isKeyPressed(sf::Keyboard::Num2)) {
-                weapon.equipedWeaponType = WeaponType::rangeWeapon;
+                weapon.equipedWeaponType = WeaponType::eRangeWeapon;
             }
             if (InputManager::getInstance()->isKeyPressed(sf::Keyboard::Num3)) {
-                weapon.equipedWeaponType = WeaponType::launcher;
+                weapon.equipedWeaponType = WeaponType::eLauncher;
             }
-
-            std::cout << "weapon equiped: " << weapon.equipedWeaponType << std::endl;
         }
     }
 private:

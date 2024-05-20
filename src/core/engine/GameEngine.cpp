@@ -189,7 +189,7 @@ GameEngine::GameEngine(InitSettings settings) {
           sf::View(),
           new PlayerMinimapSprite(m_settings.debugSettings.displayFov), true});
   m_ecsManager->addComponent(m_playerEntity, ControllableComponent{true});
-  m_ecsManager->addComponent(m_playerEntity, WeaponComponent{WeaponType::handWeapon});
+  m_ecsManager->addComponent(m_playerEntity, WeaponComponent{WeaponModel::eWeaponModelFist, WeaponType::eHandWeapon});
 
   // Create map entity
   m_mapEntity = m_ecsManager->createEntity();
