@@ -13,10 +13,8 @@ public:
     void update(float dt)
     {
         for (auto const &entity : m_entities) {
-            auto &transform = m_manager->getComponent<TransformComponent>(entity);
             auto &controllable =
                 m_manager->getComponent<ControllableComponent>(entity);
-            auto &drawable = m_manager->getComponent<MinimapSpriteComponent>(entity);
 
             if (!controllable.isPlayer) {
                 continue;
@@ -25,14 +23,19 @@ public:
             auto &weapon = m_manager->getComponent<WeaponComponent>(entity);
 
             if (InputManager::getInstance()->isKeyPressed(sf::Keyboard::Num1)) {
-                weapon.equipedWeaponType = WeaponType::eHandWeapon;
+                weapon.activeWeaponType = WeaponType::eHandWeapon;
             }
             if (InputManager::getInstance()->isKeyPressed(sf::Keyboard::Num2)) {
-                weapon.equipedWeaponType = WeaponType::eRangeWeapon;
+                weapon.activeWeaponType = WeaponType::eRangeWeapon;
             }
             if (InputManager::getInstance()->isKeyPressed(sf::Keyboard::Num3)) {
-                weapon.equipedWeaponType = WeaponType::eLauncher;
+                weapon.activeWeaponType = WeaponType::eLauncher;
             }
+            if (InputManager::getInstance()->isKeyPressed(sf::Keyboard::Space)) {
+                weapon.fired = true;
+            }
+            //TODO test purposes only
+            //std::cout << weapon.equipedWeapons[weapon.activeWeaponType] << std::endl;
         }
     }
 private:

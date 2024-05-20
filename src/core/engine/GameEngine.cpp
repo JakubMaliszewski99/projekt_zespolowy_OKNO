@@ -176,6 +176,16 @@ GameEngine::GameEngine(InitSettings settings) {
   m_ecsManager->setSystemSignature<WeaponSystem>(
       weaponSystemSignature);
 
+  //DamageSystem Signature
+  Signature damageSystemSignature;
+  damageSystemSignature.set(
+      m_ecsManager->getComponentType<WeaponComponent>());
+  //DamageSystem Register
+  m_damageSystem = m_ecsManager->registerSystem<DamageSystem>();
+  m_damageSystem->init(m_ecsManager);
+  m_ecsManager->setSystemSignature<DamageSystem>(
+      damageSystemSignature);
+
 
   m_ecsManager->addComponent(m_playerEntity, HealthComponent{100, 100});
   m_ecsManager->addComponent(
@@ -189,7 +199,12 @@ GameEngine::GameEngine(InitSettings settings) {
           sf::View(),
           new PlayerMinimapSprite(m_settings.debugSettings.displayFov), true});
   m_ecsManager->addComponent(m_playerEntity, ControllableComponent{true});
-  m_ecsManager->addComponent(m_playerEntity, WeaponComponent{WeaponModel::eWeaponModelFist, WeaponType::eHandWeapon});
+  m_ecsManager->addComponent(
+      m_playerEntity, 
+      WeaponComponent{
+          {WeaponModel::eWeaponModelFist, WeaponModel::eWeaponModelPistol, WeaponModel::eWeaponModelNone}, 
+          WeaponType::eHandWeapon,
+          false});
 
   // Create map entity
   m_mapEntity = m_ecsManager->createEntity();
@@ -313,4 +328,5 @@ void GameEngine::update(sf::Time deltaTime) {
   }
   m_collectableSystem->update(dt);
   m_weaponSystem->update(dt);
+  m_damageSystem->update(dt);
 }

@@ -12,6 +12,7 @@ enum WeaponModel{
 };
 
 struct WeaponComponent{
-    WeaponModel activeWeapon;
-    WeaponType equipedWeaponType;
+    WeaponModel equipedWeapons[3]; //0-hand; 1-range; 2-lanucher 
+    WeaponType activeWeaponType;
+    bool fired;
 };
