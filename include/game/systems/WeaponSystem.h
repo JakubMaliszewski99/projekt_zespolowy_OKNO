@@ -22,17 +22,31 @@ public:
 
             auto &weapon = m_manager->getComponent<WeaponComponent>(entity);
 
+            weapon.timeFromLastShot += dt;
+            if(weapon.timeFromLastShot > 1/weapon.fireRate)
+                weapon.readyToFire = true;
+
             if (InputManager::getInstance()->isKeyPressed(sf::Keyboard::Num1)) {
                 weapon.activeWeaponType = WeaponType::eHandWeapon;
+                weapon.readyToFire = true;
+                weapon.fired = false;
             }
             if (InputManager::getInstance()->isKeyPressed(sf::Keyboard::Num2)) {
                 weapon.activeWeaponType = WeaponType::eRangeWeapon;
+                weapon.readyToFire = true;
+                weapon.fired = false;
             }
             if (InputManager::getInstance()->isKeyPressed(sf::Keyboard::Num3)) {
                 weapon.activeWeaponType = WeaponType::eLauncher;
+                weapon.readyToFire = true;
+                weapon.fired = false;                
             }
             if (InputManager::getInstance()->isKeyPressed(sf::Keyboard::Space)) {
-                weapon.fired = true;
+                if(weapon.readyToFire == true){
+                    weapon.fired = true;
+                    weapon.readyToFire = false;
+                    weapon.timeFromLastShot = 0;
+                }
             }
             //TODO test purposes only
             //std::cout << weapon.equipedWeapons[weapon.activeWeaponType] << std::endl;

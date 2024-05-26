@@ -179,10 +179,12 @@ GameEngine::GameEngine(InitSettings settings) {
   //DamageSystem Signature
   Signature damageSystemSignature;
   damageSystemSignature.set(
-      m_ecsManager->getComponentType<WeaponComponent>());
+      m_ecsManager->getComponentType<HealthComponent>());
+    damageSystemSignature.set(
+      m_ecsManager->getComponentType<TransformComponent>());
   //DamageSystem Register
   m_damageSystem = m_ecsManager->registerSystem<DamageSystem>();
-  m_damageSystem->init(m_ecsManager);
+  m_damageSystem->init(m_ecsManager, m_playerEntity);
   m_ecsManager->setSystemSignature<DamageSystem>(
       damageSystemSignature);
 
@@ -204,7 +206,7 @@ GameEngine::GameEngine(InitSettings settings) {
       WeaponComponent{
           {WeaponModel::eWeaponModelFist, WeaponModel::eWeaponModelPistol, WeaponModel::eWeaponModelNone}, 
           WeaponType::eHandWeapon,
-          false});
+          false, true, 0, 1});
 
   // Create map entity
   m_mapEntity = m_ecsManager->createEntity();
@@ -279,6 +281,7 @@ GameEngine::GameEngine(InitSettings settings) {
         thingEntity,
         CollectableComponent{getCollectableTypeFromSubType(thing.type),
                              (CollectableSubType)thing.type, 10, 20});
+      m_ecsManager->addComponent(thingEntity, HealthComponent{100, 100});
   }
 }
 
