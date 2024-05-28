@@ -13,9 +13,11 @@
 #include <utility>
 #include <iostream>
 
+//TODO to be moved to weapon system/component:
 const float weaponSpread_inDegrees = 10;
 const float weaponSpread_angle = 2*M_PI/360 * weaponSpread_inDegrees;
-const float weaponSpread_distance = 10;
+const float weaponSpread_distance = 100;
+const float meeleRange = 100;
 
 class DamageSystem : public System{
 public:
@@ -35,7 +37,7 @@ public:
                 this->hitscanFire(transform);
             }
             else if (weapon.activeWeaponType == WeaponType::eHandWeapon) {
-                this->meeleFire();
+                this->meeleFire(transform);
             }
             else {
                 this->projectileFire();
@@ -44,8 +46,39 @@ public:
     }
 
 private:
-    void meeleFire(){
+    void meeleFire(TransformComponent& shooterTransform){
+        std::vector<std::pair<Entity, float>> entitiesToBeHit;
+        
+        for (auto const &entity : m_entities) {
+            auto &health = m_manager->getComponent<HealthComponent>(entity);
+            auto &targetTransform = m_manager->getComponent<TransformComponent>(entity);
+            
+            auto angleToEntity = angleBetweenPoints(shooterTransform.positionX, shooterTransform.positionY, targetTransform.positionX, targetTransform.positionY);
+            auto angleDiff = abs(angleToEntity - shooterTransform.angle);
+            if(angleDiff > 2 * M_PI)
+                angleDiff -= 2 * M_PI;
 
+            auto distance = distanceBetweenPoints(shooterTransform.positionX, shooterTransform.positionY, 
+                                                        targetTransform.positionX, targetTransform.positionY);
+
+            //TODO replace M_PI/2 with variable:
+            if((angleDiff < M_PI/2) && (distance < meeleRange)) {
+                if(entity == m_playerEntity)
+                    continue;
+                entitiesToBeHit.push_back(std::make_pair(entity, distance));
+            }
+        }
+        
+        if(!entitiesToBeHit.empty()) {
+            auto closestEntity = entitiesToBeHit.front();
+            for (auto entity_pair : entitiesToBeHit) {
+                if(entity_pair.second < closestEntity.second) {
+                    closestEntity = entity_pair;
+                }
+            }
+            
+            hitEntity(closestEntity.first);
+        }
     }
 
     void hitscanFire(TransformComponent& shooterTransform){
@@ -57,17 +90,22 @@ private:
             auto &health = m_manager->getComponent<HealthComponent>(entity);
             auto &targetTransform = m_manager->getComponent<TransformComponent>(entity);
             
-            if( abs(angleBetweenPoints(shooterTransform.positionX, shooterTransform.positionY, targetTransform.positionX, targetTransform.positionY)
-                    - shooterTransform.angle) < weaponSpread_angle){
+            auto angleToEntity = angleBetweenPoints(shooterTransform.positionX, shooterTransform.positionY, targetTransform.positionX, targetTransform.positionY);
+            auto angleDiff = abs(angleToEntity - shooterTransform.angle);
+            if(angleDiff > 2 * M_PI)
+                angleDiff -= 2 * M_PI;
 
-            //TODO don't know why this line results in "Retrieving non-existent component":
-            //if(distanceFromLineOfHitscan(shooterTransform, targetTransform) < weaponSpread_distance) {
+            //TODO replace M_PI/2 with variable:
+            if((abs(distanceFromLineOfHitscan(shooterTransform, targetTransform)) < weaponSpread_distance) && (angleDiff < M_PI/2)) {
+                if(entity == m_playerEntity)
+                    continue;
+
                 auto distance = distanceBetweenPoints(shooterTransform.positionX, shooterTransform.positionY, 
                                                         targetTransform.positionX, targetTransform.positionY);
                 entitiesToBeHit.push_back(std::make_pair(entity, distance));
             }
         }
-
+        
         if(!entitiesToBeHit.empty()) {
             auto closestEntity = entitiesToBeHit.front();
             for (auto entity_pair : entitiesToBeHit) {
@@ -76,8 +114,7 @@ private:
                 }
             }
             
-            //TODO replace with decremening health
-            m_manager->destroyEntity(closestEntity.first);
+            hitEntity(closestEntity.first);
         }
     }
 
@@ -86,13 +123,17 @@ private:
     }
 
     float distanceFromLineOfHitscan(TransformComponent& shooterTransform, TransformComponent& targetTransform){
-        auto result = sinf(angleBetweenPoints(shooterTransform.positionX, shooterTransform.positionY, 
+        auto sin = sinf(angleBetweenPoints(shooterTransform.positionX, shooterTransform.positionY, 
                                         targetTransform.positionX, targetTransform.positionY)
-                            - shooterTransform.angle)
-                * distanceBetweenPoints(shooterTransform.positionX, shooterTransform.positionY, 
+                            - shooterTransform.angle);
+        auto distance = distanceBetweenPoints(shooterTransform.positionX, shooterTransform.positionY, 
                                         targetTransform.positionX, targetTransform.positionY);
-        std::cout << result << std::endl;
+        auto result = sin * distance;
         return result;
+    }
+
+    void hitEntity(Entity& entity/*, float damage*/){
+        m_manager->destroyEntity(entity);
     }
 
     float angleBetweenPoints(float x1, float y1, float x2, float y2){

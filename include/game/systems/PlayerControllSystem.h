@@ -8,8 +8,6 @@
 #include "../components/TransformComponent.h"
 #include <cmath>
 
-#define M_PI 3.14159265358979323846
-
 const float DEFAULT_SPEED = 100.f;
 const float PLAYER_DEFAULT_SPEED = 150.0f;
 const float ENEMY_DEFAULT_SPEED = 70.f;
