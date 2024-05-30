@@ -48,8 +48,6 @@ public:
                     weapon.timeFromLastShot = 0;
                 }
             }
-            //TODO test purposes only
-            //std::cout << weapon.equipedWeapons[weapon.activeWeaponType] << std::endl;
         }
     }
 private:

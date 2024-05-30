@@ -2,5 +2,6 @@
 
 struct DamageComponent{
     float damage;
-    float explosionRange;
+    float activationRange;
+    float explosionRadius;
 };

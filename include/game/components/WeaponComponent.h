@@ -22,6 +22,7 @@ struct WeaponComponent{
     static constexpr const float meeleSpread_angle = 2*M_PI/360 * meeleSpread_inDegrees;
     static constexpr const float projectileSpeed = 1;
     static constexpr const float projectileExplosionRange = 100;
+    static constexpr const float projectileExplosionRadius = 100;
 
     // weapon info:
     WeaponModel equipedWeapons[3]; //0-hand; 1-range; 2-lanucher

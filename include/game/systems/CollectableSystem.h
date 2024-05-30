@@ -11,6 +11,7 @@ public:
   }
 
   void update(float dt) {
+
     auto &playerTransform =
         m_manager->getComponent<TransformComponent>(m_playerEntity);
 
@@ -26,6 +27,7 @@ public:
         // TODO: Add effect after collecting
         entitiesToDelete.push_back(entity);
       }
+
     }
 
     if (entitiesToDelete.empty()) {
@@ -35,6 +37,7 @@ public:
     for (auto entity : entitiesToDelete) {
       m_manager->destroyEntity(entity);
     }
+    
   }
 
 private:
