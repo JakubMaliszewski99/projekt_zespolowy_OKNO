@@ -124,8 +124,6 @@ private:
                          velocityScalarToVector(WeaponComponent::projectileSpeed, shooterTransform.angle),
                          shooterTransform.angle});
         m_manager->addComponent(projectile, DamageComponent{weapon.damage, WeaponComponent::projectileExplosionRange});
-
-        std::cout << velocityScalarToVector(WeaponComponent::projectileSpeed, shooterTransform.angle) << std::endl;
     }
 
     float distanceFromLineOfHitscan(TransformComponent& shooterTransform, TransformComponent& targetTransform){
