@@ -9,6 +9,7 @@
 #include "game/systems/CollectableSystem.h"
 #include "game/systems/WeaponSystem.h"
 #include "game/systems/DamageSystem.h"
+#include "game/systems/EnviromentDamageSystem.h"
 #include "game/systems/rendering/MinimapRenderingSystem.h"
 #include "game/systems/rendering/GameRenderingSystem.h"
 
@@ -51,4 +52,5 @@ private:
   std::shared_ptr<GameRenderingSystem> m_gameRenderingSystem;
   std::shared_ptr<WeaponSystem> m_weaponSystem;
   std::shared_ptr<DamageSystem> m_damageSystem;
+  std::shared_ptr<EnviromentDamageSystem> m_enviromentDamageSystem;
 };

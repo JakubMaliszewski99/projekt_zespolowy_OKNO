@@ -96,6 +96,7 @@ GameEngine::GameEngine(InitSettings settings) {
   m_ecsManager->registerComponent<CollectableComponent>();
   m_ecsManager->registerComponent<GameDrawableComponent>();
   m_ecsManager->registerComponent<WeaponComponent>();
+  m_ecsManager->registerComponent<DamageComponent>();
 
   // PlayerControllSystem Signature
   Signature playerSystemSignature;
@@ -187,6 +188,18 @@ GameEngine::GameEngine(InitSettings settings) {
   m_damageSystem->init(m_ecsManager, m_playerEntity);
   m_ecsManager->setSystemSignature<DamageSystem>(
       damageSystemSignature);
+
+  //EnviromentDamageSystem Signature
+  Signature enviromentDamageSystemSignature;
+  enviromentDamageSystemSignature.set(
+      m_ecsManager->getComponentType<DamageComponent>());
+    damageSystemSignature.set(
+      m_ecsManager->getComponentType<TransformComponent>());
+  //EnviromentDamageSystem Register
+  m_enviromentDamageSystem = m_ecsManager->registerSystem<EnviromentDamageSystem>();
+  m_enviromentDamageSystem->init(m_ecsManager);
+  m_ecsManager->setSystemSignature<EnviromentDamageSystem>(
+      enviromentDamageSystemSignature);
 
 
   m_ecsManager->addComponent(m_playerEntity, HealthComponent{100, 100});
@@ -332,4 +345,5 @@ void GameEngine::update(sf::Time deltaTime) {
   m_collectableSystem->update(dt);
   m_weaponSystem->update(dt);
   m_damageSystem->update(dt);
+  m_enviromentDamageSystem->update(dt);
 }
