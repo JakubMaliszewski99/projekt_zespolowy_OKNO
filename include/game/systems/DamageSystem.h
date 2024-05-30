@@ -6,6 +6,8 @@
 #include "../components/WeaponComponent.h"
 #include "../components/CollectableComponent.h"
 #include "../components/HealthComponent.h"
+#include "../components/DamageComponent.h"
+#include "../../core/math/utilities.h"
 #include <math.h>
 #include <cmath>
 #include <stdlib.h>
@@ -34,7 +36,7 @@ public:
                 this->meeleFire(transform);
             }
             else {
-                this->projectileFire();
+                this->projectileFire(transform, weapon);
             }
         }
     }
@@ -49,6 +51,7 @@ private:
             
             auto angleToEntity = angleBetweenPoints(shooterTransform.positionX, shooterTransform.positionY, targetTransform.positionX, targetTransform.positionY);
             auto angleDiff = abs(angleToEntity - shooterTransform.angle);
+
             if(angleDiff > 2 * M_PI)
                 angleDiff -= 2 * M_PI;
 
@@ -77,7 +80,7 @@ private:
     void hitscanFire(TransformComponent& shooterTransform){
         //TODO below code is ignoring walls:
 
-        std::vector<std::pair<Entity, float>> entitiesToBeHit;
+        std::vector<std::pair<Entity, float>> entitiesToBeHit_pairedWithDistance;
         
         for (auto const &entity : m_entities) {
             auto &health = m_manager->getComponent<HealthComponent>(entity);
@@ -85,10 +88,10 @@ private:
             
             auto angleToEntity = angleBetweenPoints(shooterTransform.positionX, shooterTransform.positionY, targetTransform.positionX, targetTransform.positionY);
             auto angleDiff = abs(angleToEntity - shooterTransform.angle);
+
             if(angleDiff > 2 * M_PI)
                 angleDiff -= 2 * M_PI;
 
-            //TODO replace M_PI/2 with variable:
             if((abs(distanceFromLineOfHitscan(shooterTransform, targetTransform)) < WeaponComponent::weaponSpread_distance) && 
                                                                             (angleDiff < WeaponComponent::weaponSpread_angle)) {
                 if(entity == m_playerEntity)
@@ -96,24 +99,33 @@ private:
 
                 auto distance = distanceBetweenPoints(shooterTransform.positionX, shooterTransform.positionY, 
                                                         targetTransform.positionX, targetTransform.positionY);
-                entitiesToBeHit.push_back(std::make_pair(entity, distance));
+                entitiesToBeHit_pairedWithDistance.push_back(std::make_pair(entity, distance));
             }
         }
         
-        if(!entitiesToBeHit.empty()) {
-            auto closestEntity = entitiesToBeHit.front();
-            for (auto entity_pair : entitiesToBeHit) {
-                if(entity_pair.second < closestEntity.second) {
-                    closestEntity = entity_pair;
+        if(!entitiesToBeHit_pairedWithDistance.empty()) {
+            auto closestPair = entitiesToBeHit_pairedWithDistance.front();
+            for (auto entity_pair : entitiesToBeHit_pairedWithDistance) {
+                if(entity_pair.second < closestPair.second) {
+                    closestPair = entity_pair;
                 }
             }
             
-            hitEntity(closestEntity.first);
+            hitEntity(closestPair.first);
         }
     }
 
-    void projectileFire() {
-        //TODO - projectile launching
+    void projectileFire(TransformComponent& shooterTransform, WeaponComponent& weapon) {
+        Entity projectile = m_manager->createEntity();
+        m_manager->addComponent(
+            projectile,
+            TransformComponent{shooterTransform.positionX, shooterTransform.positionY,
+                         shooterTransform.positionZ, shooterTransform.targetPositonZ,
+                         velocityScalarToVector(WeaponComponent::projectileSpeed, shooterTransform.angle),
+                         shooterTransform.angle});
+        m_manager->addComponent(projectile, DamageComponent{weapon.damage, WeaponComponent::projectileExplosionRange});
+
+        std::cout << velocityScalarToVector(WeaponComponent::projectileSpeed, shooterTransform.angle) << std::endl;
     }
 
     float distanceFromLineOfHitscan(TransformComponent& shooterTransform, TransformComponent& targetTransform){

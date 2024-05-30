@@ -1,5 +1,6 @@
 #include "../../../include/core/math/utilities.h"
 #include "../../../include/core/core.h"
+#include <cmath>
 #include <iostream>
 
 int angle2x(float angle) {
@@ -188,4 +189,10 @@ sf::Vector2f projectVectorOntoLine(sf::Vector2f vector, sf::Vector2f line) {
   float newLength = dotProduct / (lineLength * lineLength);
 
   return newLength * line;
+}
+
+sf::Vector2f velocityScalarToVector(float velocity, float angle_rad) {
+  float x = cosf(angle_rad) * velocity;
+  float y = sinf(angle_rad) * velocity;
+  return sf::Vector2f(x, y);
 }
