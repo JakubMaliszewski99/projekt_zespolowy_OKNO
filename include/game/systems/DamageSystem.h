@@ -72,7 +72,7 @@ private:
                     closestEntity = entity_pair;
                 }
             }
-            
+        
             hitEntity(closestEntity.first);
         }
     }
