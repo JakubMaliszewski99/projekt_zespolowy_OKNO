@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../../core/core.h"
 #include "CollectableComponent.h"
 
 enum WeaponType{
@@ -12,10 +13,24 @@ enum WeaponModel{
 };
 
 struct WeaponComponent{
-    WeaponModel equipedWeapons[3]; //0-hand; 1-range; 2-lanucher 
+    //general info:
+    static constexpr float weaponSpread_inDegrees = 10;
+    static constexpr float weaponSpread_angle = 2*M_PI/360 * weaponSpread_inDegrees;
+    static constexpr const float weaponSpread_distance = 100;
+    static constexpr const float meeleRange = 100;
+    static constexpr const float meeleSpread_inDegrees = 45;
+    static constexpr const float meeleSpread_angle = 2*M_PI/360 * meeleSpread_inDegrees;
+
+    // weapon info:
+    WeaponModel equipedWeapons[3]; //0-hand; 1-range; 2-lanucher
     WeaponType activeWeaponType;
+    
+    // time management:
     bool fired;
     bool readyToFire;
     float timeFromLastShot;
+
+    // weapon stats: 
     float fireRate; //per second
+    float damage;
 };

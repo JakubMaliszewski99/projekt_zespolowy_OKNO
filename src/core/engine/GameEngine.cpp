@@ -206,7 +206,7 @@ GameEngine::GameEngine(InitSettings settings) {
       WeaponComponent{
           {WeaponModel::eWeaponModelFist, WeaponModel::eWeaponModelPistol, WeaponModel::eWeaponModelNone}, 
           WeaponType::eHandWeapon,
-          false, true, 0, 1});
+          false, true, 0, 1, 0});
 
   // Create map entity
   m_mapEntity = m_ecsManager->createEntity();

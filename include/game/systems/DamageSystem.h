@@ -13,12 +13,6 @@
 #include <utility>
 #include <iostream>
 
-//TODO to be moved to weapon system/component:
-const float weaponSpread_inDegrees = 10;
-const float weaponSpread_angle = 2*M_PI/360 * weaponSpread_inDegrees;
-const float weaponSpread_distance = 100;
-const float meeleRange = 100;
-
 class DamageSystem : public System{
 public:
     void init(std::shared_ptr<ECSManager> manager, Entity playerEntity) {
@@ -61,8 +55,7 @@ private:
             auto distance = distanceBetweenPoints(shooterTransform.positionX, shooterTransform.positionY, 
                                                         targetTransform.positionX, targetTransform.positionY);
 
-            //TODO replace M_PI/2 with variable:
-            if((angleDiff < M_PI/2) && (distance < meeleRange)) {
+            if((angleDiff < WeaponComponent::meeleSpread_angle) && (distance < WeaponComponent::meeleRange)) {
                 if(entity == m_playerEntity)
                     continue;
                 entitiesToBeHit.push_back(std::make_pair(entity, distance));
@@ -96,7 +89,8 @@ private:
                 angleDiff -= 2 * M_PI;
 
             //TODO replace M_PI/2 with variable:
-            if((abs(distanceFromLineOfHitscan(shooterTransform, targetTransform)) < weaponSpread_distance) && (angleDiff < M_PI/2)) {
+            if((abs(distanceFromLineOfHitscan(shooterTransform, targetTransform)) < WeaponComponent::weaponSpread_distance) && 
+                                                                            (angleDiff < WeaponComponent::weaponSpread_angle)) {
                 if(entity == m_playerEntity)
                     continue;
 
