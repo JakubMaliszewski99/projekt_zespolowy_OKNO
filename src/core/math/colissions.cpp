@@ -57,3 +57,26 @@ bool lineCircleCollision(float x1, float y1, float x2, float y2, float cx,
   }
   return false;
 }
+
+std::optional<sf::Vector2f> segmentSegmentCollision(float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4) { // 1, 2 - first segm; 3, 4 - second segm;
+    float uA = ((x4-x3)*(y1-y3) - (y4-y3)*(x1-x3)) / ((y4-y3)*(x2-x1) - (x4-x3)*(y2-y1));
+    float uB = ((x2-x1)*(y1-y3) - (y2-y1)*(x1-x3)) / ((y4-y3)*(x2-x1) - (x4-x3)*(y2-y1));
+
+    // if uA and uB are between 0-1, segments are colliding
+    if (uA >= 0 && uA <= 1 && uB >= 0 && uB <= 1) {
+        float intersectionX = x1 + (uA * (x2-x1));
+        float intersectionY = y1 + (uA * (y2-y1));
+        return sf::Vector2f(intersectionX, intersectionY);
+    }
+
+    return std::nullopt;
+}
+
+std::optional<sf::Vector2f> lineSegmentCollision(float segmentX1, float segmentY1, float segmentX2, float segmentY2, float lineStartX, float lineStartY, float lineAngle) {
+    float temp_distance = distance(lineStartX, lineStartY, segmentX1, segmentY1);
+    float safe_distance = temp_distance * 2; // safe meaning segment is for sure within this distance
+
+    sf::Vector2f lineEnd = segmentEnd(lineStartX, lineStartY, lineAngle, safe_distance);
+
+    return segmentSegmentCollision(lineStartX, lineStartY, lineEnd.x, lineEnd.y, segmentX1, segmentY1, segmentX2, segmentY2);
+}

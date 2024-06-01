@@ -196,3 +196,9 @@ sf::Vector2f velocityScalarToVector(float velocity, float angle_rad) {
   float y = sinf(angle_rad) * velocity;
   return sf::Vector2f(x, y);
 }
+
+sf::Vector2f segmentEnd(float startX, float startY, float angle, float length){
+    float endX = startX + cosf(angle) * length;
+    float endY = startY + sinf(angle) * length;
+    return sf::Vector2f(endX, endY);
+}

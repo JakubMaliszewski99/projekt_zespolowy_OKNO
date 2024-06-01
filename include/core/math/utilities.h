@@ -26,3 +26,4 @@ sf::Vector2f normalize(sf::Vector2f vec);
 sf::Vector2f lineNormal(float x1, float y1, float x2, float y2);
 sf::Vector2f projectVectorOntoLine(sf::Vector2f vector, sf::Vector2f line);
 sf::Vector2f velocityScalarToVector(float velocity, float angle);
+sf::Vector2f segmentEnd(float startX, float startY, float angle, float length);

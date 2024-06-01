@@ -185,7 +185,7 @@ GameEngine::GameEngine(InitSettings settings) {
       m_ecsManager->getComponentType<TransformComponent>());
   //DamageSystem Register
   m_damageSystem = m_ecsManager->registerSystem<DamageSystem>();
-  m_damageSystem->init(m_ecsManager, m_playerEntity);
+  m_damageSystem->init(m_ecsManager, m_playerEntity, std::make_shared<BSP>(m_level));
   m_ecsManager->setSystemSignature<DamageSystem>(
       damageSystemSignature);
 

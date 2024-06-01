@@ -8,6 +8,7 @@
 #include "../components/HealthComponent.h"
 #include "../components/DamageComponent.h"
 #include "../../core/math/utilities.h"
+#include "../../core/math/collisions.h"
 #include <math.h>
 #include <cmath>
 #include <stdlib.h>
@@ -15,12 +16,14 @@
 #include <utility>
 #include <iostream>
 #include <algorithm>
+#include <limits>
 
 class DamageSystem : public System{
 public:
-    void init(std::shared_ptr<ECSManager> manager, Entity playerEntity) {
+    void init(std::shared_ptr<ECSManager> manager, Entity playerEntity, std::shared_ptr<BSP> bsp) {
         m_manager = manager;
         m_playerEntity = playerEntity;
+        m_bsp = bsp;
     }
 
     void update(float dt)
@@ -86,27 +89,36 @@ private:
 
         std::vector<std::pair<Entity, float>> entitiesToBeHit_pairedWithDistance;
         
+        float wallDistance = distanceToClosestWall(shooterTransform);
+        
         for (auto const &entity : m_entities) {
             auto &health = m_manager->getComponent<HealthComponent>(entity);
             auto &targetTransform = m_manager->getComponent<TransformComponent>(entity);
             
+            // at what angle target is:
             auto angleToEntity = angleBetweenPoints(shooterTransform.positionX, shooterTransform.positionY, targetTransform.positionX, targetTransform.positionY);
             auto angleDiff = abs(angleToEntity - shooterTransform.angle);
 
+            // normalize angle:
             if(angleDiff > 2 * M_PI)
                 angleDiff -= 2 * M_PI;
 
+            // would target be hit:
             if((abs(distanceFromLineOfHitscan(shooterTransform, targetTransform)) < WeaponComponent::weaponSpread_distance) && 
                                                                             (angleDiff < WeaponComponent::weaponSpread_angle)) {
+                // TODO replace pleyer with "shooter"
                 if(entity == m_playerEntity)
                     continue;
 
                 auto distance = distanceBetweenPoints(shooterTransform.positionX, shooterTransform.positionY, 
                                                         targetTransform.positionX, targetTransform.positionY);
-                entitiesToBeHit_pairedWithDistance.push_back(std::make_pair(entity, distance));
+
+                if(distance < wallDistance){
+                    entitiesToBeHit_pairedWithDistance.push_back(std::make_pair(entity, distance));
+                }
             }
         }
-        
+
         if(!entitiesToBeHit_pairedWithDistance.empty()) {
             auto closestPair = entitiesToBeHit_pairedWithDistance.front();
             for (auto entity_pair : entitiesToBeHit_pairedWithDistance) {
@@ -188,12 +200,59 @@ private:
         m_manager->destroyEntity(projectile);
     }
 
-    // TODO to be moved to other system:
+    void hitEntity(Entity& entity/*TODO :, float damage*/){
+        m_manager->destroyEntity(entity);
+    }
+
+    // TODO to be moved to other place:
     void moveProjectile(TransformComponent& transform) {
         sf::Vector2f velocity = transform.velocity;
         transform.velocity = normalize(velocity);
         transform.positionX += velocity.x;
         transform.positionY += velocity.y;
+    }
+
+    float distanceToClosestWall(TransformComponent& shooterTransform) {
+        /*int16_t subsectorID = m_bsp->getCurrentSubsectorID(shooterTransform.positionX,
+                                                         shooterTransform.positionY);
+        auto subsector = m_bsp->m_gameLevel->subsuctors[subsectorID];
+
+        for (int i = subsector.firstSectorNumber;
+               i < subsector.firstSectorNumber + subsector.segCount; i++) {
+            auto segment = m_bsp->m_gameLevel->segments[i];
+            auto line = m_bsp->m_gameLevel->linedefs[segment.linedefNumber];
+            auto startVertex = m_bsp->m_gameLevel->vertexes[line.startVertex];
+            auto endVertex = m_bsp->m_gameLevel->vertexes[line.endVertex];
+            auto frontsector = m_bsp->m_gameLevel->sectors[segment.frontSector];
+            auto backSectorId = segment.backSector;
+        */
+
+        float distanceToClosestWall = std::numeric_limits<float>::max();
+        float dist;
+
+        for (auto line: m_bsp->m_gameLevel->linedefs){
+            auto startVertex = m_bsp->m_gameLevel->vertexes[line.startVertex];
+            auto endVertex = m_bsp->m_gameLevel->vertexes[line.endVertex];
+
+                /*if (backSectorId != -1) {
+                    auto backSector = m_bsp->m_gameLevel->sectors[segment.backSector];
+                    if (backSector.floorHeight <
+                        shooterTransform.positionZ - PLAYER_HEIGHT / 2) {
+                        continue;
+                    }
+                }*/
+
+                std::optional<sf::Vector2f> collisionPoint = lineSegmentCollision(startVertex.x, startVertex.y, endVertex.x, endVertex.y,
+                                                                                    shooterTransform.positionX, shooterTransform.positionY,
+                                                                                    shooterTransform.angle);
+                if(collisionPoint) {
+                    dist = distance(shooterTransform.positionX, shooterTransform.positionY, (*collisionPoint).x, (*collisionPoint).y);
+                    if(dist < distanceToClosestWall) {
+                        distanceToClosestWall = dist;
+                    }
+                }
+        }
+        return distanceToClosestWall;
     }
 
     float distanceFromLineOfHitscan(TransformComponent& shooterTransform, TransformComponent& targetTransform){
@@ -204,10 +263,6 @@ private:
                                         targetTransform.positionX, targetTransform.positionY);
         auto result = sin * distance;
         return result;
-    }
-
-    void hitEntity(Entity& entity/*TODO :, float damage*/){
-        m_manager->destroyEntity(entity);
     }
 
     float angleBetweenPoints(float x1, float y1, float x2, float y2){
@@ -226,4 +281,5 @@ private:
     std::shared_ptr<ECSManager> m_manager;
     Entity m_playerEntity;
     std::vector<Entity> projectilesFired;
+    std::shared_ptr<BSP> m_bsp;
 };

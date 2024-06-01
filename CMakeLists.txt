@@ -16,7 +16,7 @@ add_executable (doom
 
 set_target_properties (doom
     PROPERTIES
-    CXX_STANDARD 14
+    CXX_STANDARD 17
 )
 
 include_directories (
