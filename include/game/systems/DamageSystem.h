@@ -146,6 +146,7 @@ private:
         projectilesFired.push_back(projectile);
     }
 
+    // TODO should be handled be other system and with ProjectileComponent
     void handleFiredProjectiles(){
         for(auto &projectile: projectilesFired){
             auto &projectileTransform = m_manager->getComponent<TransformComponent>(projectile);
@@ -153,8 +154,14 @@ private:
 
             moveProjectile(projectileTransform);
             
+            if (projectileHitWall(projectileTransform, damageComponent)){
+                projectileExplode(projectile, projectileTransform, damageComponent);
+                continue;
+            }            
+            
             for (auto &entity : m_entities){
                 
+                //TODO I don't understand why, but crushes if without following if:
                 if(entity == m_playerEntity)
                     continue;
 
@@ -164,15 +171,32 @@ private:
                     projectileExplode(projectile, projectileTransform, damageComponent);
                     break;
                 }
-                else if (projectileHitWall(projectileTransform))
-                {
-                    projectileExplode(projectile, projectileTransform, damageComponent);
-                }
             }            
         }
     }
 
-    bool projectileHitWall(TransformComponent& transform) {
+    bool projectileHitWall(TransformComponent& transform, DamageComponent& damageComponent) {
+        for (auto line: m_bsp->m_gameLevel->linedefs){
+            auto startVertex = m_bsp->m_gameLevel->vertexes[line.startVertex];
+            auto endVertex = m_bsp->m_gameLevel->vertexes[line.endVertex];
+
+            auto sector = m_bsp->m_gameLevel->sectors[line.sector];
+
+            if (sector.floorHeight <
+                transform.positionZ - PLAYER_HEIGHT / 2) {
+                continue;
+            }
+
+            sf::Vector2f temp = sf::Vector2f(1,1);
+            sf::Vector2f& temp_ref = temp;
+            
+            // TODO sth is wrong here...
+            if(lineCircleCollision(startVertex.x, startVertex.y, endVertex.x, endVertex.y,
+                                    transform.positionX, transform.positionY, damageComponent.activationRange,
+                                    temp_ref)) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -198,6 +222,7 @@ private:
         auto iterator = std::find(projectilesFired.begin(), projectilesFired.end(), projectile);
         projectilesFired.erase(iterator);
         m_manager->destroyEntity(projectile);
+        std::cout << "boom" << std::endl;
     }
 
     void hitEntity(Entity& entity/*TODO :, float damage*/){
@@ -213,19 +238,6 @@ private:
     }
 
     float distanceToClosestWall(TransformComponent& shooterTransform) {
-        /*int16_t subsectorID = m_bsp->getCurrentSubsectorID(shooterTransform.positionX,
-                                                         shooterTransform.positionY);
-        auto subsector = m_bsp->m_gameLevel->subsuctors[subsectorID];
-
-        for (int i = subsector.firstSectorNumber;
-               i < subsector.firstSectorNumber + subsector.segCount; i++) {
-            auto segment = m_bsp->m_gameLevel->segments[i];
-            auto line = m_bsp->m_gameLevel->linedefs[segment.linedefNumber];
-            auto startVertex = m_bsp->m_gameLevel->vertexes[line.startVertex];
-            auto endVertex = m_bsp->m_gameLevel->vertexes[line.endVertex];
-            auto frontsector = m_bsp->m_gameLevel->sectors[segment.frontSector];
-            auto backSectorId = segment.backSector;
-        */
 
         float distanceToClosestWall = std::numeric_limits<float>::max();
         float dist;
@@ -234,23 +246,22 @@ private:
             auto startVertex = m_bsp->m_gameLevel->vertexes[line.startVertex];
             auto endVertex = m_bsp->m_gameLevel->vertexes[line.endVertex];
 
-                /*if (backSectorId != -1) {
-                    auto backSector = m_bsp->m_gameLevel->sectors[segment.backSector];
-                    if (backSector.floorHeight <
-                        shooterTransform.positionZ - PLAYER_HEIGHT / 2) {
-                        continue;
-                    }
-                }*/
+            auto sector = m_bsp->m_gameLevel->sectors[line.sector];
 
-                std::optional<sf::Vector2f> collisionPoint = lineSegmentCollision(startVertex.x, startVertex.y, endVertex.x, endVertex.y,
-                                                                                    shooterTransform.positionX, shooterTransform.positionY,
-                                                                                    shooterTransform.angle);
-                if(collisionPoint) {
-                    dist = distance(shooterTransform.positionX, shooterTransform.positionY, (*collisionPoint).x, (*collisionPoint).y);
-                    if(dist < distanceToClosestWall) {
-                        distanceToClosestWall = dist;
-                    }
+            if (sector.floorHeight <
+                shooterTransform.positionZ - PLAYER_HEIGHT / 2) {
+                continue;
+            }
+            
+            std::optional<sf::Vector2f> collisionPoint = lineSegmentCollision(startVertex.x, startVertex.y, endVertex.x, endVertex.y,
+                                                                                shooterTransform.positionX, shooterTransform.positionY,
+                                                                                shooterTransform.angle);
+            if(collisionPoint) {
+                dist = distance(shooterTransform.positionX, shooterTransform.positionY, (*collisionPoint).x, (*collisionPoint).y);
+                if(dist < distanceToClosestWall) {
+                    distanceToClosestWall = dist;
                 }
+            }
         }
         return distanceToClosestWall;
     }
