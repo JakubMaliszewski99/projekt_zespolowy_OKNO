@@ -4,7 +4,10 @@
             "name": "Win32",
             "includePath": [
                 "${default}",
-                "C:\\SFML-2.5.1\\include"
+                "C:\\SFML-2.5.1\\include",
+                "${workspaceFolder}\\include\\core",
+                "${workspaceFolder}\\include\\game",
+                "${workspaceFolder}/include"
             ],
             "defines": [
                 "_DEBUG",
