@@ -29,26 +29,26 @@ public:
       }
 
       sf::Vector2f movement(0.f, 0.f);
-      float velocity = PLAYER_DEFAULT_SPEED * dt;
+      float scalMovement = PLAYER_DEFAULT_SPEED * dt;
       float rotation = 0.f;
 
-      // TODO: Fix diagonal velocity problem
       if (InputManager::getInstance()->isKeyPressed(sf::Keyboard::W)) {
-        movement.x += cos(transform.angle) * velocity;
-        movement.y += sin(transform.angle) * velocity;
+        movement.x += cos(transform.angle) * scalMovement;
+        movement.y += sin(transform.angle) * scalMovement;
       }
       if (InputManager::getInstance()->isKeyPressed(sf::Keyboard::S)) {
-        movement.x -= cos(transform.angle) * velocity;
-        movement.y -= sin(transform.angle) * velocity;
+        movement.x -= cos(transform.angle) * scalMovement;
+        movement.y -= sin(transform.angle) * scalMovement;
       }
       if (InputManager::getInstance()->isKeyPressed(sf::Keyboard::D)) {
-        movement.x -= cos(transform.angle + 90 * (M_PI / 180)) * velocity;
-        movement.y -= sin(transform.angle + 90 * (M_PI / 180)) * velocity;
+        movement.x -= cos(transform.angle + 90 * (M_PI / 180)) * scalMovement;
+        movement.y -= sin(transform.angle + 90 * (M_PI / 180)) * scalMovement;
       }
       if (InputManager::getInstance()->isKeyPressed(sf::Keyboard::A)) {
-        movement.x += cos(transform.angle + 90 * (M_PI / 180)) * velocity;
-        movement.y += sin(transform.angle + 90 * (M_PI / 180)) * velocity;
+        movement.x += cos(transform.angle + 90 * (M_PI / 180)) * scalMovement;
+        movement.y += sin(transform.angle + 90 * (M_PI / 180)) * scalMovement;
       }
+
       if (InputManager::getInstance()->isKeyPressed(sf::Keyboard::Q)) {
         rotation += DEFAULT_ROTATION_SPEED * dt * 0.4f;
       }
@@ -65,6 +65,7 @@ public:
 
       transform.velocity = movement;
       transform.angle = normalizeRadianAngle(transform.angle + rotation);
+      std::clog << transform.positionX << ", " << transform.positionY << std::endl;
     }
   }
 

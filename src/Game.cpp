@@ -1,7 +1,7 @@
 #include "../include/Game.h"
 #include "core/engine/InputManager.h"
 #include "core/logger/Logger.h"
-#define M_PI 3.14159265358979323846
+#include <cmath>
 
 Game::Game() {
   m_isRunning = true;

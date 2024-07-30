@@ -313,7 +313,7 @@ void GameEngine::run() {
   init();
   sf::Clock clock;
 
-  while (m_window->isOpen()) {
+while (m_window->isOpen()) {
     sf::Time deltaTime = clock.restart();
     processEvents();
     update(deltaTime);
@@ -336,7 +336,7 @@ void GameEngine::update(sf::Time deltaTime) {
 
   m_playerControllSystem->update(dt);
   m_playerMovementSystem->update(dt);
-  //m_minimapRenderingSystem->update(dt);
+
   if (m_state == GameEngineState::eGameMinimap) {
     m_minimapRenderingSystem->update(dt);
   } else if (m_state == GameEngineState::eGame) {

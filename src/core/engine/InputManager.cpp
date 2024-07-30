@@ -1,6 +1,6 @@
 #include "../include/core/engine/InputManager.h"
 
-InputManager* InputManager::m_instance = nullptr;
+InputManager *InputManager::m_instance = nullptr;
 
 InputManager::InputManager() {
   
