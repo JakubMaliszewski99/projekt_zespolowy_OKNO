@@ -65,7 +65,6 @@ public:
 
       transform.velocity = movement;
       transform.angle = normalizeRadianAngle(transform.angle + rotation);
-      std::clog << transform.positionX << ", " << transform.positionY << std::endl;
     }
   }
 
