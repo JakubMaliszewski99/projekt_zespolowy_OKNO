@@ -1,63 +1,6 @@
 #include "../include/core/engine/GameEngine.h"
-#include "../include/core/loaders/WADLoader.h"
-#include "../include/game/components/GameDrawableComponent.h"
-#include "../include/game/components/HealthComponent.h"
-#include "../include/game/sprites/CollectableMinimapSprite.h"
-#include "../include/game/sprites/LevelMinimapSprite.h"
 
-CollectableType getCollectableTypeFromSubType(int subType) {
-  switch (subType) {
-  case CollectableSubType::eWeaponBFG9000:
-  case CollectableSubType::eWeaponChaingun:
-  case CollectableSubType::eWeaponChainsaw:
-  case CollectableSubType::eWeaponPlasmaGun:
-  case CollectableSubType::eWeaponRocketLauncher:
-  case CollectableSubType::eWeaponShotgun:
-  case CollectableSubType::eWeaponSuperShotgun:
-    return CollectableType::eWeapons;
-    break;
-  case CollectableSubType::eAmmo4ShotgunShells:
-  case CollectableSubType::eAmmoBoxBullets:
-  case CollectableSubType::eAmmoBoxRockets:
-  case CollectableSubType::eAmmoBoxShotgunShells:
-  case CollectableSubType::eAmmoClip:
-  case CollectableSubType::eAmmoEnergyCell:
-  case CollectableSubType::eAmmoEnergyCellPack:
-  case CollectableSubType::eAmmoRocket:
-    return CollectableType::eAmmo;
-    break;
-  case CollectableSubType::eArtifactArmorBonus:
-  case CollectableSubType::eArtifactBersek:
-  case CollectableSubType::eArtifactComputerAreaMap:
-  case CollectableSubType::eArtifactHealthBonus:
-  case CollectableSubType::eArtifactInvulnerability:
-  case CollectableSubType::eArtifactLightAmplificationVisor:
-  case CollectableSubType::eArtifactMegasphere:
-  case CollectableSubType::eArtifactPartialInvisibility:
-  case CollectableSubType::eArtifactSupercharge:
-    return CollectableType::eArtifact;
-    break;
-  case CollectableSubType::ePowerupsArmor:
-  case CollectableSubType::ePowerupsBackpack:
-  case CollectableSubType::ePowerupsMedikit:
-  case CollectableSubType::ePowerupsMegaarmor:
-  case CollectableSubType::ePowerupsRadiationShieldingUnit:
-  case CollectableSubType::ePowerupsStimpack:
-    return CollectableType::ePowerups;
-    break;
-  case CollectableSubType::eKeysBlueKeycard:
-  case CollectableSubType::eKeysBlueSkullKey:
-  case CollectableSubType::eKeysRedKeycard:
-  case CollectableSubType::eKeysRedSkullKey:
-  case CollectableSubType::eKeysYellowKeycard:
-  case CollectableSubType::eKeysYellowSkullKey:
-    return CollectableType::eKeys;
-    break;
-  default:
-    return CollectableType::eUnknown;
-    break;
-  }
-}
+CollectableType getCollectableTypeFromSubType(int subType);
 
 GameEngine::GameEngine(InitSettings settings) {
   m_settings = settings;
@@ -79,7 +22,15 @@ GameEngine::GameEngine(InitSettings settings) {
       initialPlayerPosition = sf::Vector2f((float)thing.x, (float)thing.y);
       initialPlayerAngle = thing.angle * (M_PI / 180);
       break;
+    } else if(thing.type == 9 || thing.type == 3001 || thing.type == 3004) {
+
     }
+    /*LOADING ENEMIES - w E1M1
+    | Name | type ID |
+    | Imp  | 3001 |
+    | Shotgun Guy | 9 |
+    | Zombie Man | 3004 |
+    */
   }
 
   m_window = std::make_shared<sf::RenderWindow>();
@@ -87,17 +38,9 @@ GameEngine::GameEngine(InitSettings settings) {
   // TODO: Move ECS setup to another methods
   // ECS
   m_ecsManager = std::make_shared<ECSManager>();
-  m_ecsManager->init();
-  // Components
-  m_ecsManager->registerComponent<HealthComponent>();
-  m_ecsManager->registerComponent<TransformComponent>();
-  m_ecsManager->registerComponent<MinimapSpriteComponent>();
-  m_ecsManager->registerComponent<ControllableComponent>();
-  m_ecsManager->registerComponent<CollectableComponent>();
-  m_ecsManager->registerComponent<GameDrawableComponent>();
-  m_ecsManager->registerComponent<WeaponComponent>();
-  m_ecsManager->registerComponent<DamageComponent>();
-
+  setupECSComponents(m_ecsManager);
+  createEntities(m_ecsManager);
+  
   // PlayerControllSystem Signature
   Signature playerSystemSignature;
   playerSystemSignature.set(m_ecsManager->getComponentType<HealthComponent>());
@@ -109,7 +52,6 @@ GameEngine::GameEngine(InitSettings settings) {
   m_playerControllSystem = m_ecsManager->registerSystem<PlayerControllSystem>();
   m_playerControllSystem->init(m_ecsManager);
   m_ecsManager->setSystemSignature<PlayerControllSystem>(playerSystemSignature);
-
   // PlayerMovementSystem Signature
   Signature playerMovementSystemSignature;
   playerMovementSystemSignature.set(
@@ -346,4 +288,73 @@ void GameEngine::update(sf::Time deltaTime) {
   m_weaponSystem->update(dt);
   m_damageSystem->update(dt);
   m_enviromentDamageSystem->update(dt);
+}
+
+void GameEngine::setupECSComponents(std::shared_ptr<ECSManager>){
+  m_ecsManager->init();
+  // Components
+  m_ecsManager->registerComponent<HealthComponent>();
+  m_ecsManager->registerComponent<TransformComponent>();
+  m_ecsManager->registerComponent<MinimapSpriteComponent>();
+  m_ecsManager->registerComponent<ControllableComponent>();
+  m_ecsManager->registerComponent<CollectableComponent>();
+  m_ecsManager->registerComponent<GameDrawableComponent>();
+  m_ecsManager->registerComponent<WeaponComponent>();
+  m_ecsManager->registerComponent<DamageComponent>();
+}
+void GameEngine::createEntities(std::shared_ptr<ECSManager>){}
+void GameEngine::setupSystems(){}
+
+CollectableType getCollectableTypeFromSubType(int subType) {
+  switch (subType) {
+  case CollectableSubType::eWeaponBFG9000:
+  case CollectableSubType::eWeaponChaingun:
+  case CollectableSubType::eWeaponChainsaw:
+  case CollectableSubType::eWeaponPlasmaGun:
+  case CollectableSubType::eWeaponRocketLauncher:
+  case CollectableSubType::eWeaponShotgun:
+  case CollectableSubType::eWeaponSuperShotgun:
+    return CollectableType::eWeapons;
+    break;
+  case CollectableSubType::eAmmo4ShotgunShells:
+  case CollectableSubType::eAmmoBoxBullets:
+  case CollectableSubType::eAmmoBoxRockets:
+  case CollectableSubType::eAmmoBoxShotgunShells:
+  case CollectableSubType::eAmmoClip:
+  case CollectableSubType::eAmmoEnergyCell:
+  case CollectableSubType::eAmmoEnergyCellPack:
+  case CollectableSubType::eAmmoRocket:
+    return CollectableType::eAmmo;
+    break;
+  case CollectableSubType::eArtifactArmorBonus:
+  case CollectableSubType::eArtifactBersek:
+  case CollectableSubType::eArtifactComputerAreaMap:
+  case CollectableSubType::eArtifactHealthBonus:
+  case CollectableSubType::eArtifactInvulnerability:
+  case CollectableSubType::eArtifactLightAmplificationVisor:
+  case CollectableSubType::eArtifactMegasphere:
+  case CollectableSubType::eArtifactPartialInvisibility:
+  case CollectableSubType::eArtifactSupercharge:
+    return CollectableType::eArtifact;
+    break;
+  case CollectableSubType::ePowerupsArmor:
+  case CollectableSubType::ePowerupsBackpack:
+  case CollectableSubType::ePowerupsMedikit:
+  case CollectableSubType::ePowerupsMegaarmor:
+  case CollectableSubType::ePowerupsRadiationShieldingUnit:
+  case CollectableSubType::ePowerupsStimpack:
+    return CollectableType::ePowerups;
+    break;
+  case CollectableSubType::eKeysBlueKeycard:
+  case CollectableSubType::eKeysBlueSkullKey:
+  case CollectableSubType::eKeysRedKeycard:
+  case CollectableSubType::eKeysRedSkullKey:
+  case CollectableSubType::eKeysYellowKeycard:
+  case CollectableSubType::eKeysYellowSkullKey:
+    return CollectableType::eKeys;
+    break;
+  default:
+    return CollectableType::eUnknown;
+    break;
+  }
 }

@@ -22,8 +22,6 @@ enum CollectableSubType {
   eKeysYellowKeycard = 6, eKeysYellowSkullKey = 39
 };
 
-
-
 struct CollectableComponent {
   CollectableType type;
   CollectableSubType subType;

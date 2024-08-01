@@ -1,5 +1,5 @@
-#include "../include/core/loaders/WADLoader.h"
 #include <cstring>
+#include "../include/core/loaders/WADLoader.h"
 
 WADLoader::WADLoader() {}
 

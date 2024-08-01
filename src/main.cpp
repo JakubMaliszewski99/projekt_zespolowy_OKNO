@@ -1,9 +1,9 @@
-#include "../include/core/engine/BSP.h"
-#include "../include/core/engine/GameEngine.h"
-#include <SFML/Graphics.hpp>
 #include <iostream>
+#include <SFML/Graphics.hpp>
+#include "../include/core/engine/GameEngine.h"
 
 int main(int argc, char *argv[]) {
+
   DebugSettings debugSettings;
   debugSettings.displayFov = false;
   debugSettings.displayVisibleNodes = false;

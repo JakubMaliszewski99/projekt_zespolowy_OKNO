@@ -1,9 +1,14 @@
 #pragma once
+#include <string>
 #include <SFML/Graphics.hpp>
 #include "core/engine/GameLevel.h"
-#include <string>
 #include "core/ecs/ECSManager.h"
+#include "core/loaders/WADLoader.h"
 #include "core/logger/Logger.h"
+#include "game/components/GameDrawableComponent.h"
+#include "game/components/HealthComponent.h"
+#include "game/sprites/CollectableMinimapSprite.h"
+#include "game/sprites/LevelMinimapSprite.h"
 #include "game/systems/PlayerControllSystem.h"
 #include "game/systems/PlayerMovementSystem.h"
 #include "game/systems/CollectableSystem.h"
@@ -38,6 +43,10 @@ public:
   void update(sf::Time deltaTime);
 
 private:
+  void setupECSComponents(std::shared_ptr<ECSManager>);
+  void createEntities(std::shared_ptr<ECSManager>);
+  void setupSystems();
+
   GameEngineState m_state;
   std::shared_ptr<sf::RenderWindow> m_window;
   InitSettings m_settings;
