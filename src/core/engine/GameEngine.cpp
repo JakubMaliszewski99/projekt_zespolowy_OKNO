@@ -15,6 +15,7 @@ GameEngine::GameEngine(InitSettings settings) {
   WADLoader loader;
   m_level = loader.loadFromFile("../data/assets/DOOM1.WAD", "E1M1");
 
+  //Load player
   sf::Vector2f initialPlayerPosition;
   float initialPlayerAngle = 0.0f;
   for (auto thing : m_level->things) {
@@ -22,15 +23,7 @@ GameEngine::GameEngine(InitSettings settings) {
       initialPlayerPosition = sf::Vector2f((float)thing.x, (float)thing.y);
       initialPlayerAngle = thing.angle * (M_PI / 180);
       break;
-    } else if(thing.type == 9 || thing.type == 3001 || thing.type == 3004) {
-
     }
-    /*LOADING ENEMIES - w E1M1
-    | Name | type ID |
-    | Imp  | 3001 |
-    | Shotgun Guy | 9 |
-    | Zombie Man | 3004 |
-    */
   }
 
   m_window = std::make_shared<sf::RenderWindow>();
@@ -68,6 +61,18 @@ GameEngine::GameEngine(InitSettings settings) {
 
   // Create player entity
   m_playerEntity = m_ecsManager->createEntity();
+
+  /*
+  //EnemySystem Signature
+  Signature enemySystemSignature;
+  enemySystemSignature.set(m_ecsManager->getComponentType<EnemyComponent>());
+  enemySystemSignature.set(m_ecsManager->getComponentType<HealthComponent>());
+  enemySystemSignature.set(m_ecsManager->getComponentType<TransformComponent>());
+  //EnemySystem Register
+  m_enemySystem = m_ecsManager->registerSystem<EnemySystem>();
+  m_enemySystem->init(m_ecsManager, std::make_shared<BSP>(m_level));
+  m_ecsManager->setSystemSignature<EnemySystem>(enemySystemSignature);
+  */
 
   // MinimapRenderingsystem Signature
   Signature minimapRenderingSystemSignature;
@@ -201,6 +206,7 @@ GameEngine::GameEngine(InitSettings settings) {
       continue;
     }
 
+    //Set entity color
     sf::Color color;
 
     switch (getCollectableTypeFromSubType(thing.type)) {
@@ -223,6 +229,9 @@ GameEngine::GameEngine(InitSettings settings) {
       continue;
       break;
     }
+
+    if(thing.type == eImp || thing.type == eShotgunGuy || thing.type == eZombieMan)
+      color = sf::Color::Cyan;
 
     auto thingEntity = m_ecsManager->createEntity();
     m_ecsManager->addComponent(
@@ -301,6 +310,7 @@ void GameEngine::setupECSComponents(std::shared_ptr<ECSManager>){
   m_ecsManager->registerComponent<GameDrawableComponent>();
   m_ecsManager->registerComponent<WeaponComponent>();
   m_ecsManager->registerComponent<DamageComponent>();
+  //m_ecsManager->registerComponent<EnemyComponent>();
 }
 void GameEngine::createEntities(std::shared_ptr<ECSManager>){}
 void GameEngine::setupSystems(){}

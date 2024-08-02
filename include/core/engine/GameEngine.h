@@ -15,6 +15,7 @@
 #include "game/systems/WeaponSystem.h"
 #include "game/systems/DamageSystem.h"
 #include "game/systems/EnviromentDamageSystem.h"
+#include "game/systems/EnemySystem.h"
 #include "game/systems/rendering/MinimapRenderingSystem.h"
 #include "game/systems/rendering/GameRenderingSystem.h"
 
@@ -56,6 +57,7 @@ private:
 
   std::shared_ptr<PlayerControllSystem> m_playerControllSystem;
   std::shared_ptr<PlayerMovementSystem> m_playerMovementSystem;
+  std::shared_ptr<EnemySystem> m_enemySystem;
   std::shared_ptr<MinimapRenderingSystem> m_minimapRenderingSystem;
   std::shared_ptr<CollectableSystem> m_collectableSystem;
   std::shared_ptr<GameRenderingSystem> m_gameRenderingSystem;
