@@ -44,9 +44,8 @@ public:
   void update(sf::Time deltaTime);
 
 private:
-  void setupECSComponents(std::shared_ptr<ECSManager>);
-  void createEntities(std::shared_ptr<ECSManager>);
-  void setupSystems();
+  void setupComponents(std::shared_ptr<ECSManager>);
+  void setupSystems(std::shared_ptr<ECSManager>);
 
   GameEngineState m_state;
   std::shared_ptr<sf::RenderWindow> m_window;

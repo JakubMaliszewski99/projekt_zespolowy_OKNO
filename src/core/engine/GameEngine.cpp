@@ -1,7 +1,5 @@
 #include "../include/core/engine/GameEngine.h"
 
-CollectableType getCollectableTypeFromSubType(int subType);
-
 GameEngine::GameEngine(InitSettings settings) {
   m_settings = settings;
   m_state = settings.initialState;
@@ -15,7 +13,7 @@ GameEngine::GameEngine(InitSettings settings) {
   WADLoader loader;
   m_level = loader.loadFromFile("../data/assets/DOOM1.WAD", "E1M1");
 
-  //Load player
+  // Load player position
   sf::Vector2f initialPlayerPosition;
   float initialPlayerAngle = 0.0f;
   for (auto thing : m_level->things) {
@@ -31,20 +29,13 @@ GameEngine::GameEngine(InitSettings settings) {
   // TODO: Move ECS setup to another methods
   // ECS
   m_ecsManager = std::make_shared<ECSManager>();
-  setupECSComponents(m_ecsManager);
-  createEntities(m_ecsManager);
+  m_ecsManager->init();
+
+  setupComponents(m_ecsManager);
+  setupSystems(m_ecsManager);
   
-  // PlayerControllSystem Signature
-  Signature playerSystemSignature;
-  playerSystemSignature.set(m_ecsManager->getComponentType<HealthComponent>());
-  playerSystemSignature.set(
-      m_ecsManager->getComponentType<TransformComponent>());
-  playerSystemSignature.set(
-      m_ecsManager->getComponentType<ControllableComponent>());
-  // PlayerControllSystem Register
-  m_playerControllSystem = m_ecsManager->registerSystem<PlayerControllSystem>();
-  m_playerControllSystem->init(m_ecsManager);
-  m_ecsManager->setSystemSignature<PlayerControllSystem>(playerSystemSignature);
+
+
   // PlayerMovementSystem Signature
   Signature playerMovementSystemSignature;
   playerMovementSystemSignature.set(
@@ -59,10 +50,10 @@ GameEngine::GameEngine(InitSettings settings) {
   m_ecsManager->setSystemSignature<PlayerMovementSystem>(
       playerMovementSystemSignature);
 
-  // Create player entity
+    // Create player entity
   m_playerEntity = m_ecsManager->createEntity();
 
-  /*
+  
   //EnemySystem Signature
   Signature enemySystemSignature;
   enemySystemSignature.set(m_ecsManager->getComponentType<EnemyComponent>());
@@ -70,9 +61,9 @@ GameEngine::GameEngine(InitSettings settings) {
   enemySystemSignature.set(m_ecsManager->getComponentType<TransformComponent>());
   //EnemySystem Register
   m_enemySystem = m_ecsManager->registerSystem<EnemySystem>();
-  m_enemySystem->init(m_ecsManager, std::make_shared<BSP>(m_level));
+  m_enemySystem->init();
   m_ecsManager->setSystemSignature<EnemySystem>(enemySystemSignature);
-  */
+  
 
   // MinimapRenderingsystem Signature
   Signature minimapRenderingSystemSignature;
@@ -149,6 +140,7 @@ GameEngine::GameEngine(InitSettings settings) {
       enviromentDamageSystemSignature);
 
 
+
   m_ecsManager->addComponent(m_playerEntity, HealthComponent{100, 100});
   m_ecsManager->addComponent(
       m_playerEntity,
@@ -206,10 +198,15 @@ GameEngine::GameEngine(InitSettings settings) {
       continue;
     }
 
+    // Create Entity
+    auto thingEntity = m_ecsManager->createEntity();
+
+    //Check entity type
+
     //Set entity color
     sf::Color color;
 
-    switch (getCollectableTypeFromSubType(thing.type)) {
+    switch (m_collectableSystem -> getCollectableTypeFromSubType(thing.type)) {
     case CollectableType::eWeapons:
       color = sf::Color::Magenta;
       break;
@@ -233,17 +230,17 @@ GameEngine::GameEngine(InitSettings settings) {
     if(thing.type == eImp || thing.type == eShotgunGuy || thing.type == eZombieMan)
       color = sf::Color::Cyan;
 
-    auto thingEntity = m_ecsManager->createEntity();
     m_ecsManager->addComponent(
         thingEntity,
         TransformComponent{(float)thing.x, (float)thing.y, 0.0f, 0.0f, sf::Vector2f(), 0});
+    
     m_ecsManager->addComponent(
         thingEntity,
         MinimapSpriteComponent{sf::View(), new CollectableMinimapSprite(color),
                                false});
     m_ecsManager->addComponent(
         thingEntity,
-        CollectableComponent{getCollectableTypeFromSubType(thing.type),
+        CollectableComponent{m_collectableSystem -> getCollectableTypeFromSubType(thing.type),
                              (CollectableSubType)thing.type, 10, 20});
       m_ecsManager->addComponent(thingEntity, HealthComponent{100, 100});
   }
@@ -299,8 +296,7 @@ void GameEngine::update(sf::Time deltaTime) {
   m_enviromentDamageSystem->update(dt);
 }
 
-void GameEngine::setupECSComponents(std::shared_ptr<ECSManager>){
-  m_ecsManager->init();
+void GameEngine::setupComponents(std::shared_ptr<ECSManager>){
   // Components
   m_ecsManager->registerComponent<HealthComponent>();
   m_ecsManager->registerComponent<TransformComponent>();
@@ -310,61 +306,18 @@ void GameEngine::setupECSComponents(std::shared_ptr<ECSManager>){
   m_ecsManager->registerComponent<GameDrawableComponent>();
   m_ecsManager->registerComponent<WeaponComponent>();
   m_ecsManager->registerComponent<DamageComponent>();
-  //m_ecsManager->registerComponent<EnemyComponent>();
+  m_ecsManager->registerComponent<EnemyComponent>();
 }
-void GameEngine::createEntities(std::shared_ptr<ECSManager>){}
-void GameEngine::setupSystems(){}
+void GameEngine::setupSystems(std::shared_ptr<ECSManager>){
+  //Systems
+  // PlayerControllSystem Signature
+  Signature playerSystemSignature;
+  playerSystemSignature.set(m_ecsManager->getComponentType<HealthComponent>());
+  playerSystemSignature.set(m_ecsManager->getComponentType<TransformComponent>());
+  playerSystemSignature.set(m_ecsManager->getComponentType<ControllableComponent>());
+  // PlayerControllSystem Register
+  m_playerControllSystem = m_ecsManager->registerSystem<PlayerControllSystem>();
+  m_playerControllSystem->init(m_ecsManager);
+  m_ecsManager->setSystemSignature<PlayerControllSystem>(playerSystemSignature);
+}
 
-CollectableType getCollectableTypeFromSubType(int subType) {
-  switch (subType) {
-  case CollectableSubType::eWeaponBFG9000:
-  case CollectableSubType::eWeaponChaingun:
-  case CollectableSubType::eWeaponChainsaw:
-  case CollectableSubType::eWeaponPlasmaGun:
-  case CollectableSubType::eWeaponRocketLauncher:
-  case CollectableSubType::eWeaponShotgun:
-  case CollectableSubType::eWeaponSuperShotgun:
-    return CollectableType::eWeapons;
-    break;
-  case CollectableSubType::eAmmo4ShotgunShells:
-  case CollectableSubType::eAmmoBoxBullets:
-  case CollectableSubType::eAmmoBoxRockets:
-  case CollectableSubType::eAmmoBoxShotgunShells:
-  case CollectableSubType::eAmmoClip:
-  case CollectableSubType::eAmmoEnergyCell:
-  case CollectableSubType::eAmmoEnergyCellPack:
-  case CollectableSubType::eAmmoRocket:
-    return CollectableType::eAmmo;
-    break;
-  case CollectableSubType::eArtifactArmorBonus:
-  case CollectableSubType::eArtifactBersek:
-  case CollectableSubType::eArtifactComputerAreaMap:
-  case CollectableSubType::eArtifactHealthBonus:
-  case CollectableSubType::eArtifactInvulnerability:
-  case CollectableSubType::eArtifactLightAmplificationVisor:
-  case CollectableSubType::eArtifactMegasphere:
-  case CollectableSubType::eArtifactPartialInvisibility:
-  case CollectableSubType::eArtifactSupercharge:
-    return CollectableType::eArtifact;
-    break;
-  case CollectableSubType::ePowerupsArmor:
-  case CollectableSubType::ePowerupsBackpack:
-  case CollectableSubType::ePowerupsMedikit:
-  case CollectableSubType::ePowerupsMegaarmor:
-  case CollectableSubType::ePowerupsRadiationShieldingUnit:
-  case CollectableSubType::ePowerupsStimpack:
-    return CollectableType::ePowerups;
-    break;
-  case CollectableSubType::eKeysBlueKeycard:
-  case CollectableSubType::eKeysBlueSkullKey:
-  case CollectableSubType::eKeysRedKeycard:
-  case CollectableSubType::eKeysRedSkullKey:
-  case CollectableSubType::eKeysYellowKeycard:
-  case CollectableSubType::eKeysYellowSkullKey:
-    return CollectableType::eKeys;
-    break;
-  default:
-    return CollectableType::eUnknown;
-    break;
-  }
-}
