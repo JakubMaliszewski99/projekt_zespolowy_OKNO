@@ -102,14 +102,12 @@ GameEngine::GameEngine(InitSettings settings) {
 
     //Check entity type
     CollectableType loadedCollectable;
-std::cout << "Loading thing of ID: " << thing.type << std::endl;
+
     //Thing is enemy
     if(m_enemySystem->isEnemy(thing.type)){
         color = sf::Color::Cyan;
 
         float initialEnemyAngle = thing.angle * (M_PI / 180);
-
-        std::cout<<"Loading enemy..." << std::endl;
 
         m_ecsManager->addComponent(thingEntity,
                                   TransformComponent{(float)thing.x, (float)thing.y, 0.0f, 0.0f, sf::Vector2f(), initialEnemyAngle});
