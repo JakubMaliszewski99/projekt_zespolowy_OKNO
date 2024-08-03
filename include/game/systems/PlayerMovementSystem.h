@@ -24,8 +24,7 @@ public:
   void update(float dt) {
     for (auto const &entity : m_entities) {
       auto &transform = m_manager->getComponent<TransformComponent>(entity);
-      auto &controllable =
-          m_manager->getComponent<ControllableComponent>(entity);
+      auto &controllable = m_manager->getComponent<ControllableComponent>(entity);
       auto &drawable = m_manager->getComponent<MinimapSpriteComponent>(entity);
 
       if (!controllable.isPlayer) {
