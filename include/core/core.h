@@ -1,11 +1,10 @@
 #pragma once
-#include <SFML/Graphics.hpp>
 #include <random>
 #include <cmath>
+#include <SFML/Graphics.hpp>
 
 #define UNUSED(x) (void)(x)
 
-#define M_PI 3.14159265f
 const float FOV = 90;
 const float H_FOV = FOV / 2;
 

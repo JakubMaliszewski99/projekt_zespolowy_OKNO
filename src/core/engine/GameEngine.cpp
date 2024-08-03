@@ -26,127 +26,23 @@ GameEngine::GameEngine(InitSettings settings) {
 
   m_window = std::make_shared<sf::RenderWindow>();
 
-  // TODO: Move ECS setup to another methods
   // ECS
   m_ecsManager = std::make_shared<ECSManager>();
   m_ecsManager->init();
 
-  setupComponents(m_ecsManager);
-  setupSystems(m_ecsManager);
-  
-
-
-  // PlayerMovementSystem Signature
-  Signature playerMovementSystemSignature;
-  playerMovementSystemSignature.set(
-      m_ecsManager->getComponentType<HealthComponent>());
-  playerMovementSystemSignature.set(
-      m_ecsManager->getComponentType<TransformComponent>());
-  playerMovementSystemSignature.set(
-      m_ecsManager->getComponentType<ControllableComponent>());
-  // PlayerMovementSystem Register
-  m_playerMovementSystem = m_ecsManager->registerSystem<PlayerMovementSystem>();
-  m_playerMovementSystem->init(m_ecsManager, std::make_shared<BSP>(m_level));
-  m_ecsManager->setSystemSignature<PlayerMovementSystem>(
-      playerMovementSystemSignature);
-
-    // Create player entity
+  // Create player entity
   m_playerEntity = m_ecsManager->createEntity();
 
-  
-  //EnemySystem Signature
-  Signature enemySystemSignature;
-  enemySystemSignature.set(m_ecsManager->getComponentType<EnemyComponent>());
-  enemySystemSignature.set(m_ecsManager->getComponentType<HealthComponent>());
-  enemySystemSignature.set(m_ecsManager->getComponentType<TransformComponent>());
-  //EnemySystem Register
-  m_enemySystem = m_ecsManager->registerSystem<EnemySystem>();
-  m_enemySystem->init();
-  m_ecsManager->setSystemSignature<EnemySystem>(enemySystemSignature);
-  
+  //setup C and S
+  setupComponents();
+  setupSystems();
 
-  // MinimapRenderingsystem Signature
-  Signature minimapRenderingSystemSignature;
-  minimapRenderingSystemSignature.set(
-      m_ecsManager->getComponentType<TransformComponent>());
-  minimapRenderingSystemSignature.set(
-      m_ecsManager->getComponentType<MinimapSpriteComponent>());
-  // MinimapRenderingSystem Register
-  m_minimapRenderingSystem =
-      m_ecsManager->registerSystem<MinimapRenderingSystem>();
-  m_minimapRenderingSystem->init(m_ecsManager, m_window,
-                                 std::make_shared<BSP>(m_level), m_playerEntity,
-                                 m_settings.debugSettings);
-  m_ecsManager->setSystemSignature<MinimapRenderingSystem>(
-      minimapRenderingSystemSignature);
-
-  // GameRenderingSystem Signature
-  Signature gameRenderingSystemSignature;
-  gameRenderingSystemSignature.set(
-      m_ecsManager->getComponentType<TransformComponent>());
-  gameRenderingSystemSignature.set(
-      m_ecsManager->getComponentType<GameDrawableComponent>());
-  // GameRenderingSystem Register
-  m_gameRenderingSystem = m_ecsManager->registerSystem<GameRenderingSystem>();
-  m_gameRenderingSystem->init(m_ecsManager, m_window,
-                              std::make_shared<BSP>(m_level), m_playerEntity);
-  m_ecsManager->setSystemSignature<GameRenderingSystem>(
-      gameRenderingSystemSignature);
-
-  // CollectableSystem Signature
-  Signature collectableSystemSignature;
-  collectableSystemSignature.set(
-      m_ecsManager->getComponentType<TransformComponent>());
-  collectableSystemSignature.set(
-      m_ecsManager->getComponentType<CollectableComponent>());
-  // CollectableSystem Register
-  m_collectableSystem = m_ecsManager->registerSystem<CollectableSystem>();
-  m_collectableSystem->init(m_ecsManager, m_playerEntity);
-  m_ecsManager->setSystemSignature<CollectableSystem>(
-      collectableSystemSignature);
-
-  // WeaponSystem Signature
-  Signature weaponSystemSignature;
-  weaponSystemSignature.set(
-      m_ecsManager->getComponentType<WeaponComponent>());
-  //WeaponSystem Register
-  m_weaponSystem = m_ecsManager->registerSystem<WeaponSystem>();
-  m_weaponSystem->init(m_ecsManager);
-  m_ecsManager->setSystemSignature<WeaponSystem>(
-      weaponSystemSignature);
-
-  //DamageSystem Signature
-  Signature damageSystemSignature;
-  damageSystemSignature.set(
-      m_ecsManager->getComponentType<HealthComponent>());
-    damageSystemSignature.set(
-      m_ecsManager->getComponentType<TransformComponent>());
-  //DamageSystem Register
-  m_damageSystem = m_ecsManager->registerSystem<DamageSystem>();
-  m_damageSystem->init(m_ecsManager, m_playerEntity, std::make_shared<BSP>(m_level));
-  m_ecsManager->setSystemSignature<DamageSystem>(
-      damageSystemSignature);
-
-  //EnviromentDamageSystem Signature
-  Signature enviromentDamageSystemSignature;
-  enviromentDamageSystemSignature.set(
-      m_ecsManager->getComponentType<DamageComponent>());
-    damageSystemSignature.set(
-      m_ecsManager->getComponentType<TransformComponent>());
-  //EnviromentDamageSystem Register
-  m_enviromentDamageSystem = m_ecsManager->registerSystem<EnviromentDamageSystem>();
-  m_enviromentDamageSystem->init(m_ecsManager);
-  m_ecsManager->setSystemSignature<EnviromentDamageSystem>(
-      enviromentDamageSystemSignature);
-
-
-
+  // Adding components to player entity
   m_ecsManager->addComponent(m_playerEntity, HealthComponent{100, 100});
-  m_ecsManager->addComponent(
-      m_playerEntity,
-      TransformComponent{initialPlayerPosition.x, initialPlayerPosition.y,
-                         PLAYER_HEIGHT, PLAYER_HEIGHT,
-                         sf::Vector2f(), initialPlayerAngle});
+  m_ecsManager->addComponent(m_playerEntity,
+                            TransformComponent{initialPlayerPosition.x, initialPlayerPosition.y,
+                                              PLAYER_HEIGHT, PLAYER_HEIGHT,
+                                              sf::Vector2f(), initialPlayerAngle});
   m_ecsManager->addComponent(
       m_playerEntity,
       MinimapSpriteComponent{
@@ -201,36 +97,51 @@ GameEngine::GameEngine(InitSettings settings) {
     // Create Entity
     auto thingEntity = m_ecsManager->createEntity();
 
-    //Check entity type
-
-    //Set entity color
+    //Entity minimap color variable
     sf::Color color;
 
-    switch (m_collectableSystem -> getCollectableTypeFromSubType(thing.type)) {
-    case CollectableType::eWeapons:
-      color = sf::Color::Magenta;
-      break;
-    case CollectableType::eAmmo:
-      color = sf::Color::Yellow;
-      break;
-    case CollectableType::eArtifact:
-      color = sf::Color::Green;
-      break;
-    case CollectableType::ePowerups:
-      color = sf::Color::Red;
-      break;
-    case CollectableType::eKeys:
-      color = sf::Color::Blue;
-      break;
-    default:
-      continue;
-      break;
+    //Check entity type
+    CollectableType loadedCollectable;
+std::cout << "Loading thing of ID: " << thing.type << std::endl;
+    //Thing is enemy
+    if(m_enemySystem->isEnemy(thing.type)){
+        color = sf::Color::Cyan;
+
+        float initialEnemyAngle = thing.angle * (M_PI / 180);
+
+        std::cout<<"Loading enemy..." << std::endl;
+
+        m_ecsManager->addComponent(thingEntity,
+                                  TransformComponent{(float)thing.x, (float)thing.y, 0.0f, 0.0f, sf::Vector2f(), initialEnemyAngle});
+        m_ecsManager->addComponent(
+        thingEntity,
+        MinimapSpriteComponent{sf::View(), new EnemyMinimapSprite(color),
+                               false});
+
+        continue;
     }
-
-    if(thing.type == eImp || thing.type == eShotgunGuy || thing.type == eZombieMan)
-      color = sf::Color::Cyan;
-
-    m_ecsManager->addComponent(
+    //Thing is collectible
+    else if((loadedCollectable = m_collectableSystem -> getCollectableTypeFromSubType(thing.type)) != CollectableType::eUnknown){
+      switch (loadedCollectable) {
+        case CollectableType::eWeapons:
+          color = sf::Color::Magenta;
+          break;
+        case CollectableType::eAmmo:
+          color = sf::Color::Yellow;
+          break;
+        case CollectableType::eArtifact:
+          color = sf::Color::Green;
+          break;
+        case CollectableType::ePowerups:
+          color = sf::Color::Red;
+          break;
+        case CollectableType::eKeys:
+          color = sf::Color::Blue;
+          break;
+        default:
+          break;
+      }
+        m_ecsManager->addComponent(
         thingEntity,
         TransformComponent{(float)thing.x, (float)thing.y, 0.0f, 0.0f, sf::Vector2f(), 0});
     
@@ -243,6 +154,7 @@ GameEngine::GameEngine(InitSettings settings) {
         CollectableComponent{m_collectableSystem -> getCollectableTypeFromSubType(thing.type),
                              (CollectableSubType)thing.type, 10, 20});
       m_ecsManager->addComponent(thingEntity, HealthComponent{100, 100});
+    }
   }
 }
 
@@ -296,7 +208,7 @@ void GameEngine::update(sf::Time deltaTime) {
   m_enviromentDamageSystem->update(dt);
 }
 
-void GameEngine::setupComponents(std::shared_ptr<ECSManager>){
+void GameEngine::setupComponents(){
   // Components
   m_ecsManager->registerComponent<HealthComponent>();
   m_ecsManager->registerComponent<TransformComponent>();
@@ -308,8 +220,9 @@ void GameEngine::setupComponents(std::shared_ptr<ECSManager>){
   m_ecsManager->registerComponent<DamageComponent>();
   m_ecsManager->registerComponent<EnemyComponent>();
 }
-void GameEngine::setupSystems(std::shared_ptr<ECSManager>){
+void GameEngine::setupSystems(){
   //Systems
+
   // PlayerControllSystem Signature
   Signature playerSystemSignature;
   playerSystemSignature.set(m_ecsManager->getComponentType<HealthComponent>());
@@ -319,5 +232,85 @@ void GameEngine::setupSystems(std::shared_ptr<ECSManager>){
   m_playerControllSystem = m_ecsManager->registerSystem<PlayerControllSystem>();
   m_playerControllSystem->init(m_ecsManager);
   m_ecsManager->setSystemSignature<PlayerControllSystem>(playerSystemSignature);
+
+  // PlayerMovementSystem Signature
+  Signature playerMovementSystemSignature;
+  playerMovementSystemSignature.set(m_ecsManager->getComponentType<HealthComponent>());
+  playerMovementSystemSignature.set(m_ecsManager->getComponentType<TransformComponent>());
+  playerMovementSystemSignature.set(m_ecsManager->getComponentType<ControllableComponent>());
+  // PlayerMovementSystem Register
+  m_playerMovementSystem = m_ecsManager->registerSystem<PlayerMovementSystem>();
+  m_playerMovementSystem->init(m_ecsManager, std::make_shared<BSP>(m_level));
+  m_ecsManager->setSystemSignature<PlayerMovementSystem>(playerMovementSystemSignature);
+
+  //TODO: Modify init
+  //EnemySystem Signature
+  Signature enemySystemSignature;
+  enemySystemSignature.set(m_ecsManager->getComponentType<EnemyComponent>());
+  enemySystemSignature.set(m_ecsManager->getComponentType<HealthComponent>());
+  enemySystemSignature.set(m_ecsManager->getComponentType<TransformComponent>());
+  //EnemySystem Register
+  m_enemySystem = m_ecsManager->registerSystem<EnemySystem>();
+  m_enemySystem->init(m_ecsManager);
+  m_ecsManager->setSystemSignature<EnemySystem>(enemySystemSignature);
+
+  // MinimapRenderingsystem Signature
+  Signature minimapRenderingSystemSignature;
+  minimapRenderingSystemSignature.set(m_ecsManager->getComponentType<TransformComponent>());
+  minimapRenderingSystemSignature.set(m_ecsManager->getComponentType<MinimapSpriteComponent>());
+  // MinimapRenderingSystem Register
+  m_minimapRenderingSystem = m_ecsManager->registerSystem<MinimapRenderingSystem>();
+  m_minimapRenderingSystem->init(m_ecsManager, m_window, 
+                                std::make_shared<BSP>(m_level), 
+                                m_playerEntity, 
+                                m_settings.debugSettings);
+  m_ecsManager->setSystemSignature<MinimapRenderingSystem>(minimapRenderingSystemSignature);
+
+  // GameRenderingSystem Signature
+  Signature gameRenderingSystemSignature;
+  gameRenderingSystemSignature.set(m_ecsManager->getComponentType<TransformComponent>());
+  gameRenderingSystemSignature.set(m_ecsManager->getComponentType<GameDrawableComponent>());
+  // GameRenderingSystem Register
+  m_gameRenderingSystem = m_ecsManager->registerSystem<GameRenderingSystem>();
+  m_gameRenderingSystem->init(m_ecsManager, m_window,
+                              std::make_shared<BSP>(m_level), 
+                              m_playerEntity);
+  m_ecsManager->setSystemSignature<GameRenderingSystem>(gameRenderingSystemSignature);
+
+  // CollectableSystem Signature
+  Signature collectableSystemSignature;
+  collectableSystemSignature.set(m_ecsManager->getComponentType<TransformComponent>());
+  collectableSystemSignature.set(m_ecsManager->getComponentType<CollectableComponent>());
+  // CollectableSystem Register
+  m_collectableSystem = m_ecsManager->registerSystem<CollectableSystem>();
+  m_collectableSystem->init(m_ecsManager, m_playerEntity);
+  m_ecsManager->setSystemSignature<CollectableSystem>(collectableSystemSignature);
+
+  // WeaponSystem Signature
+  Signature weaponSystemSignature;
+  weaponSystemSignature.set(m_ecsManager->getComponentType<WeaponComponent>());
+  //WeaponSystem Register
+  m_weaponSystem = m_ecsManager->registerSystem<WeaponSystem>();
+  m_weaponSystem->init(m_ecsManager);
+  m_ecsManager->setSystemSignature<WeaponSystem>(weaponSystemSignature);
+
+  //DamageSystem Signature
+  Signature damageSystemSignature;
+  damageSystemSignature.set(m_ecsManager->getComponentType<HealthComponent>());
+  damageSystemSignature.set(m_ecsManager->getComponentType<TransformComponent>());
+  //DamageSystem Register
+  m_damageSystem = m_ecsManager->registerSystem<DamageSystem>();
+  m_damageSystem->init(m_ecsManager, m_playerEntity, std::make_shared<BSP>(m_level));
+  m_ecsManager->setSystemSignature<DamageSystem>(damageSystemSignature);
+
+  //EnviromentDamageSystem Signature
+  Signature enviromentDamageSystemSignature;
+  enviromentDamageSystemSignature.set(m_ecsManager->getComponentType<DamageComponent>());
+  damageSystemSignature.set(m_ecsManager->getComponentType<TransformComponent>());
+  //EnviromentDamageSystem Register
+  m_enviromentDamageSystem = m_ecsManager->registerSystem<EnviromentDamageSystem>();
+  m_enviromentDamageSystem->init(m_ecsManager);
+  m_ecsManager->setSystemSignature<EnviromentDamageSystem>(enviromentDamageSystemSignature);
+
 }
 

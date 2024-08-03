@@ -8,6 +8,7 @@
 #include "game/components/GameDrawableComponent.h"
 #include "game/components/HealthComponent.h"
 #include "game/sprites/CollectableMinimapSprite.h"
+#include "game/sprites/EnemyMinimapSprite.h"
 #include "game/sprites/LevelMinimapSprite.h"
 #include "game/systems/PlayerControllSystem.h"
 #include "game/systems/PlayerMovementSystem.h"
@@ -44,8 +45,8 @@ public:
   void update(sf::Time deltaTime);
 
 private:
-  void setupComponents(std::shared_ptr<ECSManager>);
-  void setupSystems(std::shared_ptr<ECSManager>);
+  void setupComponents();
+  void setupSystems();
 
   GameEngineState m_state;
   std::shared_ptr<sf::RenderWindow> m_window;

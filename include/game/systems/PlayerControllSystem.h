@@ -1,4 +1,5 @@
 #pragma once
+#include <cmath>
 #include "../../core/math/utilities.h"
 #include "../../core/ecs/ECSManager.h"
 #include "../../core/ecs/System.h"
@@ -6,10 +7,10 @@
 #include "../components/ControllableComponent.h"
 #include "../components/MinimapSpriteComponent.h"
 #include "../components/TransformComponent.h"
-#include <cmath>
+
 
 const float DEFAULT_SPEED = 100.f;
-const float PLAYER_DEFAULT_SPEED = 150.0f;
+const float PLAYER_DEFAULT_SPEED = 500.0f;
 const float ENEMY_DEFAULT_SPEED = 70.f;
 const float DEFAULT_ROTATION_SPEED = 10;
 
@@ -72,6 +73,6 @@ private:
   std::shared_ptr<ECSManager> m_manager;
 
   uint32_t currentPlayerSector() {
-
+    	return 0;
   }
 };

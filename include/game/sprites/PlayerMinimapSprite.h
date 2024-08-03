@@ -1,5 +1,4 @@
 #pragma once
-#include <SFML/Graphics.hpp>
 #include "MinimapSprite.h"
 
 class PlayerMinimapSprite : public MinimapSprite {

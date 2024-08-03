@@ -40,6 +40,10 @@ public:
     
   }
 
+  bool isCollectible(int type){
+    return false;
+  }
+
   CollectableType getCollectableTypeFromSubType(int subType) {
   switch (subType) {
   case CollectableSubType::eWeaponBFG9000:
