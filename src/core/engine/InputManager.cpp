@@ -17,3 +17,7 @@ InputManager *InputManager::getInstance() {
 bool InputManager::isKeyPressed(sf::Keyboard::Key key) { 
   return sf::Keyboard::isKeyPressed(key);
 }
+
+bool InputManager::isMouseButtonPressed(sf::Mouse::Button button){
+  return sf::Mouse::isButtonPressed(button);
+}

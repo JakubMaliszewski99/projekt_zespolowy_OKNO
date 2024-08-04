@@ -7,6 +7,7 @@
 #include "core/logger/Logger.h"
 #include "game/components/GameDrawableComponent.h"
 #include "game/components/HealthComponent.h"
+#include "game/components/PlayerStateComponent.h"
 #include "game/sprites/CollectableMinimapSprite.h"
 #include "game/sprites/EnemyMinimapSprite.h"
 #include "game/sprites/LevelMinimapSprite.h"
@@ -47,6 +48,9 @@ public:
 private:
   void setupComponents();
   void setupSystems();
+
+  void handleTabToggle();
+  bool m_tabKeyPreviouslyPressed = false;
 
   GameEngineState m_state;
   std::shared_ptr<sf::RenderWindow> m_window;

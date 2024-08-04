@@ -43,18 +43,17 @@ GameEngine::GameEngine(InitSettings settings) {
                             TransformComponent{initialPlayerPosition.x, initialPlayerPosition.y,
                                               PLAYER_HEIGHT, PLAYER_HEIGHT,
                                               sf::Vector2f(), initialPlayerAngle});
-  m_ecsManager->addComponent(
-      m_playerEntity,
-      MinimapSpriteComponent{
-          sf::View(),
-          new PlayerMinimapSprite(m_settings.debugSettings.displayFov), true});
+  m_ecsManager->addComponent(m_playerEntity,
+                            MinimapSpriteComponent{
+                            sf::View(),
+                                  new PlayerMinimapSprite(m_settings.debugSettings.displayFov), true});
   m_ecsManager->addComponent(m_playerEntity, ControllableComponent{true});
-  m_ecsManager->addComponent(
-      m_playerEntity, 
-      WeaponComponent{
-          {WeaponModel::eWeaponModelFist, WeaponModel::eWeaponModelPistol, WeaponModel::eWeaponModelNone}, 
-          WeaponType::eHandWeapon,
-          false, true, 0, 1, 0});
+  m_ecsManager->addComponent(m_playerEntity, PlayerStateComponent{0, 0, 0, 0, 0, 0, 0, 0, 0, 1});
+  m_ecsManager->addComponent(m_playerEntity, 
+                              WeaponComponent{
+                                  {WeaponModel::eWeaponModelFist, WeaponModel::eWeaponModelPistol, WeaponModel::eWeaponModelNone}, 
+                                  WeaponType::eHandWeapon,
+                                  false, true, 0, 1, 0});
 
   // Create map entity
   m_mapEntity = m_ecsManager->createEntity();
@@ -182,15 +181,14 @@ void GameEngine::init() {
   m_window->create(
       sf::VideoMode(m_settings.windowWidth, m_settings.windowHeight),
       m_settings.windowTitle);
+  m_window->setMouseCursorVisible(false);
 }
 
 void GameEngine::update(sf::Time deltaTime) {
   float dt = deltaTime.asSeconds();
-  if (InputManager::getInstance()->isKeyPressed(sf::Keyboard::Tab)) {
-    m_state = GameEngineState::eGameMinimap;
-  } else {
-    m_state = GameEngineState::eGame;
-  }
+
+  handleTabToggle();
+
 
   m_playerControllSystem->update(dt);
   m_playerMovementSystem->update(dt);
@@ -217,25 +215,26 @@ void GameEngine::setupComponents(){
   m_ecsManager->registerComponent<WeaponComponent>();
   m_ecsManager->registerComponent<DamageComponent>();
   m_ecsManager->registerComponent<EnemyComponent>();
+  m_ecsManager->registerComponent<PlayerStateComponent>();
 }
 void GameEngine::setupSystems(){
   //Systems
 
   // PlayerControllSystem Signature
-  Signature playerSystemSignature;
-  playerSystemSignature.set(m_ecsManager->getComponentType<HealthComponent>());
-  playerSystemSignature.set(m_ecsManager->getComponentType<TransformComponent>());
-  playerSystemSignature.set(m_ecsManager->getComponentType<ControllableComponent>());
+  Signature playerControllSystemSignature;
+  playerControllSystemSignature.set(m_ecsManager->getComponentType<ControllableComponent>());
+  playerControllSystemSignature.set(m_ecsManager->getComponentType<PlayerStateComponent>());
   // PlayerControllSystem Register
   m_playerControllSystem = m_ecsManager->registerSystem<PlayerControllSystem>();
-  m_playerControllSystem->init(m_ecsManager);
-  m_ecsManager->setSystemSignature<PlayerControllSystem>(playerSystemSignature);
+  m_playerControllSystem->init(m_ecsManager, m_window);
+  m_ecsManager->setSystemSignature<PlayerControllSystem>(playerControllSystemSignature);
 
   // PlayerMovementSystem Signature
   Signature playerMovementSystemSignature;
   playerMovementSystemSignature.set(m_ecsManager->getComponentType<HealthComponent>());
   playerMovementSystemSignature.set(m_ecsManager->getComponentType<TransformComponent>());
   playerMovementSystemSignature.set(m_ecsManager->getComponentType<ControllableComponent>());
+  playerMovementSystemSignature.set(m_ecsManager->getComponentType<PlayerStateComponent>());
   // PlayerMovementSystem Register
   m_playerMovementSystem = m_ecsManager->registerSystem<PlayerMovementSystem>();
   m_playerMovementSystem->init(m_ecsManager, std::make_shared<BSP>(m_level));
@@ -310,5 +309,18 @@ void GameEngine::setupSystems(){
   m_enviromentDamageSystem->init(m_ecsManager);
   m_ecsManager->setSystemSignature<EnviromentDamageSystem>(enviromentDamageSystemSignature);
 
+}
+
+void GameEngine::handleTabToggle(){
+  bool isTabPressed = InputManager::getInstance()->isKeyPressed(sf::Keyboard::Tab);
+
+  if (isTabPressed && !m_tabKeyPreviouslyPressed) {
+    if(m_state == GameEngineState::eGame)
+      m_state = GameEngineState::eGameMinimap;
+    else
+      m_state = GameEngineState::eGame;
+  }
+
+  m_tabKeyPreviouslyPressed = isTabPressed;
 }
 

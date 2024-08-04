@@ -9,10 +9,13 @@
 #include "../components/ControllableComponent.h"
 #include "../components/MinimapSpriteComponent.h"
 #include "../components/TransformComponent.h"
+#include "../components/PlayerStateComponent.h"
 
 const float FALLING_SPEED = 500.0f;
 const float CLIMBING_SPEED = 50.0f;
 const float EPSILON = 5.0f;
+const float PLAYERSPEED = 500.0f;
+const float DEFAULT_ROTATION_SPEED = 10;
 
 class PlayerMovementSystem : public System {
 public:
@@ -26,9 +29,42 @@ public:
       auto &transform = m_manager->getComponent<TransformComponent>(entity);
       auto &controllable = m_manager->getComponent<ControllableComponent>(entity);
       auto &drawable = m_manager->getComponent<MinimapSpriteComponent>(entity);
+      auto &state = m_manager->getComponent<PlayerStateComponent>(entity);
 
       if (!controllable.isPlayer) {
         continue;
+      }
+
+      //movement
+      if(state.isMovingForward){
+        transform.positionX += cos(transform.angle) * PLAYERSPEED * dt;
+        transform.positionY += sin(transform.angle) * PLAYERSPEED * dt;
+        //std::cout << "Moving Forward";
+      }
+      if(state.isMovingBackwards){
+        transform.positionX -= cos(transform.angle) * PLAYERSPEED * dt;
+        transform.positionY -= sin(transform.angle) * PLAYERSPEED * dt;
+        //std::cout << "Moving Backwards";
+      }
+      if(state.isMovingRight){
+        transform.positionX -= cos(transform.angle + 90 * (M_PI / 180)) * PLAYERSPEED * dt;
+        transform.positionY -= sin(transform.angle + 90 * (M_PI / 180)) * PLAYERSPEED * dt;
+        //std::cout << "Moving Right";
+      }
+      if(state.isMovingLeft){
+        transform.positionX += cos(transform.angle + 90 * (M_PI / 180)) * PLAYERSPEED * dt;
+        transform.positionY += sin(transform.angle + 90 * (M_PI / 180)) * PLAYERSPEED * dt;
+        //std::cout <<"Moving Left";
+      }
+
+      //rotation
+      if(state.isRotatingRight){
+        transform.angle -= DEFAULT_ROTATION_SPEED * dt * 0.4f;
+        //std::cout << "Rotating Right";
+      }
+      if(state.isRotatingLeft){
+        transform.angle += DEFAULT_ROTATION_SPEED * dt * 0.4f;
+        //std::cout << "Rotating Left";
       }
 
       sf::Vector2f velocity = transform.velocity;
@@ -73,8 +109,8 @@ public:
       }
 
       transform.velocity = normalize(velocity);
-      transform.positionX += velocity.x;
-      transform.positionY += velocity.y;
+      //transform.positionX += velocity.x;
+      //transform.positionY += velocity.y;
 
       // TODO: We don't really need targetPositionZ because it's always
       // floorHeight
