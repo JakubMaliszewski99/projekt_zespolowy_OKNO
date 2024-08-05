@@ -11,11 +11,15 @@
 #include "../components/TransformComponent.h"
 #include "../components/PlayerStateComponent.h"
 
+const float PLAYER_ACCELERATION = 800.0f;
+const float PLAYER_MAX_SPEED = 360.0f;
+const float DEFAULT_ROTATION_SPEED = 2.4f;
+const float DAMPING_FACTOR = 100.0f;
+const float DAMPING_TIME_COEFFICIENT = -2.0f;
+const float INTERPOLATION_FACTOR = 4.5f;
 const float FALLING_SPEED = 500.0f;
 const float CLIMBING_SPEED = 50.0f;
 const float EPSILON = 5.0f;
-const float PLAYERSPEED = 500.0f;
-const float DEFAULT_ROTATION_SPEED = 10;
 
 class PlayerMovementSystem : public System {
 public:
@@ -34,39 +38,73 @@ public:
       if (!controllable.isPlayer) {
         continue;
       }
+      //reset acc to 0
+      sf::Vector2f acceleration = {0.0f, 0.0f};
 
+      //prepare angles
+      float cosAngle = cos(transform.angle);
+      float sinAngle = sin(transform.angle);
+      float cosAngle90 = cos(transform.angle + 90 * (M_PI / 180));
+      float sinAngle90 = sin(transform.angle + 90 * (M_PI / 180));
+
+      //TODO: Dopracowa† podczas ruchu myszk¥ - w oryginale maksymaln¥ pr©dko˜† mo¾emy uzyska† tylko myszk¥ xD
       //movement
       if(state.isMovingForward){
-        transform.positionX += cos(transform.angle) * PLAYERSPEED * dt;
-        transform.positionY += sin(transform.angle) * PLAYERSPEED * dt;
-        //std::cout << "Moving Forward";
+        acceleration.x += cosAngle * PLAYER_ACCELERATION;
+        acceleration.y += sinAngle * PLAYER_ACCELERATION;
       }
       if(state.isMovingBackwards){
-        transform.positionX -= cos(transform.angle) * PLAYERSPEED * dt;
-        transform.positionY -= sin(transform.angle) * PLAYERSPEED * dt;
-        //std::cout << "Moving Backwards";
+        acceleration.x -= cosAngle * PLAYER_ACCELERATION;
+        acceleration.y -= sinAngle * PLAYER_ACCELERATION;
       }
       if(state.isMovingRight){
-        transform.positionX -= cos(transform.angle + 90 * (M_PI / 180)) * PLAYERSPEED * dt;
-        transform.positionY -= sin(transform.angle + 90 * (M_PI / 180)) * PLAYERSPEED * dt;
-        //std::cout << "Moving Right";
+        acceleration.x -= cosAngle90 * PLAYER_ACCELERATION;
+        acceleration.y -= sinAngle90 * PLAYER_ACCELERATION;
       }
       if(state.isMovingLeft){
-        transform.positionX += cos(transform.angle + 90 * (M_PI / 180)) * PLAYERSPEED * dt;
-        transform.positionY += sin(transform.angle + 90 * (M_PI / 180)) * PLAYERSPEED * dt;
-        //std::cout <<"Moving Left";
+        acceleration.x += cosAngle90 * PLAYER_ACCELERATION;
+        acceleration.y += sinAngle90 * PLAYER_ACCELERATION;
       }
 
+      // Tˆumienie gdy gracz przestaje si© rusza†
+      if (!state.isMovingForward && !state.isMovingBackwards && !state.isMovingRight && !state.isMovingLeft) {
+        float dampingFactor = std::pow(DAMPING_FACTOR, dt * DAMPING_TIME_COEFFICIENT);
+        std::cout << DAMPING_FACTOR << " to the power of " << dt << std::endl;
+        transform.velocity.x *= dampingFactor;
+        transform.velocity.y *= dampingFactor;
+      }else{
+        transform.velocity += acceleration * dt;
+      }
+
+      // Interpolacja wektora pr©dko˜ci
+      if (std::sqrt(acceleration.x * acceleration.x + acceleration.y * acceleration.y) > 0.0f) {
+      sf::Vector2f targetVelocity = normalize(acceleration) * std::sqrt(transform.velocity.x * transform.velocity.x + transform.velocity.y * transform.velocity.y);
+      transform.velocity = lerp(transform.velocity, targetVelocity, INTERPOLATION_FACTOR * dt);
+      }
+
+       // Clamp velocity to max speed
+      if (std::sqrt(transform.velocity.x * transform.velocity.x + transform.velocity.y * transform.velocity.y) > PLAYER_MAX_SPEED) {
+        transform.velocity = normalize(transform.velocity) * PLAYER_MAX_SPEED;
+      }
+
+      // Apply velocity to position
+      transform.positionX += transform.velocity.x * dt;
+      transform.positionY += transform.velocity.y * dt;
+
+      //Save the acceleration value to transform component
+      transform.acceleration = acceleration;
+
+      //TODO: Smooth rotacja przy ruchu myszk¥
       //rotation
       if(state.isRotatingRight){
-        transform.angle -= DEFAULT_ROTATION_SPEED * dt * 0.4f;
+        transform.angle -= DEFAULT_ROTATION_SPEED * dt;
         //std::cout << "Rotating Right";
       }
       if(state.isRotatingLeft){
-        transform.angle += DEFAULT_ROTATION_SPEED * dt * 0.4f;
+        transform.angle += DEFAULT_ROTATION_SPEED * dt;
         //std::cout << "Rotating Left";
       }
-
+      /*
       sf::Vector2f velocity = transform.velocity;
 
       // TODO: Velocity feedback??
@@ -111,6 +149,7 @@ public:
       transform.velocity = normalize(velocity);
       //transform.positionX += velocity.x;
       //transform.positionY += velocity.y;
+      */
 
       // TODO: We don't really need targetPositionZ because it's always
       // floorHeight

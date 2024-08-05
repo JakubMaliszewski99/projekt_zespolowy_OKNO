@@ -139,6 +139,7 @@ private:
             TransformComponent{shooterTransform.positionX, shooterTransform.positionY,
                          shooterTransform.positionZ, shooterTransform.targetPositonZ,
                          velocityScalarToVector(WeaponComponent::projectileSpeed, shooterTransform.angle),
+                         sf::Vector2f(),
                          shooterTransform.angle});
         m_manager->addComponent(projectile, DamageComponent{weapon.damage, 
                                                             WeaponComponent::projectileExplosionRange, 

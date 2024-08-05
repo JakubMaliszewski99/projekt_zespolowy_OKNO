@@ -202,3 +202,7 @@ sf::Vector2f segmentEnd(float startX, float startY, float angle, float length){
     float endY = startY + sinf(angle) * length;
     return sf::Vector2f(endX, endY);
 }
+
+sf::Vector2f lerp(const sf::Vector2f& start, const sf::Vector2f& end, float t) {
+  return start + t * (end - start);
+}
