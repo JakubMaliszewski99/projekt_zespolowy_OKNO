@@ -27,10 +27,13 @@ public:
         continue;
       }
 
-      //currentMousePosition = sf::Mouse::getPosition(*m_window);
+
+      //Myszka
       currentMousePosition = InputManager::getInstance()->getMousePosition(m_window);
       mouseDelta = currentMousePosition - lastMousePosition;
       InputManager::getInstance()->setMouseDelta(mouseDelta);
+      sf::Mouse::setPosition(sf::Vector2i(m_window->getSize() / 2u), *m_window);
+      lastMousePosition = InputManager::getInstance()->getMousePosition(m_window);
 
       if(state.isAlive){
 
@@ -52,15 +55,12 @@ public:
         state.isRotatingRight = (InputManager::getInstance()->isKeyPressed(sf::Keyboard::E) ||
                                 InputManager::getInstance()->isKeyPressed(sf::Keyboard::Right) ||
                                 (mouseDelta.x > 0 && !InputManager::getInstance()->isMouseButtonPressed(sf::Mouse::Right)));
-        
-        sf::Mouse::setPosition(sf::Vector2i(m_window->getSize() / 2u), *m_window);
-        lastMousePosition = InputManager::getInstance()->getMousePosition(m_window);
 
         // TODO: Implementacja tego w Systemie do renderowania
         state.isZoomingIn = InputManager::getInstance()->isKeyPressed(sf::Keyboard::Dash);
         state.isZoomingOut = InputManager::getInstance()->isKeyPressed(sf::Keyboard::Equal);
 
-        // TODO: Dodanie tego do komponentu stan¢w i implementacja w Systemie broni
+        // TODO: Implementacja w Systemie broni
         state.isFiring = InputManager::getInstance()->isKeyPressed(sf::Keyboard::LControl);
       }
     }

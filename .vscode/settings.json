@@ -53,7 +53,9 @@
         "bitset": "cpp",
         "cstring": "cpp",
         "iomanip": "cpp",
-        "cinttypes": "cpp"
+        "cinttypes": "cpp",
+        "chrono": "cpp",
+        "ratio": "cpp"
     },
     "cmake.configureOnOpen": false,
     "C_Cpp.default.compilerPath": "C:\\mingw32\\bin\\g++.exe",

@@ -1,4 +1,5 @@
 #pragma once
+#include<chrono>
 #include "../../core/core.h"
 #include "../../core/ecs/ECSManager.h"
 #include "../../core/ecs/System.h"
@@ -11,7 +12,7 @@
 #include "../components/TransformComponent.h"
 #include "../components/PlayerStateComponent.h"
 
-const float PLAYER_ACCELERATION = 800.0f;
+const float PLAYER_ACCELERATION = 700.0f;
 const float PLAYER_MAX_SPEED = 360.0f;
 const float DEFAULT_ROTATION_SPEED = 2.4f;
 const float DAMPING_FACTOR = 100.0f;
@@ -20,6 +21,8 @@ const float INTERPOLATION_FACTOR = 4.5f;
 const float FALLING_SPEED = 500.0f;
 const float CLIMBING_SPEED = 50.0f;
 const float EPSILON = 5.0f;
+const float HEAD_BOBBING_FREQUENCY = 10.0f;
+const float HEAD_BOBBING_AMPLITUDE = 7.5f;
 
 class PlayerMovementSystem : public System {
 public:
@@ -173,13 +176,15 @@ public:
       //transform.positionX += velocity.x;
       //transform.positionY += velocity.y;
       */
-
+     
       // TODO: We don't really need targetPositionZ because it's always
       // floorHeight
       int16_t floorHeight =
           m_bsp->getSubSectorHeight(transform.positionX, transform.positionY);
       transform.targetPositonZ = floorHeight + PLAYER_HEIGHT;
+      
       float dHeight = transform.targetPositonZ - transform.positionZ;
+      
       // TODO: Maybe it should be added to velocity?? And make it 3D
       // Player should be accelerating when climbing and falling
       // but when climbing it should get a some constant
@@ -191,10 +196,22 @@ public:
       } else if (dHeight < 0) {
         transform.positionZ -= FALLING_SPEED * dt;
       }
+
+
+
+      /*
+      // Head bobbing effect
+        if (state.isMovingForward || state.isMovingBackwards || state.isMovingRight || state.isMovingLeft) {
+            sf::Time elapsed = m_clock.getElapsedTime();
+            float time = elapsed.asSeconds();
+            transform.positionZ += std::sin(time * HEAD_BOBBING_FREQUENCY) * HEAD_BOBBING_AMPLITUDE;
+        }
+        */
     }
   }
 
 private:
   std::shared_ptr<ECSManager> m_manager;
   std::shared_ptr<BSP> m_bsp;
+  //sf::Clock m_clock;
 };
