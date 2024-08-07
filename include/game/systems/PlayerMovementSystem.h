@@ -50,26 +50,45 @@ public:
       //TODO: Dopracowa† podczas ruchu myszk¥ - w oryginale maksymaln¥ pr©dko˜† mo¾emy uzyska† tylko myszk¥ xD
       //movement
       if(state.isMovingForward){
-        acceleration.x += cosAngle * PLAYER_ACCELERATION;
-        acceleration.y += sinAngle * PLAYER_ACCELERATION;
+        if(InputManager::getInstance()->getMouseDelta().y < 0){
+          acceleration.x += cosAngle * PLAYER_ACCELERATION/25 * -InputManager::getInstance()->getMouseDelta().y;
+          acceleration.y += sinAngle * PLAYER_ACCELERATION/25 * -InputManager::getInstance()->getMouseDelta().y;
+        } else {
+          acceleration.x += cosAngle * PLAYER_ACCELERATION;
+          acceleration.y += sinAngle * PLAYER_ACCELERATION;
+        }
       }
       if(state.isMovingBackwards){
-        acceleration.x -= cosAngle * PLAYER_ACCELERATION;
-        acceleration.y -= sinAngle * PLAYER_ACCELERATION;
+        if(InputManager::getInstance()->getMouseDelta().y > 0){
+          acceleration.x -= cosAngle * PLAYER_ACCELERATION/25 * InputManager::getInstance()->getMouseDelta().y;
+          acceleration.y -= sinAngle * PLAYER_ACCELERATION/25 * InputManager::getInstance()->getMouseDelta().y;
+        }else{
+          acceleration.x -= cosAngle * PLAYER_ACCELERATION;
+          acceleration.y -= sinAngle * PLAYER_ACCELERATION;
+        }
       }
       if(state.isMovingRight){
-        acceleration.x -= cosAngle90 * PLAYER_ACCELERATION;
-        acceleration.y -= sinAngle90 * PLAYER_ACCELERATION;
+        if(InputManager::getInstance()->getMouseDelta().x > 0){
+          acceleration.x -= cosAngle90 * PLAYER_ACCELERATION/25 * InputManager::getInstance()->getMouseDelta().x;
+          acceleration.y -= sinAngle90 * PLAYER_ACCELERATION/25 * InputManager::getInstance()->getMouseDelta().x;
+        }else{
+          acceleration.x -= cosAngle90 * PLAYER_ACCELERATION;
+          acceleration.y -= sinAngle90 * PLAYER_ACCELERATION;
+        }
       }
       if(state.isMovingLeft){
-        acceleration.x += cosAngle90 * PLAYER_ACCELERATION;
-        acceleration.y += sinAngle90 * PLAYER_ACCELERATION;
+        if(InputManager::getInstance()->getMouseDelta().x < 0){
+          acceleration.x += cosAngle90 * PLAYER_ACCELERATION/25 * -InputManager::getInstance()->getMouseDelta().x;
+          acceleration.y += sinAngle90 * PLAYER_ACCELERATION/25 * -InputManager::getInstance()->getMouseDelta().x;
+        }else{
+          acceleration.x += cosAngle90 * PLAYER_ACCELERATION;
+          acceleration.y += sinAngle90 * PLAYER_ACCELERATION;
+        }
       }
 
       // Tˆumienie gdy gracz przestaje si© rusza†
       if (!state.isMovingForward && !state.isMovingBackwards && !state.isMovingRight && !state.isMovingLeft) {
         float dampingFactor = std::pow(DAMPING_FACTOR, dt * DAMPING_TIME_COEFFICIENT);
-        std::cout << DAMPING_FACTOR << " to the power of " << dt << std::endl;
         transform.velocity.x *= dampingFactor;
         transform.velocity.y *= dampingFactor;
       }else{
@@ -97,12 +116,18 @@ public:
       //TODO: Smooth rotacja przy ruchu myszk¥
       //rotation
       if(state.isRotatingRight){
-        transform.angle -= DEFAULT_ROTATION_SPEED * dt;
-        //std::cout << "Rotating Right";
+        if(InputManager::getInstance()->getMouseDelta().x > 0){
+          transform.angle -= DEFAULT_ROTATION_SPEED/50 * dt * InputManager::getInstance()->getMouseDelta().x;
+        }else{
+          transform.angle -= DEFAULT_ROTATION_SPEED * dt;
+        }
       }
       if(state.isRotatingLeft){
-        transform.angle += DEFAULT_ROTATION_SPEED * dt;
-        //std::cout << "Rotating Left";
+        if(InputManager::getInstance()->getMouseDelta().x < 0){
+          transform.angle += DEFAULT_ROTATION_SPEED/50 * dt * -InputManager::getInstance()->getMouseDelta().x;
+        }else{
+          transform.angle += DEFAULT_ROTATION_SPEED * dt;
+        }
       }
       /*
       sf::Vector2f velocity = transform.velocity;

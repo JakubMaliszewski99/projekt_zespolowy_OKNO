@@ -27,8 +27,10 @@ public:
         continue;
       }
 
-      currentMousePosition = sf::Mouse::getPosition(*m_window);
+      //currentMousePosition = sf::Mouse::getPosition(*m_window);
+      currentMousePosition = InputManager::getInstance()->getMousePosition(m_window);
       mouseDelta = currentMousePosition - lastMousePosition;
+      InputManager::getInstance()->setMouseDelta(mouseDelta);
 
       if(state.isAlive){
 
@@ -52,7 +54,7 @@ public:
                                 (mouseDelta.x > 0 && !InputManager::getInstance()->isMouseButtonPressed(sf::Mouse::Right)));
         
         sf::Mouse::setPosition(sf::Vector2i(m_window->getSize() / 2u), *m_window);
-        lastMousePosition = sf::Mouse::getPosition(*m_window);
+        lastMousePosition = InputManager::getInstance()->getMousePosition(m_window);
 
         // TODO: Implementacja tego w Systemie do renderowania
         state.isZoomingIn = InputManager::getInstance()->isKeyPressed(sf::Keyboard::Dash);
