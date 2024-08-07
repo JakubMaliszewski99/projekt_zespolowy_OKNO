@@ -109,7 +109,7 @@ public:
       transform.positionX += transform.velocity.x * dt;
       transform.positionY += transform.velocity.y * dt;
 
-      //Save the acceleration value to transform component
+      //Save the acceleration value to transform component - Is it necessary tho?
       transform.acceleration = acceleration;
 
       //rotation
