@@ -51,38 +51,38 @@ public:
       //movement
       if(state.isMovingForward){
         if(InputManager::getInstance()->getMouseDelta().y < 0){
-          acceleration.x += cosAngle * PLAYER_ACCELERATION/25 * -InputManager::getInstance()->getMouseDelta().y;
-          acceleration.y += sinAngle * PLAYER_ACCELERATION/25 * -InputManager::getInstance()->getMouseDelta().y;
+          acceleration.x += cosAngle * PLAYER_ACCELERATION/500 * -InputManager::getInstance()->getMouseDelta().y;
+          acceleration.y += sinAngle * PLAYER_ACCELERATION/500 * -InputManager::getInstance()->getMouseDelta().y;
         } else {
-          acceleration.x += cosAngle * PLAYER_ACCELERATION;
-          acceleration.y += sinAngle * PLAYER_ACCELERATION;
+          acceleration.x += cosAngle * PLAYER_ACCELERATION * dt;
+          acceleration.y += sinAngle * PLAYER_ACCELERATION * dt;
         }
       }
       if(state.isMovingBackwards){
         if(InputManager::getInstance()->getMouseDelta().y > 0){
-          acceleration.x -= cosAngle * PLAYER_ACCELERATION/25 * InputManager::getInstance()->getMouseDelta().y;
-          acceleration.y -= sinAngle * PLAYER_ACCELERATION/25 * InputManager::getInstance()->getMouseDelta().y;
+          acceleration.x -= cosAngle * PLAYER_ACCELERATION/500 * InputManager::getInstance()->getMouseDelta().y;
+          acceleration.y -= sinAngle * PLAYER_ACCELERATION/500 * InputManager::getInstance()->getMouseDelta().y;
         }else{
-          acceleration.x -= cosAngle * PLAYER_ACCELERATION;
-          acceleration.y -= sinAngle * PLAYER_ACCELERATION;
+          acceleration.x -= cosAngle * PLAYER_ACCELERATION * dt;
+          acceleration.y -= sinAngle * PLAYER_ACCELERATION * dt;
         }
       }
       if(state.isMovingRight){
         if(InputManager::getInstance()->getMouseDelta().x > 0){
-          acceleration.x -= cosAngle90 * PLAYER_ACCELERATION/25 * InputManager::getInstance()->getMouseDelta().x;
-          acceleration.y -= sinAngle90 * PLAYER_ACCELERATION/25 * InputManager::getInstance()->getMouseDelta().x;
+          acceleration.x -= cosAngle90 * PLAYER_ACCELERATION/500 * InputManager::getInstance()->getMouseDelta().x;
+          acceleration.y -= sinAngle90 * PLAYER_ACCELERATION/500 * InputManager::getInstance()->getMouseDelta().x;
         }else{
-          acceleration.x -= cosAngle90 * PLAYER_ACCELERATION;
-          acceleration.y -= sinAngle90 * PLAYER_ACCELERATION;
+          acceleration.x -= cosAngle90 * PLAYER_ACCELERATION * dt;
+          acceleration.y -= sinAngle90 * PLAYER_ACCELERATION * dt;
         }
       }
       if(state.isMovingLeft){
         if(InputManager::getInstance()->getMouseDelta().x < 0){
-          acceleration.x += cosAngle90 * PLAYER_ACCELERATION/25 * -InputManager::getInstance()->getMouseDelta().x;
-          acceleration.y += sinAngle90 * PLAYER_ACCELERATION/25 * -InputManager::getInstance()->getMouseDelta().x;
+          acceleration.x += cosAngle90 * PLAYER_ACCELERATION/500 * -InputManager::getInstance()->getMouseDelta().x;
+          acceleration.y += sinAngle90 * PLAYER_ACCELERATION/500 * -InputManager::getInstance()->getMouseDelta().x;
         }else{
-          acceleration.x += cosAngle90 * PLAYER_ACCELERATION;
-          acceleration.y += sinAngle90 * PLAYER_ACCELERATION;
+          acceleration.x += cosAngle90 * PLAYER_ACCELERATION * dt;
+          acceleration.y += sinAngle90 * PLAYER_ACCELERATION * dt;
         }
       }
 
@@ -92,7 +92,7 @@ public:
         transform.velocity.x *= dampingFactor;
         transform.velocity.y *= dampingFactor;
       }else{
-        transform.velocity += acceleration * dt;
+        transform.velocity += acceleration;
       }
 
       // Interpolacja wektora pr©dko˜ci
@@ -117,14 +117,14 @@ public:
       //rotation
       if(state.isRotatingRight){
         if(InputManager::getInstance()->getMouseDelta().x > 0){
-          transform.angle -= DEFAULT_ROTATION_SPEED/50 * dt * InputManager::getInstance()->getMouseDelta().x;
+          transform.angle -= DEFAULT_ROTATION_SPEED/1000 * InputManager::getInstance()->getMouseDelta().x;
         }else{
           transform.angle -= DEFAULT_ROTATION_SPEED * dt;
         }
       }
       if(state.isRotatingLeft){
         if(InputManager::getInstance()->getMouseDelta().x < 0){
-          transform.angle += DEFAULT_ROTATION_SPEED/50 * dt * -InputManager::getInstance()->getMouseDelta().x;
+          transform.angle += DEFAULT_ROTATION_SPEED/1000 * -InputManager::getInstance()->getMouseDelta().x;
         }else{
           transform.angle += DEFAULT_ROTATION_SPEED * dt;
         }
