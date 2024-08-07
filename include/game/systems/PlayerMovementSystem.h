@@ -47,7 +47,6 @@ public:
       float cosAngle90 = cos(transform.angle + 90 * (M_PI / 180));
       float sinAngle90 = sin(transform.angle + 90 * (M_PI / 180));
 
-      //TODO: Dopracowa† podczas ruchu myszk¥ - w oryginale maksymaln¥ pr©dko˜† mo¾emy uzyska† tylko myszk¥ xD
       //movement
       if(state.isMovingForward){
         if(InputManager::getInstance()->getMouseDelta().y < 0){
@@ -113,7 +112,6 @@ public:
       //Save the acceleration value to transform component
       transform.acceleration = acceleration;
 
-      //TODO: Smooth rotacja przy ruchu myszk¥
       //rotation
       if(state.isRotatingRight){
         if(InputManager::getInstance()->getMouseDelta().x > 0){
