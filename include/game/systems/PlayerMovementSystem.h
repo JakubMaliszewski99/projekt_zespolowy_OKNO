@@ -107,10 +107,6 @@ public:
         transform.velocity = normalize(transform.velocity) * PLAYER_MAX_SPEED;
       }
 
-      // Apply velocity to position
-      transform.positionX += transform.velocity.x * dt;
-      transform.positionY += transform.velocity.y * dt;
-
       //Save the acceleration value to transform component - Is it necessary tho?
       transform.acceleration = acceleration;
 
@@ -130,13 +126,79 @@ public:
         }
       }
 
-      /*
+        // Apply velocity to position
+        sf::Vector2f projectedPosition = {
+            transform.positionX + transform.velocity.x * dt,
+            transform.positionY + transform.velocity.y * dt
+        };
+        //Get Current and floor height for projected position
+        int16_t currentFloorHeight = m_bsp->getSubSectorHeight(transform.positionX, transform.positionY);
+        std::cout << transform.positionZ << std::endl;
+        int16_t projectedFloorHeight = m_bsp->getSubSectorHeight(projectedPosition.x, projectedPosition.y);
+        /*
+        // Wall collision detection
+        bool collisionDetected = false;
+        sf::Vector2f totalCorrectionVector = {0.0f, 0.0f};
+
+        int16_t subsectorID = m_bsp->getCurrentSubsectorID(transform.positionX, transform.positionY);
+        auto subsector = m_bsp->m_gameLevel->subsuctors[subsectorID];
+
+        for (int i = subsector.firstSectorNumber; i < subsector.firstSectorNumber + subsector.segCount; i++) {
+            auto segment = m_bsp->m_gameLevel->segments[i];
+            auto line = m_bsp->m_gameLevel->linedefs[segment.linedefNumber];
+            auto startVertex = m_bsp->m_gameLevel->vertexes[line.startVertex];
+            auto endVertex = m_bsp->m_gameLevel->vertexes[line.endVertex];
+            auto frontSector = m_bsp->m_gameLevel->sectors[segment.frontSector];
+            int backSectorId = segment.backSector;
+
+            sf::Vector2f hitPoint;
+            if (lineCircleCollision(
+                    startVertex.x, startVertex.y,
+                    endVertex.x, endVertex.y,
+                    projectedPosition.x, projectedPosition.y,
+                    10, hitPoint)) {
+
+                // Project velocity onto the line segment to prevent moving through walls
+                transform.velocity = projectVectorOntoLine(transform.velocity, sf::Vector2f(endVertex.x - startVertex.x, endVertex.y - startVertex.y));
+
+                // Adjust player's position to the hit point
+                transform.positionX = hitPoint.x;
+                transform.positionY = hitPoint.y;
+
+                // Handle sector transitions
+                if (backSectorId != -1) {
+                    auto backSector = m_bsp->m_gameLevel->sectors[backSectorId];
+                    int16_t backSectorHeight = backSector.floorHeight;
+                    int16_t frontSectorHeight = frontSector.floorHeight;
+                    float heightDifference = backSectorHeight - frontSectorHeight;
+
+                    // Allow stepping if within acceptable range
+                    if (std::abs(heightDifference) <= 20) {
+                        transform.positionZ = backSectorHeight + PLAYER_HEIGHT;
+                    }
+                  }
+              }
+        }
+/*
+       if (collisionDetected) {
+        // Normalize the total correction vector if necessary
+        if (std::sqrt(totalCorrectionVector.x * totalCorrectionVector.x + totalCorrectionVector.y * totalCorrectionVector.y) > 1.0f) {
+            totalCorrectionVector = normalize(totalCorrectionVector);
+        }
+        
+        // Apply the total correction vector to the velocity
+        transform.velocity = totalCorrectionVector;
+        transform.positionX += transform.velocity.x * dt;
+        transform.positionY += transform.velocity.y * dt;
+    } else {
+        // If no collision, proceed with normal movement
+        transform.positionX = projectedPosition.x;
+        transform.positionY = projectedPosition.y;
+    }
+
+
       // TODO: Velocity feedback??
       // Kudos to Poke Dev: https://www.youtube.com/watch?v=YR6Q7dUz2uk
-      int16_t subsectorID = m_bsp->getCurrentSubsectorID(transform.positionX,
-                                                         transform.positionY);
-      auto subsector = m_bsp->m_gameLevel->subsuctors[subsectorID];
-
       for (int i = subsector.firstSectorNumber;
            i < subsector.firstSectorNumber + subsector.segCount; i++) {
         auto segment = m_bsp->m_gameLevel->segments[i];
@@ -169,11 +231,16 @@ public:
                                      endVertex.y - startVertex.y));
         }
       }
-      */
+     */
+
+             // Apply the updated velocity to the player's position
+        transform.positionX += transform.velocity.x * dt;
+        transform.positionY += transform.velocity.y * dt;
+      
      
      //Wspinanie/opadanie
-      int16_t floorHeight = m_bsp->getSubSectorHeight(transform.positionX, transform.positionY);
-      float dHeight = floorHeight + PLAYER_HEIGHT - transform.positionZ;
+      
+      float dHeight = currentFloorHeight + PLAYER_HEIGHT - transform.positionZ;
 
       if(abs(dHeight) > EPSILON){
         if (dHeight > 0){
@@ -186,7 +253,7 @@ public:
           }
         }
       }else{
-        transform.positionZ = floorHeight + PLAYER_HEIGHT;
+        transform.positionZ = currentFloorHeight + PLAYER_HEIGHT;
         transform.velocityZ = 0;
       }
 

@@ -138,8 +138,6 @@ private:
     auto floorTexture = frontSector.floorTextureName;
     auto lightLevel = frontSector.lightLevel;
 
-    // TODO: Determine player height based on current sector
-    //m_playerHeight = m_playerTransform.positionZ;
     auto worldFrontZ1 = frontSector.ceilingHeight - m_playerHeight;
     auto worldFrontZ2 = frontSector.floorHeight - m_playerHeight;
 
