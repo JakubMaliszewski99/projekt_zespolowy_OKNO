@@ -14,7 +14,6 @@ public:
   void init(std::shared_ptr<ECSManager> manager, std::shared_ptr<sf::RenderWindow> window) { 
     m_manager = manager; 
     m_window = window;
-
   }
 
   void initializeMouse(std::shared_ptr<sf::RenderWindow> window){
@@ -31,7 +30,6 @@ public:
       if (!controllable.isPlayer) {
         continue;
       }
-
 
       //Myszka
       currentMousePosition = InputManager::getInstance()->getMousePosition(m_window);
