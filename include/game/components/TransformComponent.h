@@ -6,6 +6,7 @@ struct TransformComponent {
   float positionY;
   float positionZ;
   sf::Vector2f velocity;
+  float velocityZ;
   sf::Vector2f acceleration;
   float angle;
 };

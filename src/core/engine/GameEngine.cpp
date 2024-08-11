@@ -42,7 +42,7 @@ GameEngine::GameEngine(InitSettings settings) {
   m_ecsManager->addComponent(m_playerEntity,
                             TransformComponent{initialPlayerPosition.x, initialPlayerPosition.y,
                                               PLAYER_HEIGHT,
-                                              sf::Vector2f(), sf::Vector2f(), initialPlayerAngle});
+                                              sf::Vector2f(), 0.0f, sf::Vector2f(), initialPlayerAngle});
   m_ecsManager->addComponent(m_playerEntity,
                             MinimapSpriteComponent{
                             sf::View(),
@@ -62,6 +62,7 @@ GameEngine::GameEngine(InitSettings settings) {
                                               0.0f,
                                               0.0f,
                                               sf::Vector2f(),
+                                              0.0f,
                                               sf::Vector2f(),
                                               0.0f
                                           });
@@ -111,7 +112,7 @@ GameEngine::GameEngine(InitSettings settings) {
         float initialEnemyAngle = thing.angle * (M_PI / 180);
 
         m_ecsManager->addComponent(thingEntity,
-                                  TransformComponent{(float)thing.x, (float)thing.y, 0.0f, sf::Vector2f(), sf::Vector2f(), initialEnemyAngle});
+                                  TransformComponent{(float)thing.x, (float)thing.y, 0.0f, sf::Vector2f(), 0.0f, sf::Vector2f(), initialEnemyAngle});
         m_ecsManager->addComponent(
         thingEntity,
         MinimapSpriteComponent{sf::View(), new EnemyMinimapSprite(color),
@@ -142,7 +143,7 @@ GameEngine::GameEngine(InitSettings settings) {
       }
         m_ecsManager->addComponent(
         thingEntity,
-        TransformComponent{(float)thing.x, (float)thing.y, 0.0f, sf::Vector2f(), sf::Vector2f(), 0});
+        TransformComponent{(float)thing.x, (float)thing.y, 0.0f, sf::Vector2f(), 0.0f, sf::Vector2f(), 0});
     
     m_ecsManager->addComponent(
         thingEntity,

@@ -18,8 +18,9 @@ const float DEFAULT_ROTATION_SPEED = 2.4f;
 const float DAMPING_FACTOR = 100.0f;
 const float DAMPING_TIME_COEFFICIENT = -2.0f;
 const float INTERPOLATION_FACTOR = 4.5f;
-const float FALLING_SPEED = 500.0f;
-const float CLIMBING_SPEED = 50.0f;
+const float GRAVITY = 1000.0f;
+const float CLIMBING_SPEED = 100.0f;
+const float MAX_FALLING_SPEED = -600.0f;
 const float EPSILON = 5.0f;
 
 class PlayerMovementSystem : public System {
@@ -128,8 +129,8 @@ public:
           transform.angle += DEFAULT_ROTATION_SPEED * dt;
         }
       }
-      /*
 
+      /*
       // TODO: Velocity feedback??
       // Kudos to Poke Dev: https://www.youtube.com/watch?v=YR6Q7dUz2uk
       int16_t subsectorID = m_bsp->getCurrentSubsectorID(transform.positionX,
@@ -157,40 +158,39 @@ public:
         // mode
         // TODO: Fix corners, probably recurssion is required
         // TODO: Fix when falling higher wall, the player is stuck
-        float projectedX = transform.positionX + velocity.x;
-        float projectedY = transform.positionY + velocity.y;
+        float projectedX = transform.positionX + transform.velocity.x;
+        float projectedY = transform.positionY + transform.velocity.y;
         sf::Vector2f hit;
         if (lineCircleCollision(startVertex.x, startVertex.y, endVertex.x,
                                 endVertex.y, projectedX, projectedY, 1.25f,
                                 hit)) {
-          velocity = projectVectorOntoLine(
-              velocity, sf::Vector2f(endVertex.x - startVertex.x,
+          transform.velocity = projectVectorOntoLine(
+              transform.velocity, sf::Vector2f(endVertex.x - startVertex.x,
                                      endVertex.y - startVertex.y));
         }
       }
-
-      transform.velocity = normalize(velocity);
       */
      
-      // TODO: We don't really need targetPositionZ because it's always
-      // floorHeight
+     //Wspinanie/opadanie
       int16_t floorHeight = m_bsp->getSubSectorHeight(transform.positionX, transform.positionY);
-      //transform.targetPositonZ = floorHeight + PLAYER_HEIGHT;
       float dHeight = floorHeight + PLAYER_HEIGHT - transform.positionZ;
-      
-      // TODO: Maybe it should be added to velocity?? And make it 3D
-      // Player should be accelerating when climbing and falling
-      // but when climbing it should get a some constant
-      // but when falling it should be related to gravity!
-      if (abs(dHeight) < EPSILON) {
-        transform.positionZ = floorHeight + PLAYER_HEIGHT;
-        //transform.velocityZ = 0;
-      } else if (dHeight > 0) {
-        transform.positionZ += CLIMBING_SPEED * dt;
 
-      } else if (dHeight < 0) {
-        transform.positionZ -= FALLING_SPEED * dt;
+      if(abs(dHeight) > EPSILON){
+        if (dHeight > 0){
+          transform.velocityZ = CLIMBING_SPEED;
+        } else if (dHeight < 0){
+          transform.velocityZ -= GRAVITY * dt;
+          //Ograniczenie predkosci spadania
+          if (transform.velocityZ < MAX_FALLING_SPEED) {
+            transform.velocityZ = MAX_FALLING_SPEED;
+          }
+        }
+      }else{
+        transform.positionZ = floorHeight + PLAYER_HEIGHT;
+        transform.velocityZ = 0;
       }
+
+      transform.positionZ += transform.velocityZ * dt;
     }
   }
 
