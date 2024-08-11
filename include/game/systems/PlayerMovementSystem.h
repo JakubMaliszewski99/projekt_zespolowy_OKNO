@@ -21,8 +21,6 @@ const float INTERPOLATION_FACTOR = 4.5f;
 const float FALLING_SPEED = 500.0f;
 const float CLIMBING_SPEED = 50.0f;
 const float EPSILON = 5.0f;
-const float HEAD_BOBBING_FREQUENCY = 10.0f;
-const float HEAD_BOBBING_AMPLITUDE = 7.5f;
 
 class PlayerMovementSystem : public System {
 public:
@@ -99,8 +97,8 @@ public:
 
       // Interpolacja wektora pr©dko˜ci
       if (std::sqrt(acceleration.x * acceleration.x + acceleration.y * acceleration.y) > 0.0f) {
-      sf::Vector2f targetVelocity = normalize(acceleration) * std::sqrt(transform.velocity.x * transform.velocity.x + transform.velocity.y * transform.velocity.y);
-      transform.velocity = lerp(transform.velocity, targetVelocity, INTERPOLATION_FACTOR * dt);
+        sf::Vector2f targetVelocity = normalize(acceleration) * std::sqrt(transform.velocity.x * transform.velocity.x + transform.velocity.y * transform.velocity.y);
+        transform.velocity = lerp(transform.velocity, targetVelocity, INTERPOLATION_FACTOR * dt);
       }
 
        // Clamp velocity to max speed
@@ -131,7 +129,6 @@ public:
         }
       }
       /*
-      sf::Vector2f velocity = transform.velocity;
 
       // TODO: Velocity feedback??
       // Kudos to Poke Dev: https://www.youtube.com/watch?v=YR6Q7dUz2uk
@@ -173,45 +170,31 @@ public:
       }
 
       transform.velocity = normalize(velocity);
-      //transform.positionX += velocity.x;
-      //transform.positionY += velocity.y;
       */
      
       // TODO: We don't really need targetPositionZ because it's always
       // floorHeight
-      int16_t floorHeight =
-          m_bsp->getSubSectorHeight(transform.positionX, transform.positionY);
-      transform.targetPositonZ = floorHeight + PLAYER_HEIGHT;
-      
-      float dHeight = transform.targetPositonZ - transform.positionZ;
+      int16_t floorHeight = m_bsp->getSubSectorHeight(transform.positionX, transform.positionY);
+      //transform.targetPositonZ = floorHeight + PLAYER_HEIGHT;
+      float dHeight = floorHeight + PLAYER_HEIGHT - transform.positionZ;
       
       // TODO: Maybe it should be added to velocity?? And make it 3D
       // Player should be accelerating when climbing and falling
       // but when climbing it should get a some constant
       // but when falling it should be related to gravity!
       if (abs(dHeight) < EPSILON) {
-        transform.positionZ = transform.targetPositonZ;
+        transform.positionZ = floorHeight + PLAYER_HEIGHT;
+        //transform.velocityZ = 0;
       } else if (dHeight > 0) {
         transform.positionZ += CLIMBING_SPEED * dt;
+
       } else if (dHeight < 0) {
         transform.positionZ -= FALLING_SPEED * dt;
       }
-
-
-
-      /*
-      // Head bobbing effect
-        if (state.isMovingForward || state.isMovingBackwards || state.isMovingRight || state.isMovingLeft) {
-            sf::Time elapsed = m_clock.getElapsedTime();
-            float time = elapsed.asSeconds();
-            transform.positionZ += std::sin(time * HEAD_BOBBING_FREQUENCY) * HEAD_BOBBING_AMPLITUDE;
-        }
-        */
     }
   }
 
 private:
   std::shared_ptr<ECSManager> m_manager;
   std::shared_ptr<BSP> m_bsp;
-  //sf::Clock m_clock;
 };

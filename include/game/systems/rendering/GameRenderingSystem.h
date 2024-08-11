@@ -13,6 +13,9 @@
 #include <utility>
 #include <cstring>
 
+const float HEAD_BOBBING_FREQUENCY = 10.0f;
+const float HEAD_BOBBING_AMPLITUDE = 7.5f;
+
 class GameRenderingSystem : public System {
 public:
   void init(std::shared_ptr<ECSManager> manager,

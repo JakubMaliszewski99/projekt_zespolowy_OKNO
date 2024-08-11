@@ -14,7 +14,12 @@ public:
   void init(std::shared_ptr<ECSManager> manager, std::shared_ptr<sf::RenderWindow> window) { 
     m_manager = manager; 
     m_window = window;
-    currentMousePosition = sf::Mouse::getPosition(*m_window);
+
+  }
+
+  void initializeMouse(std::shared_ptr<sf::RenderWindow> window){
+    sf::Mouse::setPosition(sf::Vector2i(m_window->getSize() / 2u), *m_window);
+    currentMousePosition = InputManager::getInstance()->getMousePosition(m_window);
     lastMousePosition = currentMousePosition;
   }
 
