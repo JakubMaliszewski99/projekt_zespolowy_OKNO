@@ -126,15 +126,6 @@ public:
         }
       }
 
-        // Apply velocity to position
-        sf::Vector2f projectedPosition = {
-            transform.positionX + transform.velocity.x * dt,
-            transform.positionY + transform.velocity.y * dt
-        };
-        //Get Current and floor height for projected position
-        int16_t currentFloorHeight = m_bsp->getSubSectorHeight(transform.positionX, transform.positionY);
-        std::cout << transform.positionZ << std::endl;
-        int16_t projectedFloorHeight = m_bsp->getSubSectorHeight(projectedPosition.x, projectedPosition.y);
         /*
         // Wall collision detection
         bool collisionDetected = false;
@@ -233,13 +224,107 @@ public:
       }
      */
 
-             // Apply the updated velocity to the player's position
-        transform.positionX += transform.velocity.x * dt;
-        transform.positionY += transform.velocity.y * dt;
+    
+    /*
+      bool collisionDetected = false;
+      sf::Vector2f totalCorrectionVector = {0.0f, 0.0f};
+
+      //Get the current subsector
+      int16_t subsectorID = m_bsp->getCurrentSubsectorID(transform.positionX, transform.positionY);
+      auto subsector = m_bsp->m_gameLevel->subsuctors[subsectorID];
+
+      //TODO Collision detection
+      for (int i = subsector.firstSectorNumber; i < subsector.firstSectorNumber + subsector.segCount; i++) {
+        auto segment = m_bsp->m_gameLevel->segments[i];
+        auto line = m_bsp->m_gameLevel->linedefs[segment.linedefNumber];
+        auto startVertex = m_bsp->m_gameLevel->vertexes[line.startVertex];
+        auto endVertex = m_bsp->m_gameLevel->vertexes[line.endVertex];
+        auto frontSector = m_bsp->m_gameLevel->sectors[segment.frontSector];
+        int backSectorId = segment.backSector;
+
+        std::cout << backSectorId << " ";
+
+        if(backSectorId == -1){
+          float projectedX = transform.positionX + transform.velocity.x;
+          float projectedY = transform.positionY + transform.velocity.y;
+          sf::Vector2f hit;
+          if (lineCircleCollision(startVertex.x, startVertex.y, endVertex.x,
+                            endVertex.y, projectedX, projectedY, 10.0f, hit)){
+            
+            sf::Vector2f wallVector = {endVertex.x - startVertex.x, endVertex.y - startVertex.y};
+            totalCorrectionVector = projectVectorOntoLine(transform.velocity, wallVector);
+            collisionDetected = true;
+          }
+        }
+
+
+      }
+
+      std::cout << std::endl;
+
+        // If a collision was detected, adjust the velocity and position
+        if (collisionDetected) {
+            std::cout << "Collision Detected" << std::endl;
+            transform.velocity = totalCorrectionVector;
+            transform.positionX += transform.velocity.x * dt;
+            transform.positionY += transform.velocity.y * dt;
+        } else {
+            // If no collision, proceed with normal movement
+            transform.positionX = projectedPosition.x;
+            transform.positionY = projectedPosition.y;
+        }
+        */
+
+       // Calculate the projected position based on current velocity
+        sf::Vector2f projectedPosition = {
+            transform.positionX + transform.velocity.x * dt,
+            transform.positionY + transform.velocity.y * dt
+        };
+
+        // Now use projectedPosition in collision detection
+        bool collisionDetected = false;
+        sf::Vector2f correctionVector = {0.0f, 0.0f};
+
+        int16_t subsectorID = m_bsp->getCurrentSubsectorID(transform.positionX, transform.positionY);
+        auto subsector = m_bsp->m_gameLevel->subsuctors[subsectorID];
+
+        for (int i = subsector.firstSectorNumber; i < subsector.firstSectorNumber + subsector.segCount; i++) {
+            auto segment = m_bsp->m_gameLevel->segments[i];
+            auto line = m_bsp->m_gameLevel->linedefs[segment.linedefNumber];
+            auto startVertex = m_bsp->m_gameLevel->vertexes[line.startVertex];
+            auto endVertex = m_bsp->m_gameLevel->vertexes[line.endVertex];
+            int backSectorId = segment.backSector;
+
+            sf::Vector2f hitPoint;
+            //TODO Should react to hight diff
+            if (lineCircleCollision(
+                    startVertex.x, startVertex.y,
+                    endVertex.x, endVertex.y,
+                    projectedPosition.x, projectedPosition.y,
+                    20.0f, hitPoint) && backSectorId == -1) {
+
+                // If a collision is detected, calculate a correction vector
+                sf::Vector2f wallVector = {endVertex.x - startVertex.x, endVertex.y - startVertex.y};
+                correctionVector = projectVectorOntoLine(transform.velocity, wallVector);
+                collisionDetected = true;
+            }
+        }
+
+        // If a collision was detected, adjust the velocity and position
+        if (collisionDetected) {
+            transform.velocity = correctionVector;
+            transform.positionX += transform.velocity.x * dt;
+            transform.positionY += transform.velocity.y * dt;
+        } else {
+            // If no collision, proceed with normal movement
+            transform.positionX = projectedPosition.x;
+            transform.positionY = projectedPosition.y;
+        }
+      
       
      
      //Wspinanie/opadanie
-      
+      int16_t currentFloorHeight = m_bsp->getSubSectorHeight(transform.positionX, transform.positionY);
       float dHeight = currentFloorHeight + PLAYER_HEIGHT - transform.positionZ;
 
       if(abs(dHeight) > EPSILON){
