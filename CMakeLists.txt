@@ -35,6 +35,7 @@ add_executable (doom
  "include/game/components/SpriteComponent.h" 
  "include/game/sprites/MinimapSprite.h" 
  "include/game/systems/rendering/MinimapRenderingSystem.h" 
+ "include/game/systems/rendering/HUDRenderingSystem.h" 
  "include/game/components/ControllableComponent.h" 
  "include/game/sprites/LevelMinimapSprite.h" 
  "src/game/sprites/LevelMinimapSprite.cpp" 

@@ -68,7 +68,7 @@ public:
     m_renderWindow->setView(m_defaultView);
     m_renderWindow->clear();
     m_renderWindow->draw(m_screenSprite);
-    m_renderWindow->display();
+    //m_renderWindow->display();
   }
 
 private:

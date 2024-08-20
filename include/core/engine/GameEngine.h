@@ -20,6 +20,7 @@
 #include "game/systems/EnemySystem.h"
 #include "game/systems/rendering/MinimapRenderingSystem.h"
 #include "game/systems/rendering/GameRenderingSystem.h"
+#include "game/systems/rendering/HUDRenderingSystem.h"
 
 enum GameEngineState {
   eInitialized, eMainMenu, eInGameMenu, eGame, eGameMinimap
@@ -65,6 +66,7 @@ private:
   std::shared_ptr<MinimapRenderingSystem> m_minimapRenderingSystem;
   std::shared_ptr<CollectableSystem> m_collectableSystem;
   std::shared_ptr<GameRenderingSystem> m_gameRenderingSystem;
+  std::shared_ptr<HUDRenderingSystem> m_HUDRenderingSystem;
   std::shared_ptr<WeaponSystem> m_weaponSystem;
   std::shared_ptr<DamageSystem> m_damageSystem;
   std::shared_ptr<EnviromentDamageSystem> m_enviromentDamageSystem;

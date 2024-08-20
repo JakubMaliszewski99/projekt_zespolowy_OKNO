@@ -197,15 +197,19 @@ void GameEngine::update(sf::Time deltaTime) {
   m_playerControllSystem->update(dt);
   m_playerMovementSystem->update(dt);
 
+  m_collectableSystem->update(dt);
+  m_weaponSystem->update(dt);
+  m_damageSystem->update(dt);
+  m_enviromentDamageSystem->update(dt);
+
   if (m_state == GameEngineState::eGameMinimap) {
     m_minimapRenderingSystem->update(dt);
   } else if (m_state == GameEngineState::eGame) {
     m_gameRenderingSystem->update(dt);
   }
-  m_collectableSystem->update(dt);
-  m_weaponSystem->update(dt);
-  m_damageSystem->update(dt);
-  m_enviromentDamageSystem->update(dt);
+
+  m_HUDRenderingSystem->update();
+
 }
 
 void GameEngine::setupComponents(){
@@ -277,6 +281,15 @@ void GameEngine::setupSystems(){
                               std::make_shared<BSP>(m_level), 
                               m_playerEntity);
   m_ecsManager->setSystemSignature<GameRenderingSystem>(gameRenderingSystemSignature);
+
+  // HUDRenderingSystem Signature
+  Signature HUDRenderingSystemSignature;
+  HUDRenderingSystemSignature.set(m_ecsManager->getComponentType<HealthComponent>());
+  // HUDRenderingSystem Register
+  m_HUDRenderingSystem = m_ecsManager->registerSystem<HUDRenderingSystem>();
+  m_HUDRenderingSystem->init(m_ecsManager, m_window, m_playerEntity, m_settings.debugSettings);
+  m_ecsManager->setSystemSignature<HUDRenderingSystem>(HUDRenderingSystemSignature);
+
 
   // CollectableSystem Signature
   Signature collectableSystemSignature;

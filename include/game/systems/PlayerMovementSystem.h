@@ -141,100 +141,43 @@ public:
 
         int16_t subsectorID = m_bsp->getCurrentSubsectorID(transform.positionX, transform.positionY);
         auto subsector = m_bsp->m_gameLevel->subsuctors[subsectorID];
-/*
-        for (int i = subsector.firstSectorNumber; i < subsector.firstSectorNumber + subsector.segCount; i++) {
-            auto segment = m_bsp->m_gameLevel->segments[i];
-            auto line = m_bsp->m_gameLevel->linedefs[segment.linedefNumber];
-            auto startVertex = m_bsp->m_gameLevel->vertexes[line.startVertex];
-            auto endVertex = m_bsp->m_gameLevel->vertexes[line.endVertex];
-            auto frontSector = m_bsp->m_gameLevel->sectors[segment.frontSector];
-            int backSectorId = segment.backSector;
-
-            //Obliczenie r¢znicy wysokosci miedzy sektorami
-            auto backSector = m_bsp->m_gameLevel->sectors[backSectorId];
-            int16_t backSectorHeight = backSector.floorHeight;
-            int16_t frontSectorHeight = frontSector.floorHeight;
-            float heightDifference = backSectorHeight - frontSectorHeight;
-
-            sf::Vector2f hitPoint;
-            if (lineCircleCollision(
-                    startVertex.x, startVertex.y,
-                    endVertex.x, endVertex.y,
-                    projectedPosition.x, projectedPosition.y,
-                    25.0f, hitPoint) && (backSectorId == -1 || heightDifference >= 24)) {
-
-                // If a collision is detected, calculate a correction vector
-                sf::Vector2f wallVector = {(float)endVertex.x - (float)startVertex.x, (float)endVertex.y - (float)startVertex.y};
-                wallNormal = normalize({wallVector.y, -wallVector.x});
-
-                
-
-                collisionDetected = true;                
-                correctionVector = transform.velocity - dot(transform.velocity, wallNormal) * wallNormal;
-                //correctionVector = projectVectorOntoLine(transform.velocity, wallVector);
-                totalCorrectionVector += correctionVector;
-
-            }
-        }
-
-        // If a collision was detected, adjust the velocity and position
-        if (collisionDetected) {
-            // Normalize the total correction vector if necessary
-            if (std::sqrt(totalCorrectionVector.x * totalCorrectionVector.x + totalCorrectionVector.y * totalCorrectionVector.y) > 1.0f) {
-                totalCorrectionVector = normalize(totalCorrectionVector);
-            }
-            
-
-            transform.velocity = totalCorrectionVector;
-            transform.positionX += transform.velocity.x * dt;
-            transform.positionY += transform.velocity.y * dt;
-
-            // Ensure the player is slightly moved away from the wall
-            transform.positionX += wallNormal.x * 0.1f;
-            transform.positionY += wallNormal.y * 0.1f;
-        } else {
-            // If no collision, proceed with normal movement
-            transform.positionX = projectedPosition.x;
-            transform.positionY = projectedPosition.y;
-        }
-        */
 
        for (int i = subsector.firstSectorNumber; i < subsector.firstSectorNumber + subsector.segCount; i++) {
-    auto segment = m_bsp->m_gameLevel->segments[i];
-    auto line = m_bsp->m_gameLevel->linedefs[segment.linedefNumber];
-    auto startVertex = m_bsp->m_gameLevel->vertexes[line.startVertex];
-    auto endVertex = m_bsp->m_gameLevel->vertexes[line.endVertex];
-    auto frontSector = m_bsp->m_gameLevel->sectors[segment.frontSector];
-    int backSectorId = segment.backSector;
+        auto segment = m_bsp->m_gameLevel->segments[i];
+        auto line = m_bsp->m_gameLevel->linedefs[segment.linedefNumber];
+        auto startVertex = m_bsp->m_gameLevel->vertexes[line.startVertex];
+        auto endVertex = m_bsp->m_gameLevel->vertexes[line.endVertex];
+        auto frontSector = m_bsp->m_gameLevel->sectors[segment.frontSector];
+        int backSectorId = segment.backSector;
 
-    // Calculate height difference between sectors
-    auto backSector = m_bsp->m_gameLevel->sectors[backSectorId];
-    int16_t backSectorHeight = backSector.floorHeight;
-    int16_t frontSectorHeight = frontSector.floorHeight;
-    float heightDifference = backSectorHeight - frontSectorHeight;
+        // Calculate height difference between sectors
+        auto backSector = m_bsp->m_gameLevel->sectors[backSectorId];
+        int16_t backSectorHeight = backSector.floorHeight;
+        int16_t frontSectorHeight = frontSector.floorHeight;
+        float heightDifference = backSectorHeight - frontSectorHeight;
 
-    sf::Vector2f hitPoint;
-    if (lineCircleCollision(
-            startVertex.x, startVertex.y,
-            endVertex.x, endVertex.y,
-            projectedPosition.x, projectedPosition.y,
-            25.0f, hitPoint) && (backSectorId == -1 || heightDifference >= 24)) {
+        sf::Vector2f hitPoint;
+        if (lineCircleCollision(
+                startVertex.x, startVertex.y,
+                endVertex.x, endVertex.y,
+                projectedPosition.x, projectedPosition.y,
+                25.0f, hitPoint) && (backSectorId == -1 || heightDifference >= 24)) {
 
-        // Calculate wall vector and normal
-        sf::Vector2f wallVector = {(float)endVertex.x - (float)startVertex.x, (float)endVertex.y - (float)startVertex.y};
-        sf::Vector2f wallNormal = normalize({wallVector.y, -wallVector.x});
+          // Calculate wall vector and normal
+          sf::Vector2f wallVector = {(float)endVertex.x - (float)startVertex.x, (float)endVertex.y - (float)startVertex.y};
+          sf::Vector2f wallNormal = normalize({wallVector.y, -wallVector.x});
 
-        // Project velocity onto the wall to prevent moving into it
-        transform.velocity -= dot(transform.velocity, wallNormal) * wallNormal;
+          // Project velocity onto the wall to prevent moving into it
+          transform.velocity -= dot(transform.velocity, wallNormal) * wallNormal;
 
-        // Slightly adjust position to avoid overlap with the wall
-        sf::Vector2f correctionStep = wallNormal * 0.1f; // Small step away from the wall
-        transform.positionX += correctionStep.x;
-        transform.positionY += correctionStep.y;
+          // Slightly adjust position to avoid overlap with the wall
+          sf::Vector2f correctionStep = wallNormal * 0.1f; // Small step away from the wall
+          transform.positionX += correctionStep.x;
+          transform.positionY += correctionStep.y;
 
-        collisionDetected = true; 
+          collisionDetected = true; 
+        }
     }
-}
 
 if (!collisionDetected) {
     // If no collision, proceed with normal movement

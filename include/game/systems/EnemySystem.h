@@ -7,7 +7,10 @@ public:
     void init(std::shared_ptr<ECSManager> manager){
         m_manager = manager;
     }
-    void update(){}
+
+    void update(){
+        
+    }
 
     bool isEnemy(int type){
         switch(type){
