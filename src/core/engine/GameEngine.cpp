@@ -167,11 +167,13 @@ void GameEngine::processEvents() {
       break;
     }
   }
+  handleTabToggle();
 }
 
 void GameEngine::run() {
   init();
   sf::Clock clock;
+  m_HUDRenderingSystem->scaleHUD();
 
 while (m_window->isOpen()) {
     sf::Time deltaTime = clock.restart();
@@ -190,9 +192,6 @@ void GameEngine::init() {
 
 void GameEngine::update(sf::Time deltaTime) {
   float dt = deltaTime.asSeconds();
-
-  handleTabToggle();
-
 
   m_playerControllSystem->update(dt);
   m_playerMovementSystem->update(dt);

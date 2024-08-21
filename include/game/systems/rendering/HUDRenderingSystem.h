@@ -4,11 +4,10 @@
 #include "../include/core/ecs/ECSManager.h"
 #include "core/engine/BSP.h"
 
-const int HEALTH_BAR_W = 100;
-const int HEALTH_BAR_H = 10;
-const int HEALTH_BAR_X = 10;
-const int HEALTH_BAR_Y = 10;
-
+const float GUN_TEXTURE_X_MOV_FREQ = 5;
+const float GUN_TEXTURE_X_MOV_AMP = 60;
+const float GUN_TEXTURE_Y_MOV_FREQ = 5;
+const float GUN_TEXTURE_Y_MOV_AMP = 60;
 
 class HUDRenderingSystem : public System{
     public:
@@ -21,16 +20,32 @@ class HUDRenderingSystem : public System{
         if (!fontRight.loadFromFile("../data/font/amazdoom/AmazDooMRight.ttf")) {
             std::cout << "Font didn't load correctly..." << std::endl;
         }
-        healthBar.setSize(sf::Vector2f(HEALTH_BAR_W, HEALTH_BAR_H));
-        healthBar.setPosition(HEALTH_BAR_X, HEALTH_BAR_Y);
+        if (!hudTexture.loadFromFile("../data/textures/HUD.png")){
+            std::cout << "Could not load HUD texture!" << std::endl;
+        }
+        if(!handGunTexture.loadFromFile("C:\\Users\\kubek\\OneDrive\\Desktop\\Projekt_zespolowy\\projekt_zespolowy_OKNO\\data\\textures\\Gun.png")){
+            std::cout << "Could not load HandGun texture!" << std::endl;
+        }
+        
         healthBar.setFillColor(sf::Color::Green);
 
         healthText.setFont(fontLeft);
         healthText.setString("Health");
-        healthText.setCharacterSize(24);
+        healthText.setCharacterSize(30);
         healthText.setFillColor(sf::Color::Red);
-        healthText.setPosition(HEALTH_BAR_X + 20, HEALTH_BAR_Y + 20);
-    
+
+        ammoText.setFont(fontRight);
+        ammoText.setString("Ammo");
+        ammoText.setCharacterSize(30);
+        ammoText.setFillColor(sf::Color::Red);
+
+        ammoAmountText.setFont(fontRight);
+        ammoAmountText.setString("500");
+        ammoAmountText.setCharacterSize(60);
+        ammoAmountText.setFillColor(sf::Color::Red);
+        
+        hudSprite.setTexture(hudTexture);
+        handGunSprite.setTexture(handGunTexture);
     }
 
     void init(std::shared_ptr<ECSManager> manager, 
@@ -42,9 +57,68 @@ class HUDRenderingSystem : public System{
                 m_playerEntity = playerEntity;
             }
 
+    void scaleHUD(){
+        sf::Vector2u windowSize = m_renderWindow->getSize();
+        sf::Vector2u hudTextureSize = hudTexture.getSize();
+
+        float scaleX = static_cast<float>(windowSize.x) / hudTextureSize.x;
+        float scaleY = static_cast<float>(windowSize.y) / hudTextureSize.y;
+
+        hudSprite.setScale(scaleX, scaleY);
+
+        
+        healthBarX = windowSize.x * 0.33;
+        healthBarY = windowSize.y * 0.88;
+        defaultHealthBarWidth = windowSize.x * 0.1;
+        healthBarWidth = defaultHealthBarWidth;
+        healthBarHight = windowSize.y * 0.015; 
+
+        defaultHandGunSpriteX = windowSize.x * 0.42;
+        defaultHandGunSpriteY = windowSize.y * 0.61;
+        handGunSpriteX = defaultHandGunSpriteX;
+        handGunSpriteY = defaultHandGunSpriteY;
+
+        handGunSprite.setPosition(handGunSpriteX, handGunSpriteY);
+
+        healthBar.setSize(sf::Vector2f(healthBarWidth, healthBarHight));
+        healthBar.setPosition(healthBarX, healthBarY);
+
+        healthTextX = healthBarX + 50;
+        healthTextY = healthBarY + 25;
+        healthText.setPosition(healthTextX, healthTextY);
+
+        ammoAmountTextX = windowSize.x * 0.63;
+        ammoAmountTextY = windowSize.y * 0.85;
+        ammoAmountText.setPosition(ammoAmountTextX, ammoAmountTextY);
+
+        ammoTextX = ammoAmountTextX + 7;
+        ammoTextY = ammoAmountTextY + 60;
+        ammoText.setPosition(ammoTextX, ammoTextY);
+    }
+
     void update(){
+        auto &state = m_manager->getComponent<PlayerStateComponent>(m_playerEntity);
+        auto &health = m_manager->getComponent<HealthComponent>(m_playerEntity);
+
+        healthBarWidth = defaultHealthBarWidth * health.health / 100;
+        healthBar.setSize(sf::Vector2f(healthBarWidth, healthBarHight));
+        
+        if (state.isMovingForward || state.isMovingBackwards || state.isMovingRight || state.isMovingLeft) {
+            sf::Time elapsed = gunTextureClock.getElapsedTime();
+            float time = elapsed.asSeconds();
+            
+            handGunSpriteX =  defaultHandGunSpriteX + std::sin(time * GUN_TEXTURE_X_MOV_FREQ) * GUN_TEXTURE_X_MOV_AMP;
+            handGunSpriteY =  defaultHandGunSpriteY - std::abs(std::sin(time * GUN_TEXTURE_X_MOV_FREQ) * GUN_TEXTURE_X_MOV_AMP);
+            handGunSprite.setPosition(handGunSpriteX, handGunSpriteY);
+            std::cout << handGunSpriteX << std::endl;
+        }
+
+        m_renderWindow->draw(handGunSprite);
+        m_renderWindow->draw(hudSprite);
         m_renderWindow->draw(healthBar);
         m_renderWindow->draw(healthText);
+        m_renderWindow->draw(ammoAmountText);
+        m_renderWindow->draw(ammoText);
 
         m_renderWindow->display();
     }
@@ -55,8 +129,38 @@ class HUDRenderingSystem : public System{
     std::shared_ptr<ECSManager> m_manager;
     Entity m_playerEntity;
     DebugSettings m_debugSettings;
+
     sf::RectangleShape healthBar;
+    int defaultHealthBarWidth;
+    int healthBarWidth;
+    int healthBarHight;
+    int healthBarX;
+    int healthBarY;
+
     sf::Text healthText;
+    int healthTextX;
+    int healthTextY;
+
+    sf::Text ammoText;
+    int ammoTextX;
+    int ammoTextY;
+
+    sf::Text ammoAmountText;
+    int ammoAmountTextX;
+    int ammoAmountTextY;
+
     sf::Font fontLeft;
     sf::Font fontRight;
+
+    sf::Texture hudTexture;
+    sf::Sprite hudSprite;
+
+    sf::Texture handGunTexture;
+    sf::Sprite handGunSprite;
+    int defaultHandGunSpriteY;
+    int defaultHandGunSpriteX;
+    int handGunSpriteX;
+    int handGunSpriteY;
+
+    sf::Clock gunTextureClock;
 };
