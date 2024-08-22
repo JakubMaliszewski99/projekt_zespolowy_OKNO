@@ -1,4 +1,5 @@
 #pragma once
+#include <cmath>
 #include "../../core/math/utilities.h"
 #include "../../core/ecs/ECSManager.h"
 #include "../../core/ecs/System.h"
@@ -6,70 +7,72 @@
 #include "../components/ControllableComponent.h"
 #include "../components/MinimapSpriteComponent.h"
 #include "../components/TransformComponent.h"
-#include <cmath>
-
-#define M_PI 3.14159265358979323846
-
-const float DEFAULT_SPEED = 100.f;
-const float PLAYER_DEFAULT_SPEED = 150.0f;
-const float ENEMY_DEFAULT_SPEED = 70.f;
-const float DEFAULT_ROTATION_SPEED = 10;
+#include "../components/PlayerStateComponent.h"
 
 class PlayerControllSystem : public System {
 public:
-  void init(std::shared_ptr<ECSManager> manager) { m_manager = manager; }
+  void init(std::shared_ptr<ECSManager> manager, std::shared_ptr<sf::RenderWindow> window) { 
+    m_manager = manager; 
+    m_window = window;
+  }
+
+  void initializeMouse(std::shared_ptr<sf::RenderWindow> window){
+    sf::Mouse::setPosition(sf::Vector2i(m_window->getSize() / 2u), *m_window);
+    currentMousePosition = InputManager::getInstance()->getMousePosition(m_window);
+    lastMousePosition = currentMousePosition;
+  }
 
   void update(float dt) {
     for (auto const &entity : m_entities) {
-      auto &transform = m_manager->getComponent<TransformComponent>(entity);
-      auto &controllable =
-          m_manager->getComponent<ControllableComponent>(entity);
-      auto &drawable = m_manager->getComponent<MinimapSpriteComponent>(entity);
+      auto &controllable = m_manager->getComponent<ControllableComponent>(entity);
+      auto &state = m_manager->getComponent<PlayerStateComponent>(entity);
 
       if (!controllable.isPlayer) {
         continue;
       }
 
-      sf::Vector2f movement(0.f, 0.f);
-      float velocity = PLAYER_DEFAULT_SPEED * dt;
-      float rotation = 0.f;
+      //Myszka
+      currentMousePosition = InputManager::getInstance()->getMousePosition(m_window);
+      mouseDelta = currentMousePosition - lastMousePosition;
+      InputManager::getInstance()->setMouseDelta(mouseDelta);
+      sf::Mouse::setPosition(sf::Vector2i(m_window->getSize() / 2u), *m_window);
+      lastMousePosition = InputManager::getInstance()->getMousePosition(m_window);
 
-      // TODO: Fix diagonal velocity problem
-      if (InputManager::getInstance()->isKeyPressed(sf::Keyboard::W)) {
-        movement.x += cos(transform.angle) * velocity;
-        movement.y += sin(transform.angle) * velocity;
-      }
-      if (InputManager::getInstance()->isKeyPressed(sf::Keyboard::S)) {
-        movement.x -= cos(transform.angle) * velocity;
-        movement.y -= sin(transform.angle) * velocity;
-      }
-      if (InputManager::getInstance()->isKeyPressed(sf::Keyboard::D)) {
-        movement.x -= cos(transform.angle + 90 * (M_PI / 180)) * velocity;
-        movement.y -= sin(transform.angle + 90 * (M_PI / 180)) * velocity;
-      }
-      if (InputManager::getInstance()->isKeyPressed(sf::Keyboard::A)) {
-        movement.x += cos(transform.angle + 90 * (M_PI / 180)) * velocity;
-        movement.y += sin(transform.angle + 90 * (M_PI / 180)) * velocity;
-      }
-      if (InputManager::getInstance()->isKeyPressed(sf::Keyboard::Q)) {
-        rotation += DEFAULT_ROTATION_SPEED * dt * 0.4f;
-      }
-      if (InputManager::getInstance()->isKeyPressed(sf::Keyboard::E)) {
-        rotation -= DEFAULT_ROTATION_SPEED * dt * 0.4f;
-      }
-      // TODO: FIX ZOOMING - caused by setting size (flipping Y)
-      if (InputManager::getInstance()->isKeyPressed(sf::Keyboard::Dash)) {
-        drawable.camera.zoom(1.001f);
-      }
-      if (InputManager::getInstance()->isKeyPressed(sf::Keyboard::Equal)) {
-        drawable.camera.zoom(0.999f);
-      }
+      if(state.isAlive){
 
-      transform.velocity = movement;
-      transform.angle = normalizeRadianAngle(transform.angle + rotation);
+        state.isMovingForward = (InputManager::getInstance()->isKeyPressed(sf::Keyboard::W) ||
+                                InputManager::getInstance()->isKeyPressed(sf::Keyboard::Up) ||
+                                mouseDelta.y < 0);
+        state.isMovingBackwards = (InputManager::getInstance()->isKeyPressed(sf::Keyboard::S) ||
+                                  InputManager::getInstance()->isKeyPressed(sf::Keyboard::Down) ||
+                                  mouseDelta.y > 0);
+        state.isMovingRight = (InputManager::getInstance()->isKeyPressed(sf::Keyboard::D) ||
+                              InputManager::getInstance()->isKeyPressed(sf::Keyboard::Period) ||
+                              (mouseDelta.x > 0 && InputManager::getInstance()->isMouseButtonPressed(sf::Mouse::Right)));
+        state.isMovingLeft = (InputManager::getInstance()->isKeyPressed(sf::Keyboard::A) ||
+                            InputManager::getInstance()->isKeyPressed(sf::Keyboard::Comma) || 
+                            (mouseDelta.x < 0 && InputManager::getInstance()->isMouseButtonPressed(sf::Mouse::Right)));
+        state.isRotatingLeft = (InputManager::getInstance()->isKeyPressed(sf::Keyboard::Q) ||
+                                InputManager::getInstance()->isKeyPressed(sf::Keyboard::Left) ||
+                                (mouseDelta.x < 0 && !InputManager::getInstance()->isMouseButtonPressed(sf::Mouse::Right)));
+        state.isRotatingRight = (InputManager::getInstance()->isKeyPressed(sf::Keyboard::E) ||
+                                InputManager::getInstance()->isKeyPressed(sf::Keyboard::Right) ||
+                                (mouseDelta.x > 0 && !InputManager::getInstance()->isMouseButtonPressed(sf::Mouse::Right)));
+
+        // TODO: Implementacja tego w Systemie do renderowania
+        state.isZoomingIn = InputManager::getInstance()->isKeyPressed(sf::Keyboard::Dash);
+        state.isZoomingOut = InputManager::getInstance()->isKeyPressed(sf::Keyboard::Equal);
+
+        // TODO: Implementacja w Systemie broni
+        state.isFiring = InputManager::getInstance()->isKeyPressed(sf::Keyboard::LControl);
+      }
     }
   }
 
 private:
   std::shared_ptr<ECSManager> m_manager;
+  std::shared_ptr<sf::RenderWindow> m_window;
+  sf::Vector2i lastMousePosition;
+  sf::Vector2i currentMousePosition;
+  sf::Vector2i mouseDelta;
 };

@@ -1,9 +1,9 @@
 #pragma once
-#include "../engine/GameLevel.h"
 #include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
+#include "../engine/GameLevel.h"
 
 struct wadinfo_t {
   unsigned char identification[4];

@@ -1,6 +1,7 @@
 #pragma once
 #include "../../components/GameDrawableComponent.h"
 #include "../../components/TransformComponent.h"
+#include "../../components/PlayerStateComponent.h"
 #include "../include/core/core.h"
 #include "../include/core/ecs/ECSManager.h"
 #include "../include/core/math/utilities.h"
@@ -11,6 +12,9 @@
 #include <set>
 #include <utility>
 #include <cstring>
+
+const float HEAD_BOBBING_FREQUENCY = 10.0f;
+const float HEAD_BOBBING_AMPLITUDE = 7.5f;
 
 class GameRenderingSystem : public System {
 public:
@@ -47,6 +51,17 @@ public:
 
     m_playerTransform =
         m_manager->getComponent<TransformComponent>(m_playerEntity);
+    m_playerState = m_manager->getComponent<PlayerStateComponent>(m_playerEntity);
+
+    //TODO:Move it somewhere else? + Make the headbbob more smooth
+    m_playerHeight = m_playerTransform.positionZ;
+    // Head bobbing effect
+        if (m_playerState.isMovingForward || m_playerState.isMovingBackwards || m_playerState.isMovingRight || m_playerState.isMovingLeft) {
+            sf::Time elapsed = m_headBobbClock.getElapsedTime();
+            float time = elapsed.asSeconds();
+            m_playerHeight += std::sin(time * HEAD_BOBBING_FREQUENCY) * HEAD_BOBBING_AMPLITUDE * 
+                  (std::sqrt(m_playerTransform.velocity.x * m_playerTransform.velocity.x + m_playerTransform.velocity.y * m_playerTransform.velocity.y)/PLAYER_MAX_SPEED);
+        }
 
     renderBSP(m_playerTransform.positionX, m_playerTransform.positionY,
               RAD2DEG(m_playerTransform.angle), m_bsp->m_rootNodeID);
@@ -66,6 +81,7 @@ private:
   std::shared_ptr<ECSManager> m_manager;
   std::shared_ptr<BSP> m_bsp;
   TransformComponent m_playerTransform;
+  PlayerStateComponent m_playerState;
   Entity m_playerEntity;
   std::set<int> m_screenSet;
   std::vector<int> m_upperClip;
@@ -75,6 +91,8 @@ private:
   sf::Image m_frameBuffer;
   sf::Sprite m_screenSprite;
   sf::Texture m_texture;
+  sf::Clock m_headBobbClock;
+  int m_playerHeight;
 
   std::unordered_map<std::string, sf::Color> colorMapping;
 
@@ -274,11 +292,10 @@ private:
     auto lightLevel = frontSector.lightLevel;
 
     // TODO: Determine player height based on current sector
-    int playerHeight = m_playerTransform.positionZ;
-    float worldFrontZ1 = frontSector.ceilingHeight - playerHeight;
-    float worldBackZ1 = backSector.ceilingHeight - playerHeight;
-    float worldFrontZ2 = frontSector.floorHeight - playerHeight;
-    float worldBackZ2 = backSector.floorHeight - playerHeight;
+    float worldFrontZ1 = frontSector.ceilingHeight - m_playerHeight;
+    float worldBackZ1 = backSector.ceilingHeight - m_playerHeight;
+    float worldFrontZ2 = frontSector.floorHeight - m_playerHeight;
+    float worldBackZ2 = backSector.floorHeight - m_playerHeight;
 
     bool drawUpperWall = false;
     bool drawCeil = false;

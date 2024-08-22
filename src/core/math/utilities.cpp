@@ -1,5 +1,6 @@
 #include "../../../include/core/math/utilities.h"
 #include "../../../include/core/core.h"
+#include <cmath>
 #include <iostream>
 
 int angle2x(float angle) {
@@ -193,4 +194,24 @@ sf::Vector2f projectVectorOntoLine(sf::Vector2f vector, sf::Vector2f line) {
 int negMod(int a, int b)
 {
     return (b + (a % b)) % b;
+}
+
+sf::Vector2f velocityScalarToVector(float velocity, float angle_rad) {
+  float x = cosf(angle_rad) * velocity;
+  float y = sinf(angle_rad) * velocity;
+  return sf::Vector2f(x, y);
+}
+
+sf::Vector2f segmentEnd(float startX, float startY, float angle, float length){
+    float endX = startX + cosf(angle) * length;
+    float endY = startY + sinf(angle) * length;
+    return sf::Vector2f(endX, endY);
+}
+
+sf::Vector2f lerp(const sf::Vector2f& start, const sf::Vector2f& end, float t) {
+  return start + t * (end - start);
+}
+
+float dot(const sf::Vector2f& a, const sf::Vector2f& b) {
+    return a.x * b.x + a.y * b.y;
 }
