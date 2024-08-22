@@ -56,12 +56,12 @@ public:
     //TODO:Move it somewhere else? + Make the headbbob more smooth
     m_playerHeight = m_playerTransform.positionZ;
     // Head bobbing effect
-        if (m_playerState.isMovingForward || m_playerState.isMovingBackwards || m_playerState.isMovingRight || m_playerState.isMovingLeft) {
-            sf::Time elapsed = m_headBobbClock.getElapsedTime();
-            float time = elapsed.asSeconds();
-            m_playerHeight += std::sin(time * HEAD_BOBBING_FREQUENCY) * HEAD_BOBBING_AMPLITUDE * 
-                  (std::sqrt(m_playerTransform.velocity.x * m_playerTransform.velocity.x + m_playerTransform.velocity.y * m_playerTransform.velocity.y)/PLAYER_MAX_SPEED);
-        }
+    if (m_playerState.isMovingForward || m_playerState.isMovingBackwards || m_playerState.isMovingRight || m_playerState.isMovingLeft) {
+        sf::Time elapsed = m_headBobbClock.getElapsedTime();
+        float time = elapsed.asSeconds();
+        m_playerHeight += std::sin(time * HEAD_BOBBING_FREQUENCY) * HEAD_BOBBING_AMPLITUDE * 
+                (std::sqrt(m_playerTransform.velocity.x * m_playerTransform.velocity.x + m_playerTransform.velocity.y * m_playerTransform.velocity.y)/PLAYER_MAX_SPEED);
+    }
 
     renderBSP(m_playerTransform.positionX, m_playerTransform.positionY,
               RAD2DEG(m_playerTransform.angle), m_bsp->m_rootNodeID);
@@ -72,8 +72,6 @@ public:
     m_renderWindow->setView(m_defaultView);
     m_renderWindow->clear();
     m_renderWindow->draw(m_screenSprite);
-    m_renderWindow->display();
-
   }
 
 private:
@@ -190,9 +188,8 @@ private:
 
     auto lightLevel = frontSector.lightLevel;
 
-    int playerHeight = m_playerTransform.positionZ;
-    float worldFrontZ1 = frontSector.ceilingHeight - playerHeight;
-    float worldFrontZ2 = frontSector.floorHeight - playerHeight;
+    float worldFrontZ1 = frontSector.ceilingHeight - m_playerHeight;
+    float worldFrontZ2 = frontSector.floorHeight - m_playerHeight;
 
     bool isWallVisible =
         strncmp((const char *)frontside.middleTextureName, "-", 1) != 0;
@@ -232,7 +229,7 @@ private:
     float middleTextAlt = 0;
     if ((line.flags & 0x0010) > 0) {
         vTop = frontSector.floorHeight + texture->height;
-        middleTextAlt = vTop - playerHeight;
+        middleTextAlt = vTop - m_playerHeight;
     }
     else {
         middleTextAlt = worldFrontZ1;
@@ -394,7 +391,7 @@ private:
     if (drawUpperWall) {
         if ((line.flags & 0x8) > 0) {
             vTop = backSector.ceilingHeight + upperWallGameTexture->height;
-            upperTextureAlt = vTop - m_playerTransform.positionZ;
+            upperTextureAlt = vTop - m_playerHeight;
         }
         else {
             upperTextureAlt = worldFrontZ1;
