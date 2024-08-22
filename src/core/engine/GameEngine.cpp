@@ -70,14 +70,15 @@ GameEngine::GameEngine(InitSettings settings) {
   }
 
   WADLoader loader;
-  m_level = loader.loadFromFile("../data/assets/DOOM1.WAD", "E1M1");
+  m_level = loader.loadFromFile("../data/assets/DOOM.WAD", "E1M1");
 
   sf::Vector2f initialPlayerPosition;
   float initialPlayerAngle = 0.0f;
   for (auto thing : m_level->things) {
     if (thing.type == 1) {
       initialPlayerPosition = sf::Vector2f((float)thing.x, (float)thing.y);
-      initialPlayerAngle = thing.angle * (M_PI / 180);
+      initialPlayerAngle = 0.0f;
+      //initialPlayerAngle = thing.angle * (M_PI / 180);
       break;
     }
   }

@@ -189,3 +189,8 @@ sf::Vector2f projectVectorOntoLine(sf::Vector2f vector, sf::Vector2f line) {
 
   return newLength * line;
 }
+
+int negMod(int a, int b)
+{
+    return (b + (a % b)) % b;
+}

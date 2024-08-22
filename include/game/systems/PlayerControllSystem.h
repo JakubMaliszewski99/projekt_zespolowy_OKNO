@@ -72,8 +72,4 @@ public:
 
 private:
   std::shared_ptr<ECSManager> m_manager;
-
-  uint32_t currentPlayerSector() {
-
-  }
 };
