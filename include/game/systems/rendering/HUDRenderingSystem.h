@@ -5,9 +5,9 @@
 #include "core/engine/BSP.h"
 
 const float GUN_TEXTURE_X_MOV_FREQ = 5;
-const float GUN_TEXTURE_X_MOV_AMP = 60;
+const float GUN_TEXTURE_X_MOV_AMP = 80;
 const float GUN_TEXTURE_Y_MOV_FREQ = 5;
-const float GUN_TEXTURE_Y_MOV_AMP = 60;
+const float GUN_TEXTURE_Y_MOV_AMP = 50;
 
 class HUDRenderingSystem : public System{
     public:
@@ -73,8 +73,8 @@ class HUDRenderingSystem : public System{
         healthBarWidth = defaultHealthBarWidth;
         healthBarHight = windowSize.y * 0.015; 
 
-        defaultHandGunSpriteX = windowSize.x * 0.42;
-        defaultHandGunSpriteY = windowSize.y * 0.61;
+        defaultHandGunSpriteX = windowSize.x * 0.41;
+        defaultHandGunSpriteY = windowSize.y * 0.65;
         handGunSpriteX = defaultHandGunSpriteX;
         handGunSpriteY = defaultHandGunSpriteY;
 
@@ -110,7 +110,6 @@ class HUDRenderingSystem : public System{
             handGunSpriteX =  defaultHandGunSpriteX + std::sin(time * GUN_TEXTURE_X_MOV_FREQ) * GUN_TEXTURE_X_MOV_AMP;
             handGunSpriteY =  defaultHandGunSpriteY - std::abs(std::sin(time * GUN_TEXTURE_X_MOV_FREQ) * GUN_TEXTURE_X_MOV_AMP);
             handGunSprite.setPosition(handGunSpriteX, handGunSpriteY);
-            std::cout << handGunSpriteX << std::endl;
         }
 
         m_renderWindow->draw(handGunSprite);

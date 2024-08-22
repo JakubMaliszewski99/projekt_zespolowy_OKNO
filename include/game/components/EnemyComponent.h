@@ -11,4 +11,5 @@ enum State{
 struct EnemyComponent{
     EnemyType type;
     State state;
+    bool isAlive;
 };
