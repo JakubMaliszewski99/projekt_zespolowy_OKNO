@@ -274,6 +274,7 @@ void GameEngine::run() {
     sf::Time deltaTime = clock.restart();
     processEvents();
     update(deltaTime);
+    std::cout << 1.0f / deltaTime.asSeconds() << std::endl;
   }
 }
 

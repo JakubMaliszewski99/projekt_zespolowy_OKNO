@@ -169,14 +169,6 @@ private:
     auto line = m_bsp->m_gameLevel->linedefs[segment.linedefNumber];
     auto frontside = m_bsp->m_gameLevel->sidedefs[line.frontSidedef];
 
-    // Note: Wall texture is taken from frontside after swap?
-    char wallTexture[8];
-    strncpy(wallTexture, (const char*)frontside.middleTextureName, 8);
-    char ceilTexture[8];
-    strncpy(ceilTexture, (const char*)frontSector.ceilingTextureName, 8);
-    char floorTexture[8];
-    strncpy(floorTexture, (const char*)frontSector.floorTextureName, 8);
-
     auto lightLevel = frontSector.lightLevel;
 
     int playerHeight = m_playerTransform.positionZ;
@@ -213,9 +205,9 @@ private:
       rwScaleStep = (scale2 - rwScale1) / (x2 - x1);
     }
 
-    std::shared_ptr<GameLevelTexture> texture = m_bsp->m_gameLevel->textureImages[std::string((char*)wallTexture, 8)];
-    std::shared_ptr<GameLevelTexture> ceilGameTexture = m_bsp->m_gameLevel->flatImages[std::string((char*)ceilTexture, 8)];
-    std::shared_ptr<GameLevelTexture> floorGameTexture = m_bsp->m_gameLevel->flatImages[std::string((char*)floorTexture, 8)];
+    std::shared_ptr<GameLevelTexture> texture = m_bsp->m_gameLevel->textureImages[std::string((char*)frontside.middleTextureName, 8)];
+    std::shared_ptr<GameLevelTexture> ceilGameTexture = m_bsp->m_gameLevel->flatImages[std::string((char*)frontSector.ceilingTextureName, 8)];
+    std::shared_ptr<GameLevelTexture> floorGameTexture = m_bsp->m_gameLevel->flatImages[std::string((char*)frontSector.floorTextureName, 8)];
 
     float vTop = 0;
     float middleTextAlt = 0;
@@ -277,16 +269,6 @@ private:
     auto backSector = m_bsp->m_gameLevel->sectors[segment.backSector];
     auto line = m_bsp->m_gameLevel->linedefs[segment.linedefNumber];
     auto frontside = m_bsp->m_gameLevel->sidedefs[line.frontSidedef];
-
-    // Note: Wall texture is taken from frontside after swap?
-    char upperWallTexture[8];
-    strncpy(upperWallTexture, (const char*)frontside.upperTextureName, 8);
-    char lowerWallTexture[8];
-    strncpy(lowerWallTexture, (const char*)frontside.lowerTextureName, 8);
-    char ceilTexture[8];
-    strncpy(ceilTexture, (const char*)frontSector.ceilingTextureName, 8);
-    char floorTexture[8];
-    strncpy(floorTexture, (const char*)frontSector.floorTextureName, 8);
 
     auto lightLevel = frontSector.lightLevel;
 
@@ -383,10 +365,11 @@ private:
       }
     }
 
-    std::shared_ptr<GameLevelTexture> ceilGameTexture = m_bsp->m_gameLevel->flatImages[std::string((char*)ceilTexture, 8)];
-    std::shared_ptr<GameLevelTexture> floorGameTexture = m_bsp->m_gameLevel->flatImages[std::string((char*)floorTexture, 8)];
-    std::shared_ptr<GameLevelTexture> lowerWallGameTexture = m_bsp->m_gameLevel->textureImages[std::string((char*)lowerWallTexture, 8)];
-    std::shared_ptr<GameLevelTexture> upperWallGameTexture = m_bsp->m_gameLevel->textureImages[std::string((char*)upperWallTexture, 8)];
+    // Note: Wall texture is taken from frontside after swap?
+    std::shared_ptr<GameLevelTexture> ceilGameTexture = m_bsp->m_gameLevel->flatImages[std::string((char*)frontSector.ceilingTextureName, 8)];
+    std::shared_ptr<GameLevelTexture> floorGameTexture = m_bsp->m_gameLevel->flatImages[std::string((char*)frontSector.floorTextureName, 8)];
+    std::shared_ptr<GameLevelTexture> lowerWallGameTexture = m_bsp->m_gameLevel->textureImages[std::string((char*)frontside.lowerTextureName, 8)];
+    std::shared_ptr<GameLevelTexture> upperWallGameTexture = m_bsp->m_gameLevel->textureImages[std::string((char*)frontside.upperTextureName, 8)];
 
     float vTop = 0;
     float upperTextureAlt = 0;
