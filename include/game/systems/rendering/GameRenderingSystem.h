@@ -106,18 +106,18 @@ private:
     }
   }
 
-  void renderWallColumn(float x, float y1, float y2, int texAlt, int texCol, float invScale, int lightLevel, GameLevelTexture texture) {
+  void renderWallColumn(float x, float y1, float y2, int texAlt, int texCol, float invScale, int lightLevel, const std::shared_ptr<GameLevelTexture>& texture) {
       if (y1 > y2) {
           return;
       }
 
-      int textureW = texture.width;
-      int textureH = texture.height;
+      int textureW = texture->width;
+      int textureH = texture->height;
       int textureCol = negMod(texCol, textureW);
       float textureY = texAlt + ((float)y1 - (float)H_HEIGHT) * invScale;
 
       for (int y = y1; y < y2 + 1; y++) {
-          color_t color = texture.image[textureCol][negMod(textureY, textureH)];
+          color_t color = texture->image[textureCol][negMod(textureY, textureH)];
           float fLightLevel = lightLevel / 255.0f;
           sf::Color sfColor{ color.r, color.g, color.b };
           sfColor.r *= lightLevel / 255.0f;
@@ -128,7 +128,7 @@ private:
       }
   }
 
-  void renderFlat(float x, float y1, float y2, float worldZ, int lightLevel, GameLevelTexture texture) {
+  void renderFlat(float x, float y1, float y2, float worldZ, int lightLevel, const std::shared_ptr<GameLevelTexture>& texture) {
       if (y1 > y2) {
           return;
       }
@@ -152,7 +152,7 @@ private:
           float tx = int(left_x + dx * x) & 63;
           float ty = int(left_y + dy * x) & 63;
 
-          color_t color = texture.image[tx][ty];
+          color_t color = texture->image[tx][ty];
           sf::Color sfColor{ color.r, color.g, color.b };
           sfColor.r *= lightLevel / 255.0f;
           sfColor.g *= lightLevel / 255.0f;
@@ -213,14 +213,14 @@ private:
       rwScaleStep = (scale2 - rwScale1) / (x2 - x1);
     }
 
-    GameLevelTexture texture = m_bsp->m_gameLevel->textureImages[std::string((char*)wallTexture, 8)];
-    GameLevelTexture ceilGameTexture = m_bsp->m_gameLevel->flatImages[std::string((char*)ceilTexture, 8)];
-    GameLevelTexture floorGameTexture = m_bsp->m_gameLevel->flatImages[std::string((char*)floorTexture, 8)];
+    std::shared_ptr<GameLevelTexture> texture = m_bsp->m_gameLevel->textureImages[std::string((char*)wallTexture, 8)];
+    std::shared_ptr<GameLevelTexture> ceilGameTexture = m_bsp->m_gameLevel->flatImages[std::string((char*)ceilTexture, 8)];
+    std::shared_ptr<GameLevelTexture> floorGameTexture = m_bsp->m_gameLevel->flatImages[std::string((char*)floorTexture, 8)];
 
     float vTop = 0;
     float middleTextAlt = 0;
     if ((line.flags & 0x0010) > 0) {
-        vTop = frontSector.floorHeight + texture.height;
+        vTop = frontSector.floorHeight + texture->height;
         middleTextAlt = vTop - playerHeight;
     }
     else {
@@ -383,16 +383,16 @@ private:
       }
     }
 
-    GameLevelTexture ceilGameTexture = m_bsp->m_gameLevel->flatImages[std::string((char*)ceilTexture, 8)];
-    GameLevelTexture floorGameTexture = m_bsp->m_gameLevel->flatImages[std::string((char*)floorTexture, 8)];
-    GameLevelTexture lowerWallGameTexture = m_bsp->m_gameLevel->textureImages[std::string((char*)lowerWallTexture, 8)];
-    GameLevelTexture upperWallGameTexture = m_bsp->m_gameLevel->textureImages[std::string((char*)upperWallTexture, 8)];
+    std::shared_ptr<GameLevelTexture> ceilGameTexture = m_bsp->m_gameLevel->flatImages[std::string((char*)ceilTexture, 8)];
+    std::shared_ptr<GameLevelTexture> floorGameTexture = m_bsp->m_gameLevel->flatImages[std::string((char*)floorTexture, 8)];
+    std::shared_ptr<GameLevelTexture> lowerWallGameTexture = m_bsp->m_gameLevel->textureImages[std::string((char*)lowerWallTexture, 8)];
+    std::shared_ptr<GameLevelTexture> upperWallGameTexture = m_bsp->m_gameLevel->textureImages[std::string((char*)upperWallTexture, 8)];
 
     float vTop = 0;
     float upperTextureAlt = 0;
     if (drawUpperWall) {
         if ((line.flags & 0x8) > 0) {
-            vTop = backSector.ceilingHeight + upperWallGameTexture.height;
+            vTop = backSector.ceilingHeight + upperWallGameTexture->height;
             upperTextureAlt = vTop - m_playerTransform.positionZ;
         }
         else {

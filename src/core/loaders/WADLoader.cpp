@@ -115,14 +115,14 @@ GameLevel *WADLoader::loadFromFile(std::string filename, std::string mapName) {
   }
 
   for (auto texture : wadTextures) {
-      GameLevelTexture glTexture;
-      glTexture.width = texture->width;
-      glTexture.height = texture->height;
-      glTexture.image.resize(texture->width);
+      std::shared_ptr<GameLevelTexture> glTexture(new GameLevelTexture);
+      glTexture->width = texture->width;
+      glTexture->height = texture->height;
+      glTexture->image.resize(texture->width);
       for (int i = 0; i < texture->width; i++) {
-          glTexture.image[i].resize(texture->height);
+          glTexture->image[i].resize(texture->height);
       }
-      strncpy((char*)glTexture.name, (char*)texture->name, 8);
+      strncpy((char*)glTexture->name, (char*)texture->name, 8);
 
       mappatch_t* texturePatches = &texture->patches;
       for (int i = 0; i < texture->patchcount; i++) {
@@ -155,7 +155,7 @@ GameLevel *WADLoader::loadFromFile(std::string filename, std::string mapName) {
                       if (currentPatch.originx + x >= texture->width || currentPatch.originy + y >= texture->height || currentPatch.originy < 0 || currentPatch.originx < 0) {
                           continue;
                       }
-                      glTexture.image[currentPatch.originx + x][currentPatch.originy + y] = gameLevel->pallets[0][colorIdx];
+                      glTexture->image[currentPatch.originx + x][currentPatch.originy + y] = gameLevel->pallets[0][colorIdx];
                   }
                   currentColumnOffsetIdx++;
                   currentColumnOffset = columnOffsets[currentColumnOffsetIdx];
@@ -164,21 +164,21 @@ GameLevel *WADLoader::loadFromFile(std::string filename, std::string mapName) {
       }
 
       std::string strName((char*)texture->name, 8);
-      gameLevel->textureImages[strName] = glTexture;
+      gameLevel->textureImages[strName] = std::move(glTexture);
   }
 
   for (size_t i = flat1StartIdx + 1; i < flat1EndIdx; i++) {
-      GameLevelTexture glTexture;
-      glTexture.width = 64;
-      glTexture.height = 64;
-      glTexture.image.resize(glTexture.width);
-      for (int i = 0; i < glTexture.width; i++) {
-          glTexture.image[i].resize(glTexture.height);
+      std::shared_ptr<GameLevelTexture> glTexture(new GameLevelTexture);
+      glTexture->width = 64;
+      glTexture->height = 64;
+      glTexture->image.resize(glTexture->width);
+      for (int i = 0; i < glTexture->width; i++) {
+          glTexture->image[i].resize(glTexture->height);
       }
-      strncpy((char*)glTexture.name, (char*)lumpDirectory[i].name, 8);
+      strncpy((char*)glTexture->name, (char*)lumpDirectory[i].name, 8);
       for (int x = 0; x < 64; x++) {
           for (int y = 0; y < 64; y++) {
-              glTexture.image[x][y] = { (unsigned char)x, (unsigned char)y, (unsigned char)x };
+              glTexture->image[x][y] = { (unsigned char)x, (unsigned char)y, (unsigned char)x };
           }
       }
 
