@@ -4,7 +4,8 @@
 #include <string>
 
 #define GET_OBJ_CLASSNAME(A) typeid(A).name()
-#define CLASS_LOGGER(LEVEL, MSG) Logger::getInstance()->log(LEVEL, GET_OBJ_CLASSNAME(*this), MSG)
+#define CLASS_LOGGER(LEVEL, MSG)                                               \
+  Logger::getInstance()->log(LEVEL, GET_OBJ_CLASSNAME(*this), MSG)
 
 enum LoggingLevel { eFatal, eError, eWarn, eInfo, eDebug };
 

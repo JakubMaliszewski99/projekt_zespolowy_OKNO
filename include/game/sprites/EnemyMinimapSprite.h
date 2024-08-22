@@ -1,6 +1,6 @@
 #pragma once
-#include "MinimapSprite.h"
 #include "../include/core/core.h"
+#include "MinimapSprite.h"
 
 class EnemyMinimapSprite : public MinimapSprite {
 public:

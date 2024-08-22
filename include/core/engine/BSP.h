@@ -6,7 +6,7 @@ const int16_t SSECTOR_ID = 0x8000;
 
 class BSP {
 public:
-  BSP(GameLevel *gameLevel) { 
+  BSP(GameLevel *gameLevel) {
     m_rootNodeID = gameLevel->nodes.size() - 1;
     m_gameLevel = gameLevel;
   }
@@ -16,7 +16,7 @@ public:
     float dx = playerX - node.xStart;
     float dy = playerY - node.yStart;
     float cross = dx * node.yEndOffset - dy * node.xEndOffset;
-    
+
     return cross <= 0;
   }
 
@@ -45,7 +45,7 @@ public:
     return frontSector.floorHeight;
   }
 
-//private:
+  // private:
   GameLevel *m_gameLevel;
   int m_rootNodeID;
 };

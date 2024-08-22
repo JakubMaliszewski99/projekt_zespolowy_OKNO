@@ -1,57 +1,68 @@
 #pragma once
-#include <stdint.h>
-#include <vector>
-#include <unordered_map>
-#include <string>
 #include <memory>
+#include <stdint.h>
+#include <string>
+#include <unordered_map>
+#include <vector>
 
-enum MapLumpTypes { eThings = 0, eLineDefs, eSideDefs, eVertexes, eSegs, eSSectors, eNodes, eSectors, eReject, eBlockMap };
+enum MapLumpTypes {
+  eThings = 0,
+  eLineDefs,
+  eSideDefs,
+  eVertexes,
+  eSegs,
+  eSSectors,
+  eNodes,
+  eSectors,
+  eReject,
+  eBlockMap
+};
 
 #pragma pack(push, 1)
 struct color_t {
-	uint8_t r, g, b;
+  uint8_t r, g, b;
 };
 
 struct name_t {
-	int8_t value[8];
+  int8_t value[8];
 };
 
 struct patchheader_t {
-	uint16_t width;
-	uint16_t height;
-	int16_t leftoffset;
-	int16_t topoffset;
-	uint32_t columnofs;
+  uint16_t width;
+  uint16_t height;
+  int16_t leftoffset;
+  int16_t topoffset;
+  uint32_t columnofs;
 };
 
 /// @brief Structs holding textures lump
 /// @reference: https://doomwiki.org/wiki/TEXTURE1_and_TEXTURE2
 struct mappatch_t {
-	int16_t originx;
-	int16_t originy;
-	int16_t patch;
-	int16_t stepdir;
-	int16_t colormap;
+  int16_t originx;
+  int16_t originy;
+  int16_t patch;
+  int16_t stepdir;
+  int16_t colormap;
 };
 
 struct maptexture_t {
-	int8_t name[8];
-	int32_t masked;
-	int16_t width;
-	int16_t height;
-	int32_t columndirectory;
-	int16_t patchcount;
-	mappatch_t patches;
+  int8_t name[8];
+  int32_t masked;
+  int16_t width;
+  int16_t height;
+  int32_t columndirectory;
+  int16_t patchcount;
+  mappatch_t patches;
 };
 
 struct maptexturelump_t {
-	int32_t numtextures;
-	int32_t offset;
+  int32_t numtextures;
+  int32_t offset;
 };
 
 struct pnames_t {
-	int32_t nummappatches;
-	name_t name_p_start;
+  int32_t nummappatches;
+  name_t name_p_start;
 };
 
 /// @brief Struct holding THINGS lump
@@ -107,7 +118,6 @@ struct mapsegs_t {
   int16_t offset;
 };
 
-
 /// @brief Struct holding SSECTOR (subsector) lump
 /// @name mapsegs_t
 /// @reference: https://doomwiki.org/wiki/Subsector
@@ -151,15 +161,14 @@ struct GameLevelSegment {
 };
 
 struct GameLevelPatch {
-  int8_t* name;
+  int8_t *name;
 };
 
 struct GameLevelTexture {
-	size_t width, height;
-	int8_t name[8];
-	std::vector<std::vector<color_t>> image;
+  size_t width, height;
+  int8_t name[8];
+  std::vector<std::vector<color_t>> image;
 };
-
 
 struct GameLevel {
   std::vector<mapthings_t> things;
@@ -170,9 +179,10 @@ struct GameLevel {
   std::vector<mapssectors_t> subsuctors;
   std::vector<mapnodes_t> nodes;
   std::vector<mapsectors_t> sectors;
-  std::vector<color_t*> pallets;
+  std::vector<color_t *> pallets;
   std::vector<maptexture_t> textures;
   std::vector<GameLevelPatch> patches;
-  std::unordered_map<std::string, std::unique_ptr<GameLevelTexture>> textureImages;
+  std::unordered_map<std::string, std::unique_ptr<GameLevelTexture>>
+      textureImages;
   std::unordered_map<std::string, std::unique_ptr<GameLevelTexture>> flatImages;
 };

@@ -1,17 +1,17 @@
 #pragma once
 #include "../../components/GameDrawableComponent.h"
-#include "../../components/TransformComponent.h"
 #include "../../components/PlayerStateComponent.h"
+#include "../../components/TransformComponent.h"
 #include "../include/core/core.h"
 #include "../include/core/ecs/ECSManager.h"
 #include "../include/core/math/utilities.h"
 #include "core/engine/BSP.h"
 #include <SFML/Graphics.hpp>
 #include <algorithm>
+#include <cstring>
 #include <random>
 #include <set>
 #include <utility>
-#include <cstring>
 
 const float HEAD_BOBBING_FREQUENCY = 10.0f;
 const float HEAD_BOBBING_AMPLITUDE = 7.5f;
@@ -35,7 +35,6 @@ public:
     m_defaultView = sf::View(sf::FloatRect(0, 0, WIDTH, HEIGHT));
     m_frameBuffer.create(WIDTH, HEIGHT);
     m_texture.create(WIDTH, HEIGHT);
-
   }
 
   void update(float dt) {
@@ -51,16 +50,22 @@ public:
 
     m_playerTransform =
         m_manager->getComponent<TransformComponent>(m_playerEntity);
-    m_playerState = m_manager->getComponent<PlayerStateComponent>(m_playerEntity);
+    m_playerState =
+        m_manager->getComponent<PlayerStateComponent>(m_playerEntity);
 
-    //TODO:Move it somewhere else? + Make the headbbob more smooth
+    // TODO:Move it somewhere else? + Make the headbbob more smooth
     m_playerHeight = m_playerTransform.positionZ;
     // Head bobbing effect
-    if (m_playerState.isMovingForward || m_playerState.isMovingBackwards || m_playerState.isMovingRight || m_playerState.isMovingLeft) {
-        sf::Time elapsed = m_headBobbClock.getElapsedTime();
-        float time = elapsed.asSeconds();
-        m_playerHeight += std::sin(time * HEAD_BOBBING_FREQUENCY) * HEAD_BOBBING_AMPLITUDE * 
-                (std::sqrt(m_playerTransform.velocity.x * m_playerTransform.velocity.x + m_playerTransform.velocity.y * m_playerTransform.velocity.y)/PLAYER_MAX_SPEED);
+    if (m_playerState.isMovingForward || m_playerState.isMovingBackwards ||
+        m_playerState.isMovingRight || m_playerState.isMovingLeft) {
+      sf::Time elapsed = m_headBobbClock.getElapsedTime();
+      float time = elapsed.asSeconds();
+      m_playerHeight +=
+          std::sin(time * HEAD_BOBBING_FREQUENCY) * HEAD_BOBBING_AMPLITUDE *
+          (std::sqrt(
+               m_playerTransform.velocity.x * m_playerTransform.velocity.x +
+               m_playerTransform.velocity.y * m_playerTransform.velocity.y) /
+           PLAYER_MAX_SPEED);
     }
 
     renderBSP(m_playerTransform.positionX, m_playerTransform.positionY,
@@ -122,62 +127,64 @@ private:
     }
   }
 
-  void renderWallColumn(float x, float y1, float y2, int texAlt, int texCol, float invScale, int lightLevel, const std::unique_ptr<GameLevelTexture>& texture) {
-      if (y1 > y2) {
-          return;
-      }
+  void renderWallColumn(float x, float y1, float y2, int texAlt, int texCol,
+                        float invScale, int lightLevel,
+                        const std::unique_ptr<GameLevelTexture> &texture) {
+    if (y1 > y2) {
+      return;
+    }
 
-      int textureW = texture->width;
-      int textureH = texture->height;
-      int textureCol = negMod(texCol, textureW);
-      float textureY = texAlt + ((float)y1 - (float)H_HEIGHT) * invScale;
+    int textureW = texture->width;
+    int textureH = texture->height;
+    int textureCol = negMod(texCol, textureW);
+    float textureY = texAlt + ((float)y1 - (float)H_HEIGHT) * invScale;
 
-      for (int y = y1; y < y2 + 1; y++) {
-          color_t color = texture->image[textureCol][negMod(textureY, textureH)];
-          float fLightLevel = lightLevel / 255.0f;
-          sf::Color sfColor{ color.r, color.g, color.b };
-          sfColor.r *= lightLevel / 255.0f;
-          sfColor.g *= lightLevel / 255.0f;
-          sfColor.b *= lightLevel / 255.0f;
-          m_frameBuffer.setPixel(x, y, sfColor);
-          textureY += invScale;
-      }
+    for (int y = y1; y < y2 + 1; y++) {
+      color_t color = texture->image[textureCol][negMod(textureY, textureH)];
+      float fLightLevel = lightLevel / 255.0f;
+      sf::Color sfColor{color.r, color.g, color.b};
+      sfColor.r *= lightLevel / 255.0f;
+      sfColor.g *= lightLevel / 255.0f;
+      sfColor.b *= lightLevel / 255.0f;
+      m_frameBuffer.setPixel(x, y, sfColor);
+      textureY += invScale;
+    }
   }
 
-  void renderFlat(float x, float y1, float y2, float worldZ, int lightLevel, const std::unique_ptr<GameLevelTexture>& texture) {
-      if (y1 > y2) {
-          return;
-      }
+  void renderFlat(float x, float y1, float y2, float worldZ, int lightLevel,
+                  const std::unique_ptr<GameLevelTexture> &texture) {
+    if (y1 > y2) {
+      return;
+    }
 
-      float player_dir_x = cosf(m_playerTransform.angle);
-      float player_dir_y = sinf(m_playerTransform.angle);
-      uint8_t* framebufferPtr = (uint8_t*)m_frameBuffer.getPixelsPtr();
-      for (int y = y1; y < y2; y++) {
-          float z = H_WIDTH * worldZ / (H_HEIGHT - y);
+    float player_dir_x = cosf(m_playerTransform.angle);
+    float player_dir_y = sinf(m_playerTransform.angle);
+    uint8_t *framebufferPtr = (uint8_t *)m_frameBuffer.getPixelsPtr();
+    for (int y = y1; y < y2; y++) {
+      float z = H_WIDTH * worldZ / (H_HEIGHT - y);
 
-          float px = player_dir_x * z + m_playerTransform.positionX;
-          float py = player_dir_y * z + m_playerTransform.positionY;
+      float px = player_dir_x * z + m_playerTransform.positionX;
+      float py = player_dir_y * z + m_playerTransform.positionY;
 
-          float left_x = -player_dir_y * z + px;
-          float left_y = player_dir_x * z + py;
-          float right_x = player_dir_y * z + px;
-          float right_y = -player_dir_x * z + py;
+      float left_x = -player_dir_y * z + px;
+      float left_y = player_dir_x * z + py;
+      float right_x = player_dir_y * z + px;
+      float right_y = -player_dir_x * z + py;
 
-          float dx = (right_x - left_x) / WIDTH;
-          float dy = (right_y - left_y) / WIDTH;
+      float dx = (right_x - left_x) / WIDTH;
+      float dy = (right_y - left_y) / WIDTH;
 
-          float tx = int(left_x + dx * x) & 63;
-          float ty = int(left_y + dy * x) & 63;
+      float tx = int(left_x + dx * x) & 63;
+      float ty = int(left_y + dy * x) & 63;
 
-          color_t color = texture->image[tx][ty];
-          sf::Color sfColor{ color.r, color.g, color.b };
-          sfColor.r *= lightLevel / 255.0f;
-          sfColor.g *= lightLevel / 255.0f;
-          sfColor.b *= lightLevel / 255.0f;
-          m_frameBuffer.setPixel(x, y, sfColor);
-      }
+      color_t color = texture->image[tx][ty];
+      sf::Color sfColor{color.r, color.g, color.b};
+      sfColor.r *= lightLevel / 255.0f;
+      sfColor.g *= lightLevel / 255.0f;
+      sfColor.b *= lightLevel / 255.0f;
+      m_frameBuffer.setPixel(x, y, sfColor);
+    }
   }
-
 
   // TODO: Move it to BSP
   void drawSolidWallRange(GameLevelSegment segment, float x1, float x2,
@@ -212,7 +219,7 @@ private:
 
     int offsetAngleMod = (int)fmodf(rwScale1, 360);
     if (offsetAngleMod - 1 == 90 || offsetAngleMod + 1 == 90) {
-        rwScale1 *= 0.1;
+      rwScale1 *= 0.1;
     }
 
     if (x1 < x2) {
@@ -221,18 +228,23 @@ private:
       rwScaleStep = (scale2 - rwScale1) / (x2 - x1);
     }
 
-    std::unique_ptr<GameLevelTexture>& texture = m_bsp->m_gameLevel->textureImages[std::string((char*)frontside.middleTextureName, 8)];
-    std::unique_ptr<GameLevelTexture>& ceilGameTexture = m_bsp->m_gameLevel->flatImages[std::string((char*)frontSector.ceilingTextureName, 8)];
-    std::unique_ptr<GameLevelTexture>& floorGameTexture = m_bsp->m_gameLevel->flatImages[std::string((char*)frontSector.floorTextureName, 8)];
+    std::unique_ptr<GameLevelTexture> &texture =
+        m_bsp->m_gameLevel->textureImages[std::string(
+            (char *)frontside.middleTextureName, 8)];
+    std::unique_ptr<GameLevelTexture> &ceilGameTexture =
+        m_bsp->m_gameLevel->flatImages[std::string(
+            (char *)frontSector.ceilingTextureName, 8)];
+    std::unique_ptr<GameLevelTexture> &floorGameTexture =
+        m_bsp->m_gameLevel
+            ->flatImages[std::string((char *)frontSector.floorTextureName, 8)];
 
     float vTop = 0;
     float middleTextAlt = 0;
     if ((line.flags & 0x0010) > 0) {
-        vTop = frontSector.floorHeight + texture->height;
-        middleTextAlt = vTop - m_playerHeight;
-    }
-    else {
-        middleTextAlt = worldFrontZ1;
+      vTop = frontSector.floorHeight + texture->height;
+      middleTextAlt = vTop - m_playerHeight;
+    } else {
+      middleTextAlt = worldFrontZ1;
     }
     middleTextAlt += frontside.yOffset;
 
@@ -244,7 +256,6 @@ private:
     float wallY1Step = -rwScaleStep * worldFrontZ1;
     float wallY2 = H_HEIGHT - worldFrontZ2 * rwScale1;
     float wallY2Step = -rwScaleStep * worldFrontZ2;
-
 
     for (int x = x1; x < x2 + 1; x++) {
       float drawWallY1 = wallY1 - 1;
@@ -260,10 +271,11 @@ private:
         int wy1 = std::max<int>(drawWallY1, m_upperClip[x] + 1);
         int wy2 = std::min<int>(drawWallY2, m_lowerClip[x] - 1);
         if (wy1 < wy2) {
-            float angle = rwCenterAngle - m_x2Angle[x];
-            float textureColumn = rwDistance * tanf(DEG2RAD(angle)) - rwOffset;
-            float invScale = 1.0 / rwScale1;
-            renderWallColumn(x, wy1, wy2, middleTextAlt, textureColumn, invScale, lightLevel, texture);
+          float angle = rwCenterAngle - m_x2Angle[x];
+          float textureColumn = rwDistance * tanf(DEG2RAD(angle)) - rwOffset;
+          float invScale = 1.0 / rwScale1;
+          renderWallColumn(x, wy1, wy2, middleTextAlt, textureColumn, invScale,
+                           lightLevel, texture);
         }
       }
 
@@ -343,12 +355,12 @@ private:
 
     float rwOffset = 0;
     float rwCenterAngle = 0;
-    
+
     bool segmentTextured = drawUpperWall || drawLowerWall;
     if (segmentTextured) {
-        rwOffset = hypotenuse * sinf(DEG2RAD(offsetAngle));
-        rwOffset += segment.offset + frontside.xOffset;
-        rwCenterAngle = rwNormalAngle - RAD2DEG(m_playerTransform.angle);
+      rwOffset = hypotenuse * sinf(DEG2RAD(offsetAngle));
+      rwOffset += segment.offset + frontside.xOffset;
+      rwCenterAngle = rwNormalAngle - RAD2DEG(m_playerTransform.angle);
     }
 
     float wallY1 = H_HEIGHT - worldFrontZ1 * rwScale1;
@@ -381,31 +393,37 @@ private:
     }
 
     // Note: Wall texture is taken from frontside after swap?
-    std::unique_ptr<GameLevelTexture>& ceilGameTexture = m_bsp->m_gameLevel->flatImages[std::string((char*)frontSector.ceilingTextureName, 8)];
-    std::unique_ptr<GameLevelTexture>& floorGameTexture = m_bsp->m_gameLevel->flatImages[std::string((char*)frontSector.floorTextureName, 8)];
-    std::unique_ptr<GameLevelTexture>& lowerWallGameTexture = m_bsp->m_gameLevel->textureImages[std::string((char*)frontside.lowerTextureName, 8)];
-    std::unique_ptr<GameLevelTexture>& upperWallGameTexture = m_bsp->m_gameLevel->textureImages[std::string((char*)frontside.upperTextureName, 8)];
+    std::unique_ptr<GameLevelTexture> &ceilGameTexture =
+        m_bsp->m_gameLevel->flatImages[std::string(
+            (char *)frontSector.ceilingTextureName, 8)];
+    std::unique_ptr<GameLevelTexture> &floorGameTexture =
+        m_bsp->m_gameLevel
+            ->flatImages[std::string((char *)frontSector.floorTextureName, 8)];
+    std::unique_ptr<GameLevelTexture> &lowerWallGameTexture =
+        m_bsp->m_gameLevel
+            ->textureImages[std::string((char *)frontside.lowerTextureName, 8)];
+    std::unique_ptr<GameLevelTexture> &upperWallGameTexture =
+        m_bsp->m_gameLevel
+            ->textureImages[std::string((char *)frontside.upperTextureName, 8)];
 
     float vTop = 0;
     float upperTextureAlt = 0;
     if (drawUpperWall) {
-        if ((line.flags & 0x8) > 0) {
-            vTop = backSector.ceilingHeight + upperWallGameTexture->height;
-            upperTextureAlt = vTop - m_playerHeight;
-        }
-        else {
-            upperTextureAlt = worldFrontZ1;
-        }
+      if ((line.flags & 0x8) > 0) {
+        vTop = backSector.ceilingHeight + upperWallGameTexture->height;
+        upperTextureAlt = vTop - m_playerHeight;
+      } else {
+        upperTextureAlt = worldFrontZ1;
+      }
     }
 
     float lowerTextureAlt = 0;
     if (drawLowerWall) {
-        if ((line.flags & 0x10) > 0) {
-            lowerTextureAlt = worldBackZ1;
-        }
-        else {
-            lowerTextureAlt = worldBackZ2;
-        }
+      if ((line.flags & 0x10) > 0) {
+        lowerTextureAlt = worldBackZ1;
+      } else {
+        lowerTextureAlt = worldBackZ2;
+      }
     }
 
     for (int x = x1; x < x2 + 1; x++) {
@@ -416,11 +434,10 @@ private:
       float textureColumn = 0;
       float invScale = 0;
       if (segmentTextured) {
-          angle = rwCenterAngle - m_x2Angle[x];
-          textureColumn = rwDistance * tanf(DEG2RAD(angle)) - rwOffset;
-          invScale = 1.0 / rwScale1;
+        angle = rwCenterAngle - m_x2Angle[x];
+        textureColumn = rwDistance * tanf(DEG2RAD(angle)) - rwOffset;
+        invScale = 1.0 / rwScale1;
       }
-
 
       if (drawUpperWall) {
         float drawUpperWallY1 = wallY1 - 1;
@@ -434,8 +451,8 @@ private:
         float wy1 = std::max<float>(drawUpperWallY1, m_upperClip[x] + 1);
         float wy2 = std::min<float>(drawUpperWallY2, m_lowerClip[x] - 1);
 
-
-        renderWallColumn(x, wy1, wy2, upperTextureAlt, textureColumn, invScale, lightLevel, upperWallGameTexture);
+        renderWallColumn(x, wy1, wy2, upperTextureAlt, textureColumn, invScale,
+                         lightLevel, upperWallGameTexture);
 
         if (m_upperClip[x] < wy2) {
           m_upperClip[x] = wy2;
@@ -467,7 +484,8 @@ private:
         float wy1 = std::max<float>(drawLowerWallY1, m_upperClip[x] + 1);
         float wy2 = std::min<float>(drawLowerWallY2, m_lowerClip[x] - 1);
 
-        renderWallColumn(x, wy1, wy2, lowerTextureAlt, textureColumn, invScale, lightLevel, ceilGameTexture);
+        renderWallColumn(x, wy1, wy2, lowerTextureAlt, textureColumn, invScale,
+                         lightLevel, ceilGameTexture);
 
         if (m_lowerClip[x] > wy1) {
           m_lowerClip[x] = wy1;

@@ -7,7 +7,8 @@ CollectableMinimapSprite::CollectableMinimapSprite(sf::Color color) {
 }
 
 void CollectableMinimapSprite::update(TransformComponent transform) {
-  collectableDot.setPosition(sf::Vector2f(transform.positionX, transform.positionY));
+  collectableDot.setPosition(
+      sf::Vector2f(transform.positionX, transform.positionY));
 }
 
 void CollectableMinimapSprite::draw(sf::RenderTarget &target,

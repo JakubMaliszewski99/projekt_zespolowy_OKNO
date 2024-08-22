@@ -8,7 +8,7 @@ public:
 
 private:
   virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const;
-  
+
   // TODO: Change names, add prefix m_
   float radius;
   sf::Color playerColor;

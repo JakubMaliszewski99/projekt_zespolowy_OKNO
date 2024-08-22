@@ -1,6 +1,6 @@
-#include <iostream>
-#include <SFML/Graphics.hpp>
 #include "../include/core/engine/GameEngine.h"
+#include <SFML/Graphics.hpp>
+#include <iostream>
 
 int main(int argc, char *argv[]) {
 
@@ -14,11 +14,11 @@ int main(int argc, char *argv[]) {
   initSetting.windowHeight = HEIGHT;
   initSetting.windowTitle = "DOOM 2.5D";
   initSetting.isFullscreen = false;
-  #ifdef _DEBUG
+#ifdef _DEBUG
   initSetting.isDebug = true;
-  #else
+#else
   initSetting.isDebug = false;
-  #endif
+#endif
   initSetting.difficultyLevel = 1;
   initSetting.initialState = GameEngineState::eGame;
   initSetting.debugSettings = debugSettings;
