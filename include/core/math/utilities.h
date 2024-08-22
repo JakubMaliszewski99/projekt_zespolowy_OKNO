@@ -29,3 +29,4 @@ sf::Vector2f velocityScalarToVector(float velocity, float angle);
 sf::Vector2f segmentEnd(float startX, float startY, float angle, float length);
 sf::Vector2f lerp(const sf::Vector2f& start, const sf::Vector2f& end, float t);
 float dot(const sf::Vector2f& a, const sf::Vector2f& b);
+int negMod(int a, int b);

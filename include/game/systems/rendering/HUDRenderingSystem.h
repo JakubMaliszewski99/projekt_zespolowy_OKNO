@@ -23,7 +23,7 @@ class HUDRenderingSystem : public System{
         if (!hudTexture.loadFromFile("../data/textures/HUD.png")){
             std::cout << "Could not load HUD texture!" << std::endl;
         }
-        if(!handGunTexture.loadFromFile("C:\\Users\\kubek\\OneDrive\\Desktop\\Projekt_zespolowy\\projekt_zespolowy_OKNO\\data\\textures\\Gun.png")){
+        if(!handGunTexture.loadFromFile("../data/textures/Gun.png")){
             std::cout << "Could not load HandGun texture!" << std::endl;
         }
         

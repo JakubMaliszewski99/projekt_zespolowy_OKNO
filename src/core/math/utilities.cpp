@@ -191,6 +191,11 @@ sf::Vector2f projectVectorOntoLine(sf::Vector2f vector, sf::Vector2f line) {
   return newLength * line;
 }
 
+int negMod(int a, int b)
+{
+    return (b + (a % b)) % b;
+}
+
 sf::Vector2f velocityScalarToVector(float velocity, float angle_rad) {
   float x = cosf(angle_rad) * velocity;
   float y = sinf(angle_rad) * velocity;

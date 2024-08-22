@@ -137,7 +137,7 @@ private:
         m_manager->addComponent(
             projectile,
             TransformComponent{shooterTransform.positionX, shooterTransform.positionY,
-                         shooterTransform.positionZ,
+                         shooterTransform.positionZ, 0.0f,
                          velocityScalarToVector(WeaponComponent::projectileSpeed, shooterTransform.angle),
                          0.0f,
                          sf::Vector2f(),

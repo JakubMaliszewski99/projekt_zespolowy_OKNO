@@ -11,7 +11,7 @@ GameEngine::GameEngine(InitSettings settings) {
   }
 
   WADLoader loader;
-  m_level = loader.loadFromFile("../data/assets/DOOM1.WAD", "E1M1");
+  m_level = loader.loadFromFile("../data/assets/DOOM.WAD", "E1M1");
 
   // Load player position
   sf::Vector2f initialPlayerPosition;
@@ -19,7 +19,8 @@ GameEngine::GameEngine(InitSettings settings) {
   for (auto thing : m_level->things) {
     if (thing.type == 1) {
       initialPlayerPosition = sf::Vector2f((float)thing.x, (float)thing.y);
-      initialPlayerAngle = thing.angle * (M_PI / 180);
+      initialPlayerAngle = 0.0f;
+      //initialPlayerAngle = thing.angle * (M_PI / 180);
       break;
     }
   }
@@ -41,7 +42,7 @@ GameEngine::GameEngine(InitSettings settings) {
   m_ecsManager->addComponent(m_playerEntity, HealthComponent{100, 100});
   m_ecsManager->addComponent(m_playerEntity,
                             TransformComponent{initialPlayerPosition.x, initialPlayerPosition.y,
-                                              PLAYER_HEIGHT,
+                                              PLAYER_HEIGHT, PLAYER_HEIGHT,
                                               sf::Vector2f(), 0.0f, sf::Vector2f(), initialPlayerAngle});
   m_ecsManager->addComponent(m_playerEntity,
                             MinimapSpriteComponent{
@@ -58,6 +59,7 @@ GameEngine::GameEngine(InitSettings settings) {
   // Create map entity
   m_mapEntity = m_ecsManager->createEntity();
   m_ecsManager->addComponent(m_mapEntity, TransformComponent{
+                                              0.0f,
                                               0.0f,
                                               0.0f,
                                               0.0f,
@@ -112,7 +114,7 @@ GameEngine::GameEngine(InitSettings settings) {
         float initialEnemyAngle = thing.angle * (M_PI / 180);
 
         m_ecsManager->addComponent(thingEntity,
-                                  TransformComponent{(float)thing.x, (float)thing.y, 0.0f, sf::Vector2f(), 0.0f, sf::Vector2f(), initialEnemyAngle});
+                                  TransformComponent{(float)thing.x, (float)thing.y, 0.0f, 0.0f, sf::Vector2f(), 0.0f, sf::Vector2f(), initialEnemyAngle});
         m_ecsManager->addComponent(
         thingEntity,
         MinimapSpriteComponent{sf::View(), new EnemyMinimapSprite(color),
@@ -143,7 +145,7 @@ GameEngine::GameEngine(InitSettings settings) {
       }
         m_ecsManager->addComponent(
         thingEntity,
-        TransformComponent{(float)thing.x, (float)thing.y, 0.0f, sf::Vector2f(), 0.0f, sf::Vector2f(), 0});
+        TransformComponent{(float)thing.x, (float)thing.y, 0.0f, 0.0f, sf::Vector2f(), 0.0f, sf::Vector2f(), 0});
     
     m_ecsManager->addComponent(
         thingEntity,
@@ -179,6 +181,7 @@ while (m_window->isOpen()) {
     sf::Time deltaTime = clock.restart();
     processEvents();
     update(deltaTime);
+    std::cout << 1.0f / deltaTime.asSeconds() << std::endl;
   }
 }
 

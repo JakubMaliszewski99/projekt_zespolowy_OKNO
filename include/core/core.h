@@ -3,6 +3,7 @@
 #include <cmath>
 #include <SFML/Graphics.hpp>
 
+#define M_PI 3.14159265358979323846
 #define UNUSED(x) (void)(x)
 
 const float FOV = 90;
