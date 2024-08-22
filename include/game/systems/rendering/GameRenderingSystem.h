@@ -106,7 +106,7 @@ private:
     }
   }
 
-  void renderWallColumn(float x, float y1, float y2, int texAlt, int texCol, float invScale, int lightLevel, const std::shared_ptr<GameLevelTexture>& texture) {
+  void renderWallColumn(float x, float y1, float y2, int texAlt, int texCol, float invScale, int lightLevel, const std::unique_ptr<GameLevelTexture>& texture) {
       if (y1 > y2) {
           return;
       }
@@ -128,13 +128,14 @@ private:
       }
   }
 
-  void renderFlat(float x, float y1, float y2, float worldZ, int lightLevel, const std::shared_ptr<GameLevelTexture>& texture) {
+  void renderFlat(float x, float y1, float y2, float worldZ, int lightLevel, const std::unique_ptr<GameLevelTexture>& texture) {
       if (y1 > y2) {
           return;
       }
 
       float player_dir_x = cosf(m_playerTransform.angle);
       float player_dir_y = sinf(m_playerTransform.angle);
+      uint8_t* framebufferPtr = (uint8_t*)m_frameBuffer.getPixelsPtr();
       for (int y = y1; y < y2; y++) {
           float z = H_WIDTH * worldZ / (H_HEIGHT - y);
 
@@ -205,9 +206,9 @@ private:
       rwScaleStep = (scale2 - rwScale1) / (x2 - x1);
     }
 
-    std::shared_ptr<GameLevelTexture> texture = m_bsp->m_gameLevel->textureImages[std::string((char*)frontside.middleTextureName, 8)];
-    std::shared_ptr<GameLevelTexture> ceilGameTexture = m_bsp->m_gameLevel->flatImages[std::string((char*)frontSector.ceilingTextureName, 8)];
-    std::shared_ptr<GameLevelTexture> floorGameTexture = m_bsp->m_gameLevel->flatImages[std::string((char*)frontSector.floorTextureName, 8)];
+    std::unique_ptr<GameLevelTexture>& texture = m_bsp->m_gameLevel->textureImages[std::string((char*)frontside.middleTextureName, 8)];
+    std::unique_ptr<GameLevelTexture>& ceilGameTexture = m_bsp->m_gameLevel->flatImages[std::string((char*)frontSector.ceilingTextureName, 8)];
+    std::unique_ptr<GameLevelTexture>& floorGameTexture = m_bsp->m_gameLevel->flatImages[std::string((char*)frontSector.floorTextureName, 8)];
 
     float vTop = 0;
     float middleTextAlt = 0;
@@ -366,10 +367,10 @@ private:
     }
 
     // Note: Wall texture is taken from frontside after swap?
-    std::shared_ptr<GameLevelTexture> ceilGameTexture = m_bsp->m_gameLevel->flatImages[std::string((char*)frontSector.ceilingTextureName, 8)];
-    std::shared_ptr<GameLevelTexture> floorGameTexture = m_bsp->m_gameLevel->flatImages[std::string((char*)frontSector.floorTextureName, 8)];
-    std::shared_ptr<GameLevelTexture> lowerWallGameTexture = m_bsp->m_gameLevel->textureImages[std::string((char*)frontside.lowerTextureName, 8)];
-    std::shared_ptr<GameLevelTexture> upperWallGameTexture = m_bsp->m_gameLevel->textureImages[std::string((char*)frontside.upperTextureName, 8)];
+    std::unique_ptr<GameLevelTexture>& ceilGameTexture = m_bsp->m_gameLevel->flatImages[std::string((char*)frontSector.ceilingTextureName, 8)];
+    std::unique_ptr<GameLevelTexture>& floorGameTexture = m_bsp->m_gameLevel->flatImages[std::string((char*)frontSector.floorTextureName, 8)];
+    std::unique_ptr<GameLevelTexture>& lowerWallGameTexture = m_bsp->m_gameLevel->textureImages[std::string((char*)frontside.lowerTextureName, 8)];
+    std::unique_ptr<GameLevelTexture>& upperWallGameTexture = m_bsp->m_gameLevel->textureImages[std::string((char*)frontside.upperTextureName, 8)];
 
     float vTop = 0;
     float upperTextureAlt = 0;

@@ -115,7 +115,7 @@ GameLevel *WADLoader::loadFromFile(std::string filename, std::string mapName) {
   }
 
   for (auto texture : wadTextures) {
-      std::shared_ptr<GameLevelTexture> glTexture(new GameLevelTexture);
+      std::unique_ptr<GameLevelTexture> glTexture(new GameLevelTexture);
       glTexture->width = texture->width;
       glTexture->height = texture->height;
       glTexture->image.resize(texture->width);
@@ -168,7 +168,7 @@ GameLevel *WADLoader::loadFromFile(std::string filename, std::string mapName) {
   }
 
   for (size_t i = flat1StartIdx + 1; i < flat1EndIdx; i++) {
-      std::shared_ptr<GameLevelTexture> glTexture(new GameLevelTexture);
+      std::unique_ptr<GameLevelTexture> glTexture(new GameLevelTexture);
       glTexture->width = 64;
       glTexture->height = 64;
       glTexture->image.resize(glTexture->width);
@@ -183,7 +183,7 @@ GameLevel *WADLoader::loadFromFile(std::string filename, std::string mapName) {
       }
 
       std::string strName((char*)lumpDirectory[i].name, 8);
-      gameLevel->flatImages[strName] = glTexture;
+      gameLevel->flatImages[strName] = std::move(glTexture);
   }
 
   if (selectedMapLumpIndex < 0) {

@@ -173,6 +173,6 @@ struct GameLevel {
   std::vector<color_t*> pallets;
   std::vector<maptexture_t> textures;
   std::vector<GameLevelPatch> patches;
-  std::unordered_map<std::string, std::shared_ptr<GameLevelTexture>> textureImages;
-  std::unordered_map<std::string, std::shared_ptr<GameLevelTexture>> flatImages;
+  std::unordered_map<std::string, std::unique_ptr<GameLevelTexture>> textureImages;
+  std::unordered_map<std::string, std::unique_ptr<GameLevelTexture>> flatImages;
 };
