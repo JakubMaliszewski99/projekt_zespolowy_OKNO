@@ -49,7 +49,15 @@
         "streambuf": "cpp",
         "typeinfo": "cpp",
         "fstream": "cpp",
-        "sstream": "cpp"
+        "sstream": "cpp",
+        "bitset": "cpp",
+        "cstring": "cpp",
+        "iomanip": "cpp",
+        "cinttypes": "cpp",
+        "chrono": "cpp",
+        "ratio": "cpp",
+        "codecvt": "cpp",
+        "filesystem": "cpp"
     },
     "cmake.configureOnOpen": false,
     "C_Cpp.default.compilerPath": "C:\\mingw32\\bin\\g++.exe",
