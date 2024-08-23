@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../core/ecs/System.h"
+#include "../../core/engine/BSP.h"
 #include "../../core/engine/InputManager.h"
 #include "../../core/math/collisions.h"
 #include "../../core/math/utilities.h"

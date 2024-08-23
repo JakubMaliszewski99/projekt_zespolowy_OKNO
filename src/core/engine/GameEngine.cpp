@@ -11,7 +11,7 @@ GameEngine::GameEngine(InitSettings settings) {
   }
 
   WADLoader loader;
-  m_level = loader.loadFromFile("../data/assets/DOOM.WAD", "E1M1");
+  m_level = loader.loadFromFile("../data/assets/DOOM1.WAD", "E1M1");
 
   // Load player position
   sf::Vector2f initialPlayerPosition;
@@ -19,8 +19,7 @@ GameEngine::GameEngine(InitSettings settings) {
   for (auto thing : m_level->things) {
     if (thing.type == 1) {
       initialPlayerPosition = sf::Vector2f((float)thing.x, (float)thing.y);
-      initialPlayerAngle = 0.0f;
-      // initialPlayerAngle = thing.angle * (M_PI / 180);
+      initialPlayerAngle = thing.angle * (M_PI / 180);
       break;
     }
   }
@@ -187,7 +186,6 @@ void GameEngine::run() {
     sf::Time deltaTime = clock.restart();
     processEvents();
     update(deltaTime);
-    std::cout << 1.0f / deltaTime.asSeconds() << std::endl;
   }
 }
 

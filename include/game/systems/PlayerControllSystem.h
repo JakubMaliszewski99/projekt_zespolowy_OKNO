@@ -30,7 +30,7 @@ public:
           m_manager->getComponent<ControllableComponent>(entity);
       auto &state = m_manager->getComponent<PlayerStateComponent>(entity);
 
-      if (!controllable.isPlayer) {
+      if (!controllable.isPlayer || !m_window->hasFocus()) {
         continue;
       }
 
