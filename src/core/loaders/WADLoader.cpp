@@ -194,7 +194,7 @@ GameLevel *WADLoader::loadFromFile(std::string filename, std::string mapName) {
       for (int y = 0; y < 64; y++) {
         uint8_t colorMapPointer = *colorMapValue++;
         color_t color = gameLevel->pallets[0][colorMapPointer];
-        glTexture->image[x][y] = color;
+        glTexture->image[y][x] = color;
       }
     }
 

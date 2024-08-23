@@ -159,10 +159,10 @@ private:
     }
 
     if (strncmp((const char *)texture->name, "F_SKY1", 8) == 0) {
-      float texCol = 2.2 * (RAD2DEG(m_playerTransform.angle) + m_x2Angle[x]);
+      float texCol = 2.2f * (RAD2DEG(m_playerTransform.angle) + m_x2Angle[x]);
 
-      float skyTexAlt = 100;
-      float skyInvScale = 160 / HEIGHT;
+      float skyTexAlt = 0.0f;
+      float skyInvScale = 160.0f / (float)HEIGHT;
       renderWallColumn(x, y1, y2, skyTexAlt, texCol, skyInvScale, 255, texture);
       return;
     }
@@ -311,7 +311,6 @@ private:
     auto frontside = m_bsp->m_gameLevel->sidedefs[line.frontSidedef];
     auto lightLevel = frontSector.lightLevel;
 
-    // TODO: Determine player height based on current sector
     float worldFrontZ1 = frontSector.ceilingHeight - m_playerHeight;
     float worldBackZ1 = backSector.ceilingHeight - m_playerHeight;
     float worldFrontZ2 = frontSector.floorHeight - m_playerHeight;
@@ -334,7 +333,9 @@ private:
       drawUpperWall =
           strncmp((const char *)frontside.upperTextureName, "-", 1) != 0 &&
           worldBackZ1 < worldFrontZ1;
-      drawCeil = worldFrontZ1 >= 0;
+      bool isSkyVisible = strncmp((const char *)frontSector.ceilingTextureName,
+                                  "F_SKY1", 8) == 0;
+      drawCeil = worldFrontZ1 >= 0 || isSkyVisible;
     }
 
     bool drawLowerWall = false;
