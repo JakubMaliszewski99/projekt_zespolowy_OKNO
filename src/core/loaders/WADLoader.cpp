@@ -188,10 +188,13 @@ GameLevel *WADLoader::loadFromFile(std::string filename, std::string mapName) {
       glTexture->image[i].resize(glTexture->height);
     }
     strncpy((char *)glTexture->name, (char *)lumpDirectory[i].name, 8);
+    uint8_t *colorMapValue = buffer.data() + lumpDirectory[i].filepos;
+
     for (int x = 0; x < 64; x++) {
       for (int y = 0; y < 64; y++) {
-        glTexture->image[x][y] = {(unsigned char)x, (unsigned char)y,
-                                  (unsigned char)x};
+        uint8_t colorMapPointer = *colorMapValue++;
+        color_t color = gameLevel->pallets[0][colorMapPointer];
+        glTexture->image[x][y] = color;
       }
     }
 
