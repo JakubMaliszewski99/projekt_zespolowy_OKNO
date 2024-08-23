@@ -158,6 +158,15 @@ private:
       return;
     }
 
+    if (strncmp((const char *)texture->name, "F_SKY1", 8) == 0) {
+      float texCol = 2.2 * (RAD2DEG(m_playerTransform.angle) + m_x2Angle[x]);
+
+      float skyTexAlt = 100;
+      float skyInvScale = 160 / HEIGHT;
+      renderWallColumn(x, y1, y2, skyTexAlt, texCol, skyInvScale, 255, texture);
+      return;
+    }
+
     float player_dir_x = cosf(m_playerTransform.angle);
     float player_dir_y = sinf(m_playerTransform.angle);
     uint8_t *framebufferPtr = (uint8_t *)m_frameBuffer.getPixelsPtr();
@@ -201,7 +210,9 @@ private:
 
     bool isWallVisible =
         strncmp((const char *)frontside.middleTextureName, "-", 1) != 0;
-    bool isCeilVisible = worldFrontZ1 > 0;
+    bool isSkyVisible =
+        strncmp((const char *)frontSector.ceilingTextureName, "F_SKY1", 8) == 0;
+    bool isCeilVisible = worldFrontZ1 > 0 || isSkyVisible;
     bool isFloorVisible = worldFrontZ2 < 0;
 
     float rwNormalAngle = segment.angle + 90;
@@ -298,7 +309,6 @@ private:
     auto backSector = m_bsp->m_gameLevel->sectors[segment.backSector];
     auto line = m_bsp->m_gameLevel->linedefs[segment.linedefNumber];
     auto frontside = m_bsp->m_gameLevel->sidedefs[line.frontSidedef];
-
     auto lightLevel = frontSector.lightLevel;
 
     // TODO: Determine player height based on current sector
@@ -306,6 +316,14 @@ private:
     float worldBackZ1 = backSector.ceilingHeight - m_playerHeight;
     float worldFrontZ2 = frontSector.floorHeight - m_playerHeight;
     float worldBackZ2 = backSector.floorHeight - m_playerHeight;
+
+    bool isFrontSectorSky =
+        strncmp((const char *)frontSector.ceilingTextureName, "F_SKY1", 8) == 0;
+    bool isBackSectorSky =
+        strncmp((const char *)backSector.ceilingTextureName, "F_SKY1", 8) == 0;
+    if (isFrontSectorSky && isBackSectorSky) {
+      worldFrontZ1 = worldBackZ1;
+    }
 
     bool drawUpperWall = false;
     bool drawCeil = false;
