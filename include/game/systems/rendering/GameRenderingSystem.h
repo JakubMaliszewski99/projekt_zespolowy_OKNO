@@ -162,7 +162,7 @@ private:
       float texCol = 2.2f * (RAD2DEG(m_playerTransform.angle) + m_x2Angle[x]);
 
       float skyTexAlt = 0.0f;
-      float skyInvScale = 160.0f / (float)HEIGHT;
+      float skyInvScale = 100.0f / (float)HEIGHT;
       renderWallColumn(x, y1, y2, skyTexAlt, texCol, skyInvScale, 255, texture);
       return;
     }
