@@ -283,7 +283,7 @@ private:
       if (isFloorVisible) {
         int fy1 = std::max<int>(drawWallY2 + 1, m_upperClip[x] + 1);
         int fy2 = m_lowerClip[x] - 1;
-        renderFlat(x, fy1, fy2, worldFrontZ2, lightLevel, ceilGameTexture);
+        renderFlat(x, fy1, fy2, worldFrontZ2, lightLevel, floorGameTexture);
       }
 
       rwScale1 += rwScaleStep;
@@ -487,16 +487,8 @@ private:
         float wy1 = std::max<float>(drawLowerWallY1, m_upperClip[x] + 1);
         float wy2 = std::min<float>(drawLowerWallY2, m_lowerClip[x] - 1);
 
-        // TEKWALL1
-        // STARTAN3
-        if (strncmp((const char *)lowerWallGameTexture->name, "TEKWALL1", 8) ==
-            0) {
-          renderWallColumn(x, wy1, wy2, lowerTextureAlt, textureColumn,
-                           invScale, lightLevel, lowerWallGameTexture);
-        } else {
-          renderWallColumn(x, wy1, wy2, lowerTextureAlt, textureColumn,
-                           invScale, lightLevel, lowerWallGameTexture);
-        }
+        renderWallColumn(x, wy1, wy2, lowerTextureAlt, textureColumn, invScale,
+                         lightLevel, lowerWallGameTexture);
 
         if (m_lowerClip[x] > wy1) {
           m_lowerClip[x] = wy1;
