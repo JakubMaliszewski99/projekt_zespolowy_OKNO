@@ -1,8 +1,6 @@
 #pragma once
-#include <string>
-#include <SFML/Graphics.hpp>
-#include "core/engine/GameLevel.h"
 #include "core/ecs/ECSManager.h"
+#include "core/engine/GameLevel.h"
 #include "core/loaders/WADLoader.h"
 #include "core/logger/Logger.h"
 #include "game/components/GameDrawableComponent.h"
@@ -11,19 +9,25 @@
 #include "game/sprites/CollectableMinimapSprite.h"
 #include "game/sprites/EnemyMinimapSprite.h"
 #include "game/sprites/LevelMinimapSprite.h"
+#include "game/systems/CollectableSystem.h"
+#include "game/systems/DamageSystem.h"
+#include "game/systems/EnemySystem.h"
+#include "game/systems/EnviromentDamageSystem.h"
 #include "game/systems/PlayerControllSystem.h"
 #include "game/systems/PlayerMovementSystem.h"
-#include "game/systems/CollectableSystem.h"
 #include "game/systems/WeaponSystem.h"
-#include "game/systems/DamageSystem.h"
-#include "game/systems/EnviromentDamageSystem.h"
-#include "game/systems/EnemySystem.h"
-#include "game/systems/rendering/MinimapRenderingSystem.h"
 #include "game/systems/rendering/GameRenderingSystem.h"
 #include "game/systems/rendering/HUDRenderingSystem.h"
+#include "game/systems/rendering/MinimapRenderingSystem.h"
+#include <SFML/Graphics.hpp>
+#include <string>
 
 enum GameEngineState {
-  eInitialized, eMainMenu, eInGameMenu, eGame, eGameMinimap
+  eInitialized,
+  eMainMenu,
+  eInGameMenu,
+  eGame,
+  eGameMinimap
 };
 
 // TODO: Do something with InitSettings

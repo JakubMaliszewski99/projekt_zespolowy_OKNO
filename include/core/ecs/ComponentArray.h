@@ -1,6 +1,8 @@
 #pragma once
 #include "Entity.h"
+#include <array>
 #include <cassert>
+#include <unordered_map>
 
 class IComponentArray {
 public:

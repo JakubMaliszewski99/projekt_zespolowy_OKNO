@@ -30,15 +30,17 @@ EnemyMinimapSprite::EnemyMinimapSprite(sf::Color color) {
 }
 
 void EnemyMinimapSprite::update(TransformComponent transform) {
-  m_enemyDot.setPosition(sf::Vector2f(transform.positionX, transform.positionY));
+  m_enemyDot.setPosition(
+      sf::Vector2f(transform.positionX, transform.positionY));
 
   float enemyAngle = transform.angle;
   m_direction = sf::Vector2f(std::cos(enemyAngle), std::sin(enemyAngle));
   m_directionLine[0].position =
       m_enemyDot.getPosition() +
       sf::Vector2f(m_enemyDot.getRadius(), m_enemyDot.getRadius());
-  m_directionLine[1].position = m_directionLine[0].position + m_direction * 18.f;
-  float fov = FOV * (M_PI/180);
+  m_directionLine[1].position =
+      m_directionLine[0].position + m_direction * 18.f;
+  float fov = FOV * (M_PI / 180);
   float hFov = fov / 2;
   sf::Vector2f directionRay1 =
       sf::Vector2f(std::cos(enemyAngle - hFov), std::sin(enemyAngle - hFov));
@@ -62,7 +64,7 @@ void EnemyMinimapSprite::update(TransformComponent transform) {
 }
 
 void EnemyMinimapSprite::draw(sf::RenderTarget &target,
-                                    sf::RenderStates states) const {
+                              sf::RenderStates states) const {
   target.draw(m_enemyDot);
   target.draw(m_directionLine);
   if (m_isFovVisible) {

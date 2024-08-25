@@ -1,11 +1,11 @@
 #pragma once
-#include <SFML/Graphics.hpp>
 #include "../sprites/PlayerMinimapSprite.h"
+#include <SFML/Graphics.hpp>
 
 // TODO: Use safe pointers
 // TODO: Change to shared_ptr?
 struct MinimapSpriteComponent {
   sf::View camera;
-  MinimapSprite* sprite;
+  MinimapSprite *sprite;
   bool isPlayer;
 };

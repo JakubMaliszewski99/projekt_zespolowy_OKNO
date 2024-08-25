@@ -51,7 +51,7 @@ public:
       renderBSP(playerTransform.positionX, playerTransform.positionY,
                 RAD2DEG(playerTransform.angle), m_bsp->m_rootNodeID);
     }
-    //m_renderWindow->display();
+    // m_renderWindow->display();
   }
 
 private:

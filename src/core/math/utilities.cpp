@@ -138,12 +138,13 @@ backfaceCullingSegment(float playerX, float playerY, float playerAngle,
   return std::make_tuple(true, angle1, angle2, origAngle1);
 }
 
-float xToAngle(float x) { 
+float xToAngle(float x) {
   float angle = RAD2DEG(atan((H_WIDTH - x) / SCREEN_DIST));
   return angle;
 }
 
-float scaleFromGlobalAngle(float x, float rwNormalAngle, float rwDistance, float playerAngle) {
+float scaleFromGlobalAngle(float x, float rwNormalAngle, float rwDistance,
+                           float playerAngle) {
   float xAngle = xToAngle(x);
   float num = SCREEN_DIST * cosf(DEG2RAD(rwNormalAngle - xAngle - playerAngle));
   float den = rwDistance * cosf(DEG2RAD(xAngle));
@@ -160,16 +161,16 @@ float distance(float x1, float y1, float x2, float y2) {
 
   float dist = sqrtf(dx * dx + dy * dy);
 
-  return dist; 
+  return dist;
 }
 
 float vectorLength(float x, float y) { return sqrtf(x * x + y * y); }
 
-float vectorLength(sf::Vector2f vec) { 
+float vectorLength(sf::Vector2f vec) {
   return sqrtf(vec.x * vec.x + vec.y * vec.y);
 }
 
-sf::Vector2f normalize(sf::Vector2f vec) { 
+sf::Vector2f normalize(sf::Vector2f vec) {
   float length = vectorLength(vec);
   sf::Vector2f normalized = vec / length;
   return normalized;
@@ -179,7 +180,7 @@ sf::Vector2f lineNormal(float x1, float y1, float x2, float y2) {
   float dx = x2 - x1;
   float dy = y2 - y1;
 
-  //TODO: Take angle in account
+  // TODO: Take angle in account
   return sf::Vector2f(-dy, dx);
 }
 
@@ -191,10 +192,7 @@ sf::Vector2f projectVectorOntoLine(sf::Vector2f vector, sf::Vector2f line) {
   return newLength * line;
 }
 
-int negMod(int a, int b)
-{
-    return (b + (a % b)) % b;
-}
+int negMod(int a, int b) { return (b + (a % b)) % b; }
 
 sf::Vector2f velocityScalarToVector(float velocity, float angle_rad) {
   float x = cosf(angle_rad) * velocity;
@@ -202,16 +200,16 @@ sf::Vector2f velocityScalarToVector(float velocity, float angle_rad) {
   return sf::Vector2f(x, y);
 }
 
-sf::Vector2f segmentEnd(float startX, float startY, float angle, float length){
-    float endX = startX + cosf(angle) * length;
-    float endY = startY + sinf(angle) * length;
-    return sf::Vector2f(endX, endY);
+sf::Vector2f segmentEnd(float startX, float startY, float angle, float length) {
+  float endX = startX + cosf(angle) * length;
+  float endY = startY + sinf(angle) * length;
+  return sf::Vector2f(endX, endY);
 }
 
-sf::Vector2f lerp(const sf::Vector2f& start, const sf::Vector2f& end, float t) {
+sf::Vector2f lerp(const sf::Vector2f &start, const sf::Vector2f &end, float t) {
   return start + t * (end - start);
 }
 
-float dot(const sf::Vector2f& a, const sf::Vector2f& b) {
-    return a.x * b.x + a.y * b.y;
+float dot(const sf::Vector2f &a, const sf::Vector2f &b) {
+  return a.x * b.x + a.y * b.y;
 }

@@ -39,7 +39,7 @@ void PlayerMinimapSprite::update(TransformComponent transform) {
       playerDot.getPosition() +
       sf::Vector2f(playerDot.getRadius(), playerDot.getRadius());
   directionLine[1].position = directionLine[0].position + direction * 18.f;
-  float fov = FOV * (M_PI/180);
+  float fov = FOV * (M_PI / 180);
   float hFov = fov / 2;
   sf::Vector2f directionRay1 =
       sf::Vector2f(std::cos(playerAngle - hFov), std::sin(playerAngle - hFov));

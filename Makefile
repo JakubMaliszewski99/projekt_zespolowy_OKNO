@@ -1,6 +1,6 @@
 PROGRAMNAME = doom.out
 COMPILER = g++
-CXXFLAGS = -std=c++11 -Wall
+CXXFLAGS = -std=c++17 -Wall
 SRCDIR = src
 BINDIR = bin
 INCLUDEDIR = include

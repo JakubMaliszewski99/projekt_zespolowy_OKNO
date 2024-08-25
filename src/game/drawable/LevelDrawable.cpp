@@ -1,12 +1,7 @@
 #include "../include/game/drawable/LevelDrawable.h"
 
-LevelDrawable::LevelDrawable() { 
-}
+LevelDrawable::LevelDrawable() {}
 
-void LevelDrawable::update(TransformComponent palyerTransform) {
+void LevelDrawable::update(TransformComponent palyerTransform) {}
 
-}
-
-void LevelDrawable::draw(sf::RenderTarget &target, sf::RenderStates states) {
-
-}
+void LevelDrawable::draw(sf::RenderTarget &target, sf::RenderStates states) {}

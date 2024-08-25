@@ -1,6 +1,6 @@
 #pragma once
-#include<memory>
 #include <SFML/Graphics.hpp>
+#include <memory>
 
 // TODO: Refactor to EventManager?
 class InputManager {
@@ -12,6 +12,7 @@ public:
   sf::Vector2i getMousePosition(std::shared_ptr<sf::RenderWindow> window);
   sf::Vector2i getMouseDelta();
   void setMouseDelta(sf::Vector2i mouseDelta);
+
 private:
   static InputManager *m_instance;
   sf::Vector2i m_mouseDelta;

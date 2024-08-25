@@ -1,6 +1,6 @@
 #include "../include/core/core.h"
 
-//Generowanie randomowego koloru dla poszczeg¢lnych sektor¢w
+// Generowanie randomowego koloru dla poszczeg¢lnych sektor¢w
 sf::Color getRandomColor() {
   std::random_device rd;
   std::mt19937 gen(rd());
