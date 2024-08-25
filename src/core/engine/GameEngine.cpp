@@ -122,7 +122,10 @@ GameEngine::GameEngine(InitSettings settings) {
                            sf::View(), new EnemyMinimapSprite(color, m_settings.debugSettings.displayFov), false});
 
       m_ecsManager->addComponent(
-          thingEntity, EnemyComponent{static_cast<EnemyType>(thing.type), Idle, 1});
+          thingEntity, EnemyComponent{static_cast<EnemyType>(thing.type), Patrol, 1});
+
+      m_ecsManager->addComponent(
+        thingEntity, HealthComponent{100, 0});
 
       enemyEntities.push_back(thingEntity);
       continue;
@@ -275,7 +278,7 @@ void GameEngine::setupSystems() {
       m_ecsManager->getComponentType<TransformComponent>());
   // EnemySystem Register
   m_enemySystem = m_ecsManager->registerSystem<EnemySystem>();
-  m_enemySystem->init(m_ecsManager);
+  m_enemySystem->init(m_ecsManager, m_playerEntity);
   m_ecsManager->setSystemSignature<EnemySystem>(enemySystemSignature);
 
   // MinimapRenderingsystem Signature

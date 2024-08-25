@@ -25,6 +25,10 @@ EnemyMinimapSprite::EnemyMinimapSprite(sf::Color color, bool isFovVisible) {
   m_fovRays[1].resize(2);
   m_fovRays[1][0].color = sf::Color::Yellow;
   m_fovRays[1][1].color = sf::Color::Yellow;
+  m_fovRays[2].setPrimitiveType(sf::Lines);
+  m_fovRays[2].resize(2);
+  m_fovRays[2][0].color = sf::Color::Yellow;
+  m_fovRays[2][1].color = sf::Color::Yellow;
 
   this->m_isFovVisible = isFovVisible;
 }
@@ -55,6 +59,8 @@ void EnemyMinimapSprite::update(TransformComponent transform) {
       m_enemyDot.getPosition() +
       sf::Vector2f(m_enemyDot.getRadius(), m_enemyDot.getRadius());
   m_fovRays[1][1].position = m_fovRays[1][0].position + directionRay2 * FOV_LENGTH;
+  m_fovRays[2][0].position = m_fovRays[0][1].position;
+  m_fovRays[2][1].position = m_fovRays[1][1].position;
 
   m_velocity = transform.velocity;
   m_velocityLine[0].position =
@@ -70,6 +76,7 @@ void EnemyMinimapSprite::draw(sf::RenderTarget &target,
   if (m_isFovVisible) {
     target.draw(m_fovRays[0]);
     target.draw(m_fovRays[1]);
+    target.draw(m_fovRays[2]);
   }
   target.draw(m_velocityLine);
 }

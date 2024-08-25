@@ -76,4 +76,5 @@ private:
   std::shared_ptr<EnviromentDamageSystem> m_enviromentDamageSystem;
 
   std::vector<Entity> enemyEntities;
+
 };

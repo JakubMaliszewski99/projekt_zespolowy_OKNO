@@ -8,4 +8,8 @@ struct EnemyComponent {
   EnemyType type;
   State state;
   bool isAlive;
+
+  float rotationProgress = 0.0f;
+  float pauseRotationTimer = 0.0f;
+  sf::VertexArray fovRays[3];
 };
