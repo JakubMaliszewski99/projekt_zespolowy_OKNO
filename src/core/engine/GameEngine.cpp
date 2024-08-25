@@ -119,8 +119,12 @@ GameEngine::GameEngine(InitSettings settings) {
                                           sf::Vector2f(), initialEnemyAngle});
       m_ecsManager->addComponent(
           thingEntity, MinimapSpriteComponent{
-                           sf::View(), new EnemyMinimapSprite(color), false});
+                           sf::View(), new EnemyMinimapSprite(color, m_settings.debugSettings.displayFov), false});
 
+      m_ecsManager->addComponent(
+          thingEntity, EnemyComponent{static_cast<EnemyType>(thing.type), Idle, 1});
+
+      enemyEntities.push_back(thingEntity);
       continue;
     }
     // Thing is collectible
@@ -202,6 +206,7 @@ void GameEngine::update(sf::Time deltaTime) {
 
   m_playerControllSystem->update(dt);
   m_playerMovementSystem->update(dt);
+  m_enemySystem->update(dt, enemyEntities);
 
   m_collectableSystem->update(dt);
   m_weaponSystem->update(dt);

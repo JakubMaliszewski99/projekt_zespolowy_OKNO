@@ -4,7 +4,7 @@
 
 class EnemyMinimapSprite : public MinimapSprite {
 public:
-  EnemyMinimapSprite(sf::Color color);
+  EnemyMinimapSprite(sf::Color color, bool isFovVisible);
   void update(TransformComponent transform);
 
 private:

@@ -49,11 +49,11 @@ void PlayerMinimapSprite::update(TransformComponent transform) {
   fovRays[0][0].position =
       playerDot.getPosition() +
       sf::Vector2f(playerDot.getRadius(), playerDot.getRadius());
-  fovRays[0][1].position = fovRays[0][0].position + directionRay1 * 2000.0f;
+  fovRays[0][1].position = fovRays[0][0].position + directionRay1 * 700.0f;
   fovRays[1][0].position =
       playerDot.getPosition() +
       sf::Vector2f(playerDot.getRadius(), playerDot.getRadius());
-  fovRays[1][1].position = fovRays[1][0].position + directionRay2 * 2000.0f;
+  fovRays[1][1].position = fovRays[1][0].position + directionRay2 * 700.0f;
 
   velocity = transform.velocity;
   velocityLine[0].position =
