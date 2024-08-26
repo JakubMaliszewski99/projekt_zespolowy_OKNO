@@ -1,3 +1,10 @@
 *.o
 *.exe
 *.out
+bin/
+.vscode
+build/
+out/
+.vs/
+CMakeCache.txt
+CMakeFiles/
