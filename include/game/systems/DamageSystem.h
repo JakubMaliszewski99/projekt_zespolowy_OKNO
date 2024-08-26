@@ -251,7 +251,8 @@ private:
   }
 
   void hitEntity(Entity &entity /*TODO :, float damage*/) {
-    m_manager->destroyEntity(entity);
+    auto &health = m_manager->getComponent<HealthComponent>(entity); 
+    health.health -= 25.0f;
   }
 
   // TODO to be moved to other place:

@@ -20,11 +20,18 @@ public:
 
   void update(float dt, std::vector<Entity> enemyEntities){
     auto &playerTransform = m_manager->getComponent<TransformComponent>(m_playerEntity);
+    auto &playerHealth = m_manager->getComponent<HealthComponent>(m_playerEntity);
+    auto &playerState = m_manager->getComponent<PlayerStateComponent>(m_playerEntity);
 
     for (auto const &entity : enemyEntities){
       auto &transform = m_manager->getComponent<TransformComponent>(entity);
       auto &enemy = m_manager->getComponent<EnemyComponent>(entity);
       auto &health = m_manager->getComponent<HealthComponent>(entity);
+
+      if(health.health <= 0){
+        enemy.isAlive = false;
+      }
+      std::cout << health.health << std::endl;
 
       // handle logic differently depending on the game state
       if(enemy.isAlive){
@@ -80,14 +87,60 @@ public:
             // 5. Update the enemy's rotation to face the player
             transform.angle = std::atan2(directionToPlayer.y, directionToPlayer.x);
 
+            //6. Increment the chasing timer
+            enemy.chasingTimer += dt;
+
             if(!isPlayerInView(transform, playerPosition)){
               enemy.state = Patrol;
+            }else{
+              if(length < 500.0f && enemy.chasingTimer >= 2.0f){
+                enemy.state = Attack;
+                enemy.chasingTimer = 0.0f;
+              }
             }
             
             break;
           }
           case Attack:
-            //Shoot the player
+            
+            enemy.attackingTimer += dt;
+            
+            //wait 2 seconds
+            if(enemy.attackingTimer >= 1.0f){
+              //fire
+              // Check if the player is in the line of fire
+            sf::Vector2f enemyPosition(transform.positionX, transform.positionY);
+            sf::Vector2f playerPosition(playerTransform.positionX, playerTransform.positionY);
+
+            // Direction the enemy is facing
+            sf::Vector2f enemyDirection = sf::Vector2f(std::cos(transform.angle), std::sin(transform.angle));
+
+            // Direction from the enemy to the player
+            sf::Vector2f directionToPlayer = playerPosition - enemyPosition;
+            float length = std::sqrt(directionToPlayer.x * directionToPlayer.x + directionToPlayer.y * directionToPlayer.y);
+
+            if (length != 0) {
+                directionToPlayer /= length; // Normalize the direction
+            }
+
+            // Dot product to check if the player is in the line of fire
+            float dotProduct = enemyDirection.x * directionToPlayer.x + enemyDirection.y * directionToPlayer.y;
+
+            if (dotProduct > 0.98f && length < 700.0f) { // 0.98f is close to 1.0f, meaning almost the same direction
+                // The player is within the line of fire
+                if(playerHealth.health > 0){
+                  playerHealth.health -= 25; // Reduce player health by 25
+                  std::cout << "Player hit! Health reduced by 25." << std::endl;
+                  if(playerHealth.health <= 0){
+                    playerState.isAlive = false;
+                  }
+                }
+            } else {
+                std::cout << "Player missed!" << std::endl;
+            }
+              enemy.state = Chase;
+              enemy.attackingTimer = 0.0f;
+            }
             break;
           default:
             break;

@@ -12,4 +12,7 @@ struct EnemyComponent {
   float rotationProgress = 0.0f;
   float pauseRotationTimer = 0.0f;
   sf::VertexArray fovRays[3];
+
+  float chasingTimer = 0.0f;
+  float attackingTimer = 0.0f;
 };
