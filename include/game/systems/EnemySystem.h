@@ -5,7 +5,7 @@
 #include "../components/EnemyComponent.h"
 #include "../components/TransformComponent.h"
 
-const float DEFAULT_ENEMY_ROTATION_SPEED = 2.4f;
+const float DEFAULT_ENEMY_ROTATION_SPEED = 1.2f;
 const float PATROL_ROTATION_LIMIT = 180.0f * (M_PI / 180.0f);
 const float PATROL_PAUSE_DURATION = 3.0f;
 const float ENEMY_SPEED = 50.0f;

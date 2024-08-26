@@ -17,6 +17,8 @@ private:
   sf::Vector2f m_velocity;
   sf::VertexArray m_directionLine;
   sf::VertexArray m_velocityLine;
-  sf::VertexArray m_fovRays[3];
+  sf::VertexArray m_fovRays[2];
   bool m_isFovVisible;
+  sf::VertexArray m_fovArc;
+  const int numArcPoints = 30;
 };

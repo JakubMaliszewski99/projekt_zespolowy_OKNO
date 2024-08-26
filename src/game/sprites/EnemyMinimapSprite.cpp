@@ -25,10 +25,11 @@ EnemyMinimapSprite::EnemyMinimapSprite(sf::Color color, bool isFovVisible) {
   m_fovRays[1].resize(2);
   m_fovRays[1][0].color = sf::Color::Yellow;
   m_fovRays[1][1].color = sf::Color::Yellow;
-  m_fovRays[2].setPrimitiveType(sf::Lines);
-  m_fovRays[2].resize(2);
-  m_fovRays[2][0].color = sf::Color::Yellow;
-  m_fovRays[2][1].color = sf::Color::Yellow;
+
+
+  m_fovArc.setPrimitiveType(sf::LineStrip); // <-- Initialize the arc
+  m_fovArc.resize(numArcPoints + 1);        // <-- Set the number of points
+
 
   this->m_isFovVisible = isFovVisible;
 }
@@ -59,8 +60,17 @@ void EnemyMinimapSprite::update(TransformComponent transform) {
       m_enemyDot.getPosition() +
       sf::Vector2f(m_enemyDot.getRadius(), m_enemyDot.getRadius());
   m_fovRays[1][1].position = m_fovRays[1][0].position + directionRay2 * FOV_LENGTH;
-  m_fovRays[2][0].position = m_fovRays[0][1].position;
-  m_fovRays[2][1].position = m_fovRays[1][1].position;
+
+
+sf::Vector2f originPosition = m_enemyDot.getPosition() + sf::Vector2f(m_enemyDot.getRadius(), m_enemyDot.getRadius());
+  for (int i = 0; i <= numArcPoints; ++i) {       
+      float t = static_cast<float>(i) / numArcPoints;
+      float angle = enemyAngle - hFov + t * fov;  // Interpolate between the start and end angles
+      sf::Vector2f pointOnArc = originPosition + sf::Vector2f(std::cos(angle), std::sin(angle)) * FOV_LENGTH;
+      m_fovArc[i].position = pointOnArc;
+      m_fovArc[i].color = sf::Color::Yellow; // Set color for the arc
+  }
+
 
   m_velocity = transform.velocity;
   m_velocityLine[0].position =
@@ -76,7 +86,8 @@ void EnemyMinimapSprite::draw(sf::RenderTarget &target,
   if (m_isFovVisible) {
     target.draw(m_fovRays[0]);
     target.draw(m_fovRays[1]);
-    target.draw(m_fovRays[2]);
+    target.draw(m_fovArc);
+    
   }
   target.draw(m_velocityLine);
 }
