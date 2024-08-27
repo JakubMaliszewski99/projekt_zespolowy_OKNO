@@ -6,8 +6,12 @@
 #define M_PI 3.14159265358979323846
 #define UNUSED(x) (void)(x)
 
-const float FOV = 90;
+//fov rays constants
+const float FOV = 90; //don't touch this (rendering depends on this)
 const float H_FOV = FOV / 2;
+const float FOV_ENEMIES = 60;
+const float FOV_LENGTH = 700.0f;
+
 
 #define WIDTH 1600
 #define HEIGHT 1000

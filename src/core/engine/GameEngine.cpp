@@ -56,12 +56,12 @@ GameEngine::GameEngine(InitSettings settings) {
                              WeaponComponent{{WeaponModel::eWeaponModelFist,
                                               WeaponModel::eWeaponModelPistol,
                                               WeaponModel::eWeaponModelNone},
-                                             WeaponType::eHandWeapon,
+                                             WeaponType::eRangeWeapon,
                                              false,
                                              true,
                                              0,
                                              1,
-                                             0});
+                                             25});
 
   // Create map entity
   m_mapEntity = m_ecsManager->createEntity();
@@ -119,8 +119,15 @@ GameEngine::GameEngine(InitSettings settings) {
                                           sf::Vector2f(), initialEnemyAngle});
       m_ecsManager->addComponent(
           thingEntity, MinimapSpriteComponent{
-                           sf::View(), new EnemyMinimapSprite(color), false});
+                           sf::View(), new EnemyMinimapSprite(color, m_settings.debugSettings.displayFov), false});
 
+      m_ecsManager->addComponent(
+          thingEntity, EnemyComponent{static_cast<EnemyType>(thing.type), Patrol, 1});
+
+      m_ecsManager->addComponent(
+        thingEntity, HealthComponent{100, 0});
+
+      enemyEntities.push_back(thingEntity);
       continue;
     }
     // Thing is collectible
@@ -202,6 +209,7 @@ void GameEngine::update(sf::Time deltaTime) {
 
   m_playerControllSystem->update(dt);
   m_playerMovementSystem->update(dt);
+  m_enemySystem->update(dt, enemyEntities);
 
   m_collectableSystem->update(dt);
   m_weaponSystem->update(dt);
@@ -270,7 +278,7 @@ void GameEngine::setupSystems() {
       m_ecsManager->getComponentType<TransformComponent>());
   // EnemySystem Register
   m_enemySystem = m_ecsManager->registerSystem<EnemySystem>();
-  m_enemySystem->init(m_ecsManager);
+  m_enemySystem->init(m_ecsManager, m_playerEntity);
   m_ecsManager->setSystemSignature<EnemySystem>(enemySystemSignature);
 
   // MinimapRenderingsystem Signature

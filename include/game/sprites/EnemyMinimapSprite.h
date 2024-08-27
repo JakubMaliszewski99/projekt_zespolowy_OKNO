@@ -4,7 +4,7 @@
 
 class EnemyMinimapSprite : public MinimapSprite {
 public:
-  EnemyMinimapSprite(sf::Color color);
+  EnemyMinimapSprite(sf::Color color, bool isFovVisible);
   void update(TransformComponent transform);
 
 private:
@@ -19,4 +19,6 @@ private:
   sf::VertexArray m_velocityLine;
   sf::VertexArray m_fovRays[2];
   bool m_isFovVisible;
+  sf::VertexArray m_fovArc;
+  const int numArcPoints = 30;
 };

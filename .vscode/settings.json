@@ -57,7 +57,8 @@
         "chrono": "cpp",
         "ratio": "cpp",
         "codecvt": "cpp",
-        "filesystem": "cpp"
+        "filesystem": "cpp",
+        "list": "cpp"
     },
     "cmake.configureOnOpen": false,
     "C_Cpp.default.compilerPath": "C:\\mingw32\\bin\\g++.exe",
