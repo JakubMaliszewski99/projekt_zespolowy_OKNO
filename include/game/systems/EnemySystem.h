@@ -31,7 +31,6 @@ public:
       if(health.health <= 0){
         enemy.isAlive = false;
       }
-      std::cout << health.health << std::endl;
 
       // handle logic differently depending on the game state
       if(enemy.isAlive){
