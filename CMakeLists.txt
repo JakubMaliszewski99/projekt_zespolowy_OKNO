@@ -47,7 +47,7 @@ add_executable (doom
  "include/core/math/utilities.h" 
  "src/core/math/utilities.cpp" 
  "include/game/systems/rendering/GameRenderingSystem.h" 
- "include/game/components/GameDrawableComponent.h"
+ 
  "include/game/components/PlayerStateComponent.h" 
  "include/game/drawable/GameDrawable.h" 
  "include/game/drawable/LevelDrawable.h" 

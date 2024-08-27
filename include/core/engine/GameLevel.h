@@ -183,5 +183,7 @@ struct GameLevel {
   std::vector<maptexture_t> textures;
   std::vector<GameLevelPatch> patches;
   std::unordered_map<std::string, std::unique_ptr<GameLevelTexture>>
+      spriteImages;
+  std::unordered_map<std::string, std::unique_ptr<GameLevelTexture>>
       textureImages;
 };

@@ -1,5 +1,4 @@
 #pragma once
-#include "../../components/GameDrawableComponent.h"
 #include "../../components/PlayerStateComponent.h"
 #include "../../components/TransformComponent.h"
 #include "../include/core/core.h"
@@ -16,6 +15,21 @@
 const float HEAD_BOBBING_FREQUENCY = 10.0f;
 const float HEAD_BOBBING_AMPLITUDE = 7.5f;
 
+#define SIL_NONE 0
+#define SIL_BOTTOM 1
+#define SIL_TOP 2
+#define SIL_BOTH 3
+
+struct DrawSeg_t {
+  int x1, x2;
+  float scale1, scale2, scalestep;
+  int silhouette;
+  float bsilheight, tsilheight;
+  std::vector<float> sprtopclip;
+  std::vector<float> sprbottomclip;
+  std::vector<float> maskedtexturecol;
+};
+
 class GameRenderingSystem : public System {
 public:
   void init(std::shared_ptr<ECSManager> manager,
@@ -28,6 +42,7 @@ public:
     for (int i = 0; i < WIDTH; i++) {
       m_upperClip.push_back(-1);
       m_lowerClip.push_back(HEIGHT);
+      m_rwScale.push_back(-1);
 
       float angle = RAD2DEG(atanf((H_WIDTH - i) / SCREEN_DIST));
       m_x2Angle.push_back(angle);
@@ -42,10 +57,13 @@ public:
     m_screenSet.clear();
     m_upperClip.clear();
     m_lowerClip.clear();
+    m_rwScale.clear();
+    drawSegs.clear();
     for (int i = 0; i < WIDTH; i++) {
       m_screenSet.insert(i);
       m_upperClip.push_back(-1);
       m_lowerClip.push_back(HEIGHT);
+      m_rwScale.push_back(-1);
     }
 
     m_playerTransform =
@@ -71,6 +89,89 @@ public:
     renderBSP(m_playerTransform.positionX, m_playerTransform.positionY,
               RAD2DEG(m_playerTransform.angle), m_bsp->m_rootNodeID);
 
+    for (auto const &entity : m_entities) {
+      auto spriteComponent = m_manager->getComponent<SpriteComponent>(entity);
+      auto spriteTransform =
+          m_manager->getComponent<TransformComponent>(entity);
+      auto &spriteImage =
+          m_bsp->m_gameLevel->spriteImages[std::string("BAR1B0", 8)];
+
+      if (!spriteComponent.draw) {
+        continue;
+      }
+
+      sf::Vector2f spriteCenter(spriteTransform.positionX,
+                                spriteTransform.positionY);
+      sf::Vector2f playerCenter(m_playerTransform.positionX,
+                                m_playerTransform.positionY);
+      sf::Vector2f displacement = spriteCenter - playerCenter;
+
+      float disAngle = atan2f(displacement.y, displacement.x);
+
+      sf::Vector2f v1;
+      sf::Vector2f v2;
+
+      v1.x = spriteImage->width * cosf(disAngle) -
+             spriteImage->width * sinf(disAngle);
+      v1.y = spriteImage->width * sinf(disAngle) +
+             spriteImage->width * cosf(disAngle);
+      v2.x = -spriteImage->width * cosf(disAngle) +
+             spriteImage->width * sinf(disAngle);
+      v2.y = -spriteImage->width * sinf(disAngle) -
+             spriteImage->width * cosf(disAngle);
+
+      v1 += spriteCenter;
+      v2 += spriteCenter;
+
+      auto cullingResults = backfaceCullingSegment(
+          m_playerTransform.positionX, m_playerTransform.positionY,
+          RAD2DEG(m_playerTransform.angle), v1, v2);
+
+      if (std::get<0>(cullingResults)) {
+        float x1 = angle2x(std::get<1>(cullingResults));
+        float x2 = angle2x(std::get<2>(cullingResults));
+
+        float dx = m_playerTransform.positionX - spriteCenter.x;
+        float dy = m_playerTransform.positionY - spriteCenter.y;
+        float hypotenuse = sqrt(dx * dx + dy * dy);
+
+        float rwNormalAngle = 90;
+        float offsetAngle = rwNormalAngle - std::get<3>(cullingResults);
+        float rwDistance = hypotenuse * cosf(DEG2RAD(offsetAngle));
+
+        float rwScale1 = scaleFromGlobalAngle(x1, rwNormalAngle, rwDistance,
+                                              RAD2DEG(m_playerTransform.angle));
+
+        float invScale = 1.0 / rwScale1;
+
+        for (auto ds : drawSegs) {
+          if (ds.x1 > x2 || ds.x2 < x1) {
+            continue;
+          }
+
+          int r1 = ds.x1 < x1 ? x1 : ds.x1;
+          int r2 = ds.x2 > x2 ? x2 : ds.x2;
+
+          float scale;
+          float lowscale;
+          if (ds.scale1 > ds.scale2) {
+            lowscale = ds.scale2;
+            scale = ds.scale1;
+          } else {
+            lowscale = ds.scale1;
+            scale = ds.scale2;
+          }
+
+          if (scale < rwScale1 ||
+              (lowscale < rwScale1 /* && !pointonseg() */)) {
+            continue;
+          }
+        }
+
+        renderSprite(x1, x2, rwScale1, spriteImage);
+      }
+    }
+
     m_texture.update(m_frameBuffer);
     m_screenSprite.setTexture(m_texture);
 
@@ -89,7 +190,9 @@ private:
   std::set<int> m_screenSet;
   std::vector<int> m_upperClip;
   std::vector<int> m_lowerClip;
+  std::vector<int> m_rwScale;
   std::vector<float> m_x2Angle;
+  std::vector<DrawSeg_t> drawSegs;
   sf::View m_defaultView;
   sf::Image m_frameBuffer;
   sf::Sprite m_screenSprite;
@@ -98,6 +201,20 @@ private:
   int m_playerHeight;
 
   std::unordered_map<std::string, sf::Color> colorMapping;
+
+  void renderSprite(size_t x1, size_t x2, float rwScale,
+                    const std::unique_ptr<GameLevelTexture> &gameSprite) {
+
+    for (size_t i = x1; i < x2; i++) {
+      for (size_t j = 0; j < HEIGHT; j++) {
+        if (i >= WIDTH) {
+          continue;
+        }
+
+        m_frameBuffer.setPixel(i, j, sf::Color::Red);
+      }
+    }
+  }
 
   sf::Color getColor(int8_t *texture, int lightLevel) {
     std::string key((char *)texture);
@@ -199,6 +316,10 @@ private:
   // TODO: Move it to BSP
   void drawSolidWallRange(GameLevelSegment segment, float x1, float x2,
                           float inAngle) {
+    DrawSeg_t drawSeg;
+    drawSeg.x1 = x1;
+    drawSeg.x2 = x2;
+
     auto frontSector = m_bsp->m_gameLevel->sectors[segment.frontSector];
     auto line = m_bsp->m_gameLevel->linedefs[segment.linedefNumber];
     auto frontside = m_bsp->m_gameLevel->sidedefs[line.frontSidedef];
@@ -228,7 +349,7 @@ private:
     float rwScaleStep = 0;
     float rwScale1 = scaleFromGlobalAngle(x1, rwNormalAngle, rwDistance,
                                           RAD2DEG(m_playerTransform.angle));
-
+    drawSeg.scale1 = rwScale1;
     int offsetAngleMod = (int)fmodf(rwScale1, 360);
     if (offsetAngleMod - 1 == 90 || offsetAngleMod + 1 == 90) {
       rwScale1 *= 0.1;
@@ -238,7 +359,11 @@ private:
       float scale2 = scaleFromGlobalAngle(x2, rwNormalAngle, rwDistance,
                                           RAD2DEG(m_playerTransform.angle));
       rwScaleStep = (scale2 - rwScale1) / (x2 - x1);
+      drawSeg.scale2 = scale2;
+    } else {
+      drawSeg.scale2 = drawSeg.scale1;
     }
+    drawSeg.scalestep = rwScaleStep;
 
     std::unique_ptr<GameLevelTexture> &texture =
         m_bsp->m_gameLevel->textureImages[std::string(
@@ -269,6 +394,7 @@ private:
     float wallY2 = H_HEIGHT - worldFrontZ2 * rwScale1;
     float wallY2Step = -rwScaleStep * worldFrontZ2;
 
+    drawSegs.push_back(drawSeg);
     for (int x = x1; x < x2 + 1; x++) {
       float drawWallY1 = wallY1 - 1;
       float drawWallY2 = wallY2;
@@ -297,6 +423,7 @@ private:
         renderFlat(x, fy1, fy2, worldFrontZ2, lightLevel, floorGameTexture);
       }
 
+      m_rwScale[x] = rwScale1;
       rwScale1 += rwScaleStep;
       wallY1 += wallY1Step;
       wallY2 += wallY2Step;
@@ -305,6 +432,10 @@ private:
 
   void drawPortalWallRange(GameLevelSegment segment, float x1, float x2,
                            float inAngle) {
+    DrawSeg_t drawSeg;
+    drawSeg.x1 = x1;
+    drawSeg.x2 = x2;
+
     auto frontSector = m_bsp->m_gameLevel->sectors[segment.frontSector];
     auto backSector = m_bsp->m_gameLevel->sectors[segment.backSector];
     auto line = m_bsp->m_gameLevel->linedefs[segment.linedefNumber];
@@ -367,11 +498,16 @@ private:
     float rwScaleStep = 0;
     float rwScale1 = scaleFromGlobalAngle(x1, rwNormalAngle, rwDistance,
                                           RAD2DEG(m_playerTransform.angle));
+    drawSeg.scale1 = rwScale1;
     if (x2 > x1) {
       float scale2 = scaleFromGlobalAngle(x2, rwNormalAngle, rwDistance,
                                           RAD2DEG(m_playerTransform.angle));
       rwScaleStep = (scale2 - rwScale1) / (x2 - x1);
+      drawSeg.scale2 = scale2;
+    } else {
+      drawSeg.scale2 = drawSeg.scale1;
     }
+    drawSeg.scalestep = rwScaleStep;
 
     float rwOffset = 0;
     float rwCenterAngle = 0;
@@ -448,6 +584,7 @@ private:
       lowerTextureAlt += frontside.yOffset;
     }
 
+    drawSegs.push_back(drawSeg);
     for (int x = x1; x < x2 + 1; x++) {
       float drawWallY1 = wallY1 - 1;
       float drawWallY2 = wallY2;
@@ -475,6 +612,7 @@ private:
 
         renderWallColumn(x, wy1, wy2, upperTextureAlt, textureColumn, invScale,
                          lightLevel, upperWallGameTexture);
+        m_rwScale[x] = rwScale1;
 
         if (m_upperClip[x] < wy2) {
           m_upperClip[x] = wy2;
@@ -508,6 +646,7 @@ private:
 
         renderWallColumn(x, wy1, wy2, lowerTextureAlt, textureColumn, invScale,
                          lightLevel, lowerWallGameTexture);
+        m_rwScale[x] = rwScale1;
 
         if (m_lowerClip[x] > wy1) {
           m_lowerClip[x] = wy1;

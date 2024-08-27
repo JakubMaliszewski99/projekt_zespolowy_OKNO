@@ -54,6 +54,8 @@ GameLevel *WADLoader::loadFromFile(std::string filename, std::string mapName) {
   size_t pnamesIdx = -1;
   size_t flat1StartIdx = -1;
   size_t flat1EndIdx = -1;
+  size_t spriteStartIdx = -1;
+  size_t spriteEndIdx = -1;
   for (size_t i = 0; i < wadFile->info.numlumps; i++) {
     if (strnicmp("PLAYPAL", (const char *)lumpDirectory[i].name, 8) == 0) {
       playpalIdx = i;
@@ -70,10 +72,18 @@ GameLevel *WADLoader::loadFromFile(std::string filename, std::string mapName) {
     if (strnicmp("F1_END", (const char *)lumpDirectory[i].name, 8) == 0) {
       flat1EndIdx = i;
     }
+    if (strnicmp("S_START", (const char *)lumpDirectory[i].name, 8) == 0) {
+      spriteStartIdx = i;
+    }
+    if (strnicmp("S_END", (const char *)lumpDirectory[i].name, 8) == 0) {
+      spriteEndIdx = i;
+    }
     if (strnicmp(mapName.c_str(), (const char *)lumpDirectory[i].name, 8) ==
         0) {
       selectedMapLumpIndex = i;
     }
+
+    printf("%.8s\n", lumpDirectory[i].name);
   }
 
   filelump_t playpalLump = lumpDirectory[playpalIdx];
@@ -200,6 +210,38 @@ GameLevel *WADLoader::loadFromFile(std::string filename, std::string mapName) {
 
     std::string strName((char *)lumpDirectory[i].name, 8);
     gameLevel->textureImages[strName] = std::move(glTexture);
+  }
+
+  // SPRITES
+  for (size_t i = spriteStartIdx + 1; i < spriteEndIdx; i++) {
+    std::unique_ptr<GameLevelTexture> glTexture(new GameLevelTexture);
+
+    size_t filepos = lumpDirectory[i].filepos;
+    patchheader_t *patchHeader = (patchheader_t *)&buffer.data()[filepos];
+    glTexture->width = patchHeader->width;
+    glTexture->height = patchHeader->height;
+    glTexture->image.resize(patchHeader->height);
+    for (int i = 0; i < patchHeader->height; i++) {
+      glTexture->image[i].resize(patchHeader->width);
+    }
+    strncpy((char *)glTexture->name, (char *)lumpDirectory[i].name, 8);
+
+    uint32_t *columnOffsets = &patchHeader->columnofs;
+    uint32_t currentColumnOffsetIdx = 0;
+    uint32_t currentColumnOffset = columnOffsets[currentColumnOffsetIdx];
+    for (int x = 0; x < patchHeader->width; x++) {
+      uint8_t *post = (uint8_t *)&buffer.data()[filepos + currentColumnOffset];
+      for (int y = 0; y < patchHeader->height; y++) {
+        uint8_t colorIdx = post[3 + y];
+
+        glTexture->image[y][x] = gameLevel->pallets[0][colorIdx];
+      }
+      currentColumnOffsetIdx++;
+      currentColumnOffset = columnOffsets[currentColumnOffsetIdx];
+    }
+
+    std::string strName((char *)lumpDirectory[i].name, 8);
+    gameLevel->spriteImages[strName] = std::move(glTexture);
   }
 
   if (selectedMapLumpIndex < 0) {

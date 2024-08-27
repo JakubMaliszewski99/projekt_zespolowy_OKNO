@@ -71,8 +71,6 @@ GameEngine::GameEngine(InitSettings settings) {
   m_ecsManager->addComponent(
       m_mapEntity, MinimapSpriteComponent{
                        sf::View(), new LevelMinimapSprite(m_level), false});
-  m_ecsManager->addComponent(
-      m_mapEntity, GameDrawableComponent{GameDrawableType::eLevel, nullptr});
 
   // Spawn things
   for (auto thing : m_level->things) {
@@ -153,13 +151,15 @@ GameEngine::GameEngine(InitSettings settings) {
 
       m_ecsManager->addComponent(
           thingEntity,
-          MinimapSpriteComponent{sf::View(),
-                                 new CollectableMinimapSprite(color), false});
+          MinimapSpriteComponent{
+              sf::View(), new CollectableMinimapSprite(color, m_ecsManager),
+              false});
       m_ecsManager->addComponent(
           thingEntity,
           CollectableComponent{
               m_collectableSystem->getCollectableTypeFromSubType(thing.type),
               (CollectableSubType)thing.type, 10, 20});
+      m_ecsManager->addComponent(thingEntity, SpriteComponent{"BAR1B0"});
       m_ecsManager->addComponent(thingEntity, HealthComponent{100, 100});
     }
   }
@@ -214,7 +214,8 @@ void GameEngine::update(sf::Time deltaTime) {
     m_gameRenderingSystem->update(dt);
   }
 
-  m_HUDRenderingSystem->update();
+  // m_HUDRenderingSystem->update();
+  m_window->display();
 }
 
 void GameEngine::setupComponents() {
@@ -224,11 +225,11 @@ void GameEngine::setupComponents() {
   m_ecsManager->registerComponent<MinimapSpriteComponent>();
   m_ecsManager->registerComponent<ControllableComponent>();
   m_ecsManager->registerComponent<CollectableComponent>();
-  m_ecsManager->registerComponent<GameDrawableComponent>();
   m_ecsManager->registerComponent<WeaponComponent>();
   m_ecsManager->registerComponent<DamageComponent>();
   m_ecsManager->registerComponent<EnemyComponent>();
   m_ecsManager->registerComponent<PlayerStateComponent>();
+  m_ecsManager->registerComponent<SpriteComponent>();
 }
 void GameEngine::setupSystems() {
   // Systems
@@ -293,7 +294,7 @@ void GameEngine::setupSystems() {
   gameRenderingSystemSignature.set(
       m_ecsManager->getComponentType<TransformComponent>());
   gameRenderingSystemSignature.set(
-      m_ecsManager->getComponentType<GameDrawableComponent>());
+      m_ecsManager->getComponentType<SpriteComponent>());
   // GameRenderingSystem Register
   m_gameRenderingSystem = m_ecsManager->registerSystem<GameRenderingSystem>();
   m_gameRenderingSystem->init(m_ecsManager, m_window,

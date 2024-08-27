@@ -19,6 +19,8 @@ public:
     for (auto const &entity : m_entities) {
       auto &collectableTransform =
           m_manager->getComponent<TransformComponent>(entity);
+      auto &collectableSprite =
+          m_manager->getComponent<SpriteComponent>(entity);
       auto &collectable = m_manager->getComponent<CollectableComponent>(entity);
 
       if (this->distance(playerTransform.positionX, playerTransform.positionY,
@@ -26,6 +28,7 @@ public:
                          collectableTransform.positionY) < collectable.radius) {
         // TODO: Add effect after collecting
         entitiesToDelete.push_back(entity);
+        collectableSprite.draw = false;
       }
     }
 
