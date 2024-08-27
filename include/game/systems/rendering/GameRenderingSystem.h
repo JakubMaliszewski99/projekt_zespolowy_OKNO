@@ -146,6 +146,7 @@ private:
       sfColor.r *= lightLevel / 255.0f;
       sfColor.g *= lightLevel / 255.0f;
       sfColor.b *= lightLevel / 255.0f;
+
       m_frameBuffer.setPixel(x, y, sfColor);
       textureY += invScale;
     }
@@ -232,11 +233,11 @@ private:
         m_bsp->m_gameLevel->textureImages[std::string(
             (char *)frontside.middleTextureName, 8)];
     std::unique_ptr<GameLevelTexture> &ceilGameTexture =
-        m_bsp->m_gameLevel->flatImages[std::string(
+        m_bsp->m_gameLevel->textureImages[std::string(
             (char *)frontSector.ceilingTextureName, 8)];
     std::unique_ptr<GameLevelTexture> &floorGameTexture =
-        m_bsp->m_gameLevel
-            ->flatImages[std::string((char *)frontSector.floorTextureName, 8)];
+        m_bsp->m_gameLevel->textureImages[std::string(
+            (char *)frontSector.floorTextureName, 8)];
 
     float vTop = 0;
     float middleTextAlt = 0;
@@ -282,7 +283,7 @@ private:
       if (isFloorVisible) {
         int fy1 = std::max<int>(drawWallY2 + 1, m_upperClip[x] + 1);
         int fy2 = m_lowerClip[x] - 1;
-        renderFlat(x, fy1, fy2, worldFrontZ2, lightLevel, ceilGameTexture);
+        renderFlat(x, fy1, fy2, worldFrontZ2, lightLevel, floorGameTexture);
       }
 
       rwScale1 += rwScaleStep;
@@ -310,8 +311,8 @@ private:
     bool drawCeil = false;
     if (worldFrontZ1 != worldBackZ1 ||
         frontSector.lightLevel != backSector.lightLevel ||
-        strcmp((const char *)frontSector.ceilingTextureName,
-               (const char *)backSector.ceilingTextureName) != 0) {
+        strncmp((const char *)frontSector.ceilingTextureName,
+                (const char *)backSector.ceilingTextureName, 8) != 0) {
       drawUpperWall =
           strncmp((const char *)frontside.upperTextureName, "-", 1) != 0 &&
           worldBackZ1 < worldFrontZ1;
@@ -322,8 +323,8 @@ private:
     bool drawFloor = false;
     if (worldFrontZ2 != worldBackZ2 ||
         frontSector.lightLevel != backSector.lightLevel ||
-        strcmp((const char *)frontSector.floorTextureName,
-               (const char *)backSector.floorTextureName) != 0) {
+        strncmp((const char *)frontSector.floorTextureName,
+                (const char *)backSector.floorTextureName, 8) != 0) {
       drawLowerWall =
           strncmp((const char *)frontside.lowerTextureName, "-", 1) != 0 &&
           worldBackZ2 > worldFrontZ2;
@@ -394,11 +395,11 @@ private:
 
     // Note: Wall texture is taken from frontside after swap?
     std::unique_ptr<GameLevelTexture> &ceilGameTexture =
-        m_bsp->m_gameLevel->flatImages[std::string(
+        m_bsp->m_gameLevel->textureImages[std::string(
             (char *)frontSector.ceilingTextureName, 8)];
     std::unique_ptr<GameLevelTexture> &floorGameTexture =
-        m_bsp->m_gameLevel
-            ->flatImages[std::string((char *)frontSector.floorTextureName, 8)];
+        m_bsp->m_gameLevel->textureImages[std::string(
+            (char *)frontSector.floorTextureName, 8)];
     std::unique_ptr<GameLevelTexture> &lowerWallGameTexture =
         m_bsp->m_gameLevel
             ->textureImages[std::string((char *)frontside.lowerTextureName, 8)];
@@ -410,11 +411,12 @@ private:
     float upperTextureAlt = 0;
     if (drawUpperWall) {
       if ((line.flags & 0x8) > 0) {
+        upperTextureAlt = worldFrontZ1;
+      } else {
         vTop = backSector.ceilingHeight + upperWallGameTexture->height;
         upperTextureAlt = vTop - m_playerHeight;
-      } else {
-        upperTextureAlt = worldFrontZ1;
       }
+      upperTextureAlt += frontside.yOffset;
     }
 
     float lowerTextureAlt = 0;
@@ -424,6 +426,7 @@ private:
       } else {
         lowerTextureAlt = worldBackZ2;
       }
+      lowerTextureAlt += frontside.yOffset;
     }
 
     for (int x = x1; x < x2 + 1; x++) {
@@ -485,7 +488,7 @@ private:
         float wy2 = std::min<float>(drawLowerWallY2, m_lowerClip[x] - 1);
 
         renderWallColumn(x, wy1, wy2, lowerTextureAlt, textureColumn, invScale,
-                         lightLevel, ceilGameTexture);
+                         lightLevel, lowerWallGameTexture);
 
         if (m_lowerClip[x] > wy1) {
           m_lowerClip[x] = wy1;

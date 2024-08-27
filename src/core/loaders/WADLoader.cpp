@@ -1,28 +1,29 @@
 #include "../include/core/loaders/WADLoader.h"
+#include "../include/core/math/utilities.h"
 #include <cstring>
 
 WADLoader::WADLoader() {}
 
 int WADLoader::getLumpTypeFromName(unsigned char lumpname[8]) {
-  if (strncmp((const char *)lumpname, "THINGS", 8) == 0) {
+  if (strnicmp((const char *)lumpname, "THINGS", 8) == 0) {
     return MapLumpTypes::eThings;
-  } else if (strncmp((const char *)lumpname, "LINEDEFS", 8) == 0) {
+  } else if (strnicmp((const char *)lumpname, "LINEDEFS", 8) == 0) {
     return MapLumpTypes::eLineDefs;
-  } else if (strncmp((const char *)lumpname, "SIDEDEFS", 8) == 0) {
+  } else if (strnicmp((const char *)lumpname, "SIDEDEFS", 8) == 0) {
     return MapLumpTypes::eSideDefs;
-  } else if (strncmp((const char *)lumpname, "VERTEXES", 8) == 0) {
+  } else if (strnicmp((const char *)lumpname, "VERTEXES", 8) == 0) {
     return MapLumpTypes::eVertexes;
-  } else if (strncmp((const char *)lumpname, "SEGS", 8) == 0) {
+  } else if (strnicmp((const char *)lumpname, "SEGS", 8) == 0) {
     return MapLumpTypes::eSegs;
-  } else if (strncmp((const char *)lumpname, "SSECTORS", 8) == 0) {
+  } else if (strnicmp((const char *)lumpname, "SSECTORS", 8) == 0) {
     return MapLumpTypes::eSSectors;
-  } else if (strncmp((const char *)lumpname, "NODES", 8) == 0) {
+  } else if (strnicmp((const char *)lumpname, "NODES", 8) == 0) {
     return MapLumpTypes::eNodes;
-  } else if (strncmp((const char *)lumpname, "SECTORS", 8) == 0) {
+  } else if (strnicmp((const char *)lumpname, "SECTORS", 8) == 0) {
     return MapLumpTypes::eSectors;
-  } else if (strncmp((const char *)lumpname, "REJECT", 8) == 0) {
+  } else if (strnicmp((const char *)lumpname, "REJECT", 8) == 0) {
     return MapLumpTypes::eReject;
-  } else if (strncmp((const char *)lumpname, "BLOCKMAP", 8) == 0) {
+  } else if (strnicmp((const char *)lumpname, "BLOCKMAP", 8) == 0) {
     return MapLumpTypes::eBlockMap;
   }
   return -1;
@@ -39,8 +40,8 @@ GameLevel *WADLoader::loadFromFile(std::string filename, std::string mapName) {
   std::vector<unsigned char> buffer(std::istreambuf_iterator<char>(file), {});
 
   wadfile_t *wadFile = (wadfile_t *)buffer.data();
-  if (strncmp("IWAD", (const char *)wadFile->info.identification, 4) != 0 &&
-      strncmp("PWAD", (const char *)wadFile->info.identification, 4) != 0) {
+  if (strnicmp("IWAD", (const char *)wadFile->info.identification, 4) != 0 &&
+      strnicmp("PWAD", (const char *)wadFile->info.identification, 4) != 0) {
     std::cerr << "[ERROR] WADLoader: Invalid WAD header." << std::endl;
     return nullptr;
   }
@@ -54,22 +55,23 @@ GameLevel *WADLoader::loadFromFile(std::string filename, std::string mapName) {
   size_t flat1StartIdx = -1;
   size_t flat1EndIdx = -1;
   for (size_t i = 0; i < wadFile->info.numlumps; i++) {
-    if (strncmp("PLAYPAL", (const char *)lumpDirectory[i].name, 8) == 0) {
+    if (strnicmp("PLAYPAL", (const char *)lumpDirectory[i].name, 8) == 0) {
       playpalIdx = i;
     }
-    if (strncmp("TEXTURE1", (const char *)lumpDirectory[i].name, 8) == 0) {
+    if (strnicmp("TEXTURE1", (const char *)lumpDirectory[i].name, 8) == 0) {
       texture1Idx = i;
     }
-    if (strncmp("PNAMES", (const char *)lumpDirectory[i].name, 8) == 0) {
+    if (strnicmp("PNAMES", (const char *)lumpDirectory[i].name, 8) == 0) {
       pnamesIdx = i;
     }
-    if (strncmp("F1_START", (const char *)lumpDirectory[i].name, 8) == 0) {
+    if (strnicmp("F1_START", (const char *)lumpDirectory[i].name, 8) == 0) {
       flat1StartIdx = i;
     }
-    if (strncmp("F1_END", (const char *)lumpDirectory[i].name, 8) == 0) {
+    if (strnicmp("F1_END", (const char *)lumpDirectory[i].name, 8) == 0) {
       flat1EndIdx = i;
     }
-    if (strncmp(mapName.c_str(), (const char *)lumpDirectory[i].name, 8) == 0) {
+    if (strnicmp(mapName.c_str(), (const char *)lumpDirectory[i].name, 8) ==
+        0) {
       selectedMapLumpIndex = i;
     }
   }
@@ -95,6 +97,7 @@ GameLevel *WADLoader::loadFromFile(std::string filename, std::string mapName) {
   maptexturelump_t *mapTextures =
       (maptexturelump_t *)&buffer.data()[texture1Lump.filepos];
   std::vector<maptexture_t *> wadTextures;
+
   for (size_t i = 0; i < mapTextures->numtextures; i++) {
     int32_t *pOffset = &mapTextures->offset;
     int32_t offset = pOffset[i];
@@ -134,8 +137,8 @@ GameLevel *WADLoader::loadFromFile(std::string filename, std::string mapName) {
       bool patchFound = false;
       size_t patchOffset = -1;
       for (size_t j = 0; j < wadFile->info.numlumps; j++) {
-        if (strncmp((const char *)patchName,
-                    (const char *)lumpDirectory[j].name, 8) == 0) {
+        if (strnicmp((const char *)patchName,
+                     (const char *)lumpDirectory[j].name, 8) == 0) {
           patchFound = true;
           patchOffset = lumpDirectory[j].filepos;
         }
@@ -156,9 +159,10 @@ GameLevel *WADLoader::loadFromFile(std::string filename, std::string mapName) {
               break;
             }
             uint8_t colorIdx = post[3 + y];
+
             if (currentPatch.originx + x >= texture->width ||
                 currentPatch.originy + y >= texture->height ||
-                currentPatch.originy < 0 || currentPatch.originx < 0) {
+                currentPatch.originy + y < 0 || currentPatch.originx + x < 0) {
               continue;
             }
             glTexture
@@ -184,15 +188,18 @@ GameLevel *WADLoader::loadFromFile(std::string filename, std::string mapName) {
       glTexture->image[i].resize(glTexture->height);
     }
     strncpy((char *)glTexture->name, (char *)lumpDirectory[i].name, 8);
+    uint8_t *colorMapValue = buffer.data() + lumpDirectory[i].filepos;
+
     for (int x = 0; x < 64; x++) {
       for (int y = 0; y < 64; y++) {
-        glTexture->image[x][y] = {(unsigned char)x, (unsigned char)y,
-                                  (unsigned char)x};
+        uint8_t colorMapPointer = *colorMapValue++;
+        color_t color = gameLevel->pallets[0][colorMapPointer];
+        glTexture->image[x][y] = color;
       }
     }
 
     std::string strName((char *)lumpDirectory[i].name, 8);
-    gameLevel->flatImages[strName] = std::move(glTexture);
+    gameLevel->textureImages[strName] = std::move(glTexture);
   }
 
   if (selectedMapLumpIndex < 0) {

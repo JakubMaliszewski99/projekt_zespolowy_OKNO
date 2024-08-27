@@ -5,7 +5,7 @@
 int main(int argc, char *argv[]) {
 
   DebugSettings debugSettings;
-  debugSettings.displayFov = false;
+  debugSettings.displayFov = true;
   debugSettings.displayVisibleNodes = false;
   debugSettings.displayVisibleSegments = false;
 

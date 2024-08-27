@@ -40,11 +40,13 @@ public:
         weapon.readyToFire = true;
         weapon.fired = false;
       }
-      if (InputManager::getInstance()->isKeyPressed(sf::Keyboard::Space)) {
+      if (InputManager::getInstance()->isKeyPressed(sf::Keyboard::LControl) || 
+          InputManager::getInstance()->isMouseButtonPressed(sf::Mouse::Left)) {
         if (weapon.readyToFire == true) {
           weapon.fired = true;
           weapon.readyToFire = false;
           weapon.timeFromLastShot = 0;
+          std::cout << "Weapon fired"<< std::endl;
         }
       }
     }

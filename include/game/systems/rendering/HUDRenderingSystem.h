@@ -28,6 +28,8 @@ public:
 
     healthBar.setFillColor(sf::Color::Green);
 
+    missingHealthBar.setFillColor(sf::Color::Red);
+
     healthText.setFont(fontLeft);
     healthText.setString("Health");
     healthText.setCharacterSize(30);
@@ -70,6 +72,12 @@ public:
     healthBarWidth = defaultHealthBarWidth;
     healthBarHight = windowSize.y * 0.015;
 
+    healthBar.setSize(sf::Vector2f(healthBarWidth, healthBarHight));
+    healthBar.setPosition(healthBarX, healthBarY);
+
+    missingHealthBar.setSize(sf::Vector2f(defaultHealthBarWidth, healthBarHight));
+    missingHealthBar.setPosition(healthBarX, healthBarY);
+
     defaultHandGunSpriteX = windowSize.x * 0.41;
     defaultHandGunSpriteY = windowSize.y * 0.65;
     handGunSpriteX = defaultHandGunSpriteX;
@@ -77,8 +85,7 @@ public:
 
     handGunSprite.setPosition(handGunSpriteX, handGunSpriteY);
 
-    healthBar.setSize(sf::Vector2f(healthBarWidth, healthBarHight));
-    healthBar.setPosition(healthBarX, healthBarY);
+
 
     healthTextX = healthBarX + 50;
     healthTextY = healthBarY + 25;
@@ -97,7 +104,11 @@ public:
     auto &state = m_manager->getComponent<PlayerStateComponent>(m_playerEntity);
     auto &health = m_manager->getComponent<HealthComponent>(m_playerEntity);
 
-    healthBarWidth = defaultHealthBarWidth * health.health / 100;
+    if(health.health > 0)
+      healthBarWidth = defaultHealthBarWidth * health.health / 100;
+    else
+      healthBarWidth = 0.0f;
+      
     healthBar.setSize(sf::Vector2f(healthBarWidth, healthBarHight));
 
     if (state.isMovingForward || state.isMovingBackwards ||
@@ -116,6 +127,7 @@ public:
 
     m_renderWindow->draw(handGunSprite);
     m_renderWindow->draw(hudSprite);
+    m_renderWindow->draw(missingHealthBar);
     m_renderWindow->draw(healthBar);
     m_renderWindow->draw(healthText);
     m_renderWindow->draw(ammoAmountText);
@@ -136,6 +148,8 @@ private:
   int healthBarHight;
   int healthBarX;
   int healthBarY;
+
+  sf::RectangleShape missingHealthBar;
 
   sf::Text healthText;
   int healthTextX;

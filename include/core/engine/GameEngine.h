@@ -74,4 +74,7 @@ private:
   std::shared_ptr<WeaponSystem> m_weaponSystem;
   std::shared_ptr<DamageSystem> m_damageSystem;
   std::shared_ptr<EnviromentDamageSystem> m_enviromentDamageSystem;
+
+  std::vector<Entity> enemyEntities;
+
 };
