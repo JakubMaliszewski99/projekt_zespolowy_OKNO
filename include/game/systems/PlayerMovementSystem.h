@@ -188,7 +188,7 @@ public:
                       heightDifference = backSectorHeight - frontSectorHeight;
                   }
 
-                  if(backSectorId == -1 || heightDifference >= 24){
+                  if(backSectorId == -1 || heightDifference >= 25){
                     // Calculate wall vector and normal
                     sf::Vector2f wallVector = {(float)endVertex.x -
                     (float)startVertex.x, (float)endVertex.y - (float)startVertex.y};
